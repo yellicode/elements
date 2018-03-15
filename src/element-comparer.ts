@@ -1,0 +1,67 @@
+/*
+ * Copyright (c) 2018 Yellicode
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+import * as Interfaces from "./interfaces";
+
+const NO_ORDER = 0;
+
+export class ElementComparer {
+
+    public static compareOrderedElements<TElement extends Interfaces.OrderedElement & Interfaces.NamedElement>(x: TElement, y: TElement): number {
+        // We use a value of 0 (NO_ORDER) for elements having no order at all.
+        // An order of NO_ORDER comes after a set order		
+        var xOrder = x.order || NO_ORDER;
+        var yOrder = y.order || NO_ORDER;
+        if (xOrder === NO_ORDER && yOrder !== NO_ORDER) {
+            return 1;
+        }
+        if (yOrder === NO_ORDER && xOrder !== NO_ORDER) {
+            return -1;
+        }
+        // Both have an order
+        const result = xOrder - yOrder;
+        if (result !== 0) return result;
+        // Both have the same order. Fallback by name. Unless we are dealing with parameters.        
+        return x.elementType === Interfaces.ElementType.parameter ? result : x.name.localeCompare(y.name);
+    }
+
+    public static comparePackageableElements<TElement extends Interfaces.PackageableElement>(x: TElement, y: TElement): number {
+        // Packages first
+        if (x.elementType === Interfaces.ElementType.package) {
+            if (y.elementType !== Interfaces.ElementType.package) {
+                // x is a package, y isn't
+                return -1;
+            }
+        }
+        else if (y.elementType === Interfaces.ElementType.package) {
+            // x is not a package, y is
+            return 1;
+        }
+        // Then compare by name
+        return x.name.localeCompare(y.name);
+    }
+
+    public static haveEqualSignatures(x: Interfaces.Operation, y: Interfaces.Operation): boolean {
+        if (x.name !== y.name) return false;
+        // Same name
+        if (x.ownedParameters.length !== y.ownedParameters.length) {
+            return false;
+        }
+        // Same number of parameters
+        if (x.ownedParameters.length === 0)
+            return true;
+
+        // Same number of parameters (> 0)
+        for (let i = 0, len = x.ownedParameters.length; i < len; i++) {
+            const typeOfParamX = x.ownedParameters[i].type;
+            const typeOfParamY = y.ownedParameters[i].type;
+            if (typeOfParamX !== typeOfParamY) return false;
+        }
+
+        return true;
+    }
+}

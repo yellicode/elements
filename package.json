@@ -1,0 +1,31 @@
+{
+  "name": "@yellicode/model",
+  "version": "0.1.7",
+  "description": "Model package for Yellicode - an extensible code generator.",
+  "license": "MPL-2.0",
+  "main": "dist/bundles/model.umd.js",
+  "module": "dist/es5/model.js",
+  "es2015": "dist/es6/model.js",
+  "types": "dist/types/model.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "github:yellicode/model.git"
+  },
+  "dependencies": {
+    "@yellicode/core": "^0.1.2",
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.33",
+    "@types/lodash": "4.14.89",
+    "rollup": "^0.50.0"
+  },
+  "scripts": {
+    "build:es5": "tsc",       
+    "build:es6": "tsc -m es6 -t es6 --outDir dist/es6 --declaration --declarationDir dist/types",       
+    "build:umd":"./node_modules/.bin/rollup --config rollup.config.js", 
+    "build:dist": "npm run build:es5 & npm run build:es6 & npm run build:umd",
+    "build": "npm run build:dist",
+    "prepublish": "npm run build:dist"
+  }
+}
