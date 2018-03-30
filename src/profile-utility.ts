@@ -14,8 +14,8 @@ export class ProfileUtility {
         return profile.packagedElements.filter((e) => e.elementType === Interfaces.ElementType.stereotype) as Interfaces.Stereotype[];
     }
 
-    public static hasStereotypeId<TElement extends Interfaces.Element>(element: TElement, stereotypeId: string): boolean {
-        if (!element.appliedStereotypes)
+    public static hasStereotypeId<TElement extends Interfaces.Element>(element: TElement | null, stereotypeId: string): boolean {
+        if (!element || !element.appliedStereotypes)
             return false;
 
         return ProfileUtility.hasStereotypeIdRecursive(element.appliedStereotypes, stereotypeId);
@@ -55,8 +55,8 @@ export class ProfileUtility {
         return metaClasses;
     }
 
-    public static hasProfileId<TElement extends Interfaces.Package>(pack: Interfaces.Package, profileId: string): boolean {
-        if (!pack.appliedProfiles) return false;
+    public static hasProfileId<TElement extends Interfaces.Package>(pack: Interfaces.Package | null, profileId: string): boolean {
+        if (!pack || !pack.appliedProfiles) return false;
         return pack.appliedProfiles.some((s) => s.id === profileId);
     }
 
