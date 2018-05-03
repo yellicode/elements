@@ -31,8 +31,8 @@ export class DataToModelConverter
 {
 	private referencesToResolve: {target:any, data:any, resolvefn: (target:any, element:any) => void }[] = [];
 	private elementMap: ElementMap = new ElementMap();
-	private modelDelegate: ModelDelegate = new ModelDelegate(this.elementMap);
 	private elementIdPrefix: string | null = null;
+	public modelDelegate: ModelDelegate = new ModelDelegate(this.elementMap);
 
 	private createPrimitiveTypes(): Interfaces.PrimitiveType[]
 	{

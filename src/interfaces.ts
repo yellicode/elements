@@ -176,6 +176,13 @@ export interface Document
 	/**
 	*/
 	references: DocumentReference[];
+	/**
+	* Returns an Element representing the element whose id property matches the specified string.
+	* @returns {Element} The model element matching the specified ID, or null if no matching element was
+	* found in the model.
+	* @param {string} id The ID of the element to search for.
+	*/
+	findElementById(id: string): Element | null;
 }
 
 

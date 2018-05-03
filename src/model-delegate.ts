@@ -16,9 +16,14 @@ import * as utils from './utils';
  * Internal class to which all behaviour of the model classes is delegated.
  */
 export class ModelDelegate {
-
     constructor(private elementMap: ElementMap) {
 
+    }
+
+    // ************************  Document **************************** //     
+    
+    public findElementById(id: string): Interfaces.Element | null {
+        return this.elementMap.getElementById(id);
     }
 
     // **************************  Element ******************************* //     
@@ -118,7 +123,8 @@ export class ModelDelegate {
 
     public getAllEnumerations(element: Interfaces.Package): Interfaces.Enumeration[] {
         return ModelDelegate.getAllPackagedElementsWhere<Interfaces.Enumeration>(element, pe => ElementTypeUtility.isEnumeration(pe.elementType));
-    }    
+    }
+
 
     // ************************  PackageableElement **************************** //     
 
@@ -145,13 +151,13 @@ export class ModelDelegate {
         return result;
     }
 
-    public getNamespaceName(packagedElement: Interfaces.PackageableElement, separator: string = '.'): string {        
+    public getNamespaceName(packagedElement: Interfaces.PackageableElement, separator: string = '.'): string {
         return this.getNestingPackages(packagedElement, true).map(p => p.name).join(separator);
     }
 
-    public getQualifiedName(packagedElement: Interfaces.PackageableElement, separator: string = '.'): string {             
+    public getQualifiedName(packagedElement: Interfaces.PackageableElement, separator: string = '.'): string {
         const namespaceName = this.getNamespaceName(packagedElement, separator);
-        return namespaceName ? `${namespaceName}${separator}${packagedElement.name}` : packagedElement.name;        
+        return namespaceName ? `${namespaceName}${separator}${packagedElement.name}` : packagedElement.name;
     }
 
     // ************************  Generalization **************************** //     

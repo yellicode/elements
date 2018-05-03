@@ -33,17 +33,6 @@ export class TaggedValueSpecification implements Interfaces.TaggedValueSpecifica
 	public specification!: Interfaces.ValueSpecification;
 }
 
-export class Document implements Interfaces.Document
-{
-	public id: string = '';
-	public creator: string = '';
-	public modelTypeName: string = '';
-	public modelTypeVersion: string = '';
-	public model: Interfaces.Model | null = null;
-	public profiles: Interfaces.Model | null = null;
-	public references: Interfaces.DocumentReference[] = [];
-}
-
 export abstract class Element implements Interfaces.Element
 {
 	constructor(protected modelDelegate:ModelDelegate, owner: Interfaces.Element | null)
