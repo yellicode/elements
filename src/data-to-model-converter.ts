@@ -31,7 +31,6 @@ export class DataToModelConverter
 {
 	private referencesToResolve: {target:any, data:any, resolvefn: (target:any, element:any) => void }[] = [];
 	private elementMap: ElementMap = new ElementMap();
-	private elementIdPrefix: string | null = null;
 	public modelDelegate: ModelDelegate = new ModelDelegate(this.elementMap);
 
 	private createPrimitiveTypes(): Interfaces.PrimitiveType[]
@@ -113,17 +112,18 @@ export class DataToModelConverter
      * NOTE: this function must be edited in the partial template file.
      */
     private createElementId(elementId: string): string {
-        // ids must be prefixed if we are loading a referenced document, because references to it 
-        // are prefixed with the document id      
-        return this.elementIdPrefix ? this.elementIdPrefix + '.' + elementId : elementId;
+        return elementId;//  
+	    // Obsolete: ids must be prefixed if we are loading a referenced document, because references to it 
+	    // are prefixed with the document id    
+        //return this.elementIdPrefix ? this.elementIdPrefix + '.' + elementId : elementId;
     }
 
     /**
      * NOTE: this function must be edited in the partial template file.
      */
-    public convert(data: Data.ModelData, profiles: Interfaces.Profile[] | null, elementIdPrefix: string | null): Interfaces.Model {
+    public convert(data: Data.ModelData, profiles: Interfaces.Profile[] | null): Interfaces.Model {
 
-        this.elementIdPrefix = elementIdPrefix;
+        // this.elementIdPrefix = elementIdPrefix;
 
         // Extend prototypes with profile specific accessors
         if (profiles) {

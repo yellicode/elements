@@ -31,24 +31,16 @@ export class ModelReader {
         return ModelReader.readDocumentRecursive(documentData, false);
     }
 
-    // public static readModel(modelData: Data.ModelData): Interfaces.Model | null {
-    //     if (!modelData) return null;
-
-    //     const converter = new DataToModelConverter();
-
-    //     return converter.convert(modelData, null, null);
-    // }
-
     private static readDocumentRecursive(documentData: Data.DocumentData, isReferencedDocument: boolean): Interfaces.Document | null {
-        // Ids must be prefixed if we are loading a referenced document, because references to it 
+        // Obsolete: Ids must be prefixed if we are loading a referenced document, because references to it 
         // are prefixed with the document id      
-        const elementIdPrefix = isReferencedDocument ? documentData.id : null;
+        // const elementIdPrefix = isReferencedDocument ? documentData.id : null;
 
         // Convert the document's referenced documents first
         ModelReader.readReferencedDocumentsRecursive(documentData);
 
         // Convert the document's profiles first (this allows the converter to resolve references to them)
-        const profilesInDocument = documentData.profiles ? ModelReader.converter.convert(documentData.profiles, null, elementIdPrefix) : null;
+        const profilesInDocument = documentData.profiles ? ModelReader.converter.convert(documentData.profiles, null) : null;
         if (profilesInDocument) {
             profilesInDocument.packagedElements.forEach(p => {
                 if (ElementTypeUtility.isProfile(p.elementType)) { // the element can also be a Enum or other type
@@ -58,7 +50,7 @@ export class ModelReader {
         }
 
         // Then convert the model, using the profiles
-        const modelInDocument = documentData.model ? ModelReader.converter.convert(documentData.model, ModelReader.allProfiles, elementIdPrefix) : null;
+        const modelInDocument = documentData.model ? ModelReader.converter.convert(documentData.model, ModelReader.allProfiles) : null;
         const document = new Document(ModelReader.converter.modelDelegate);
         document.id = documentData.id;
         document.modelTypeName = documentData.modelTypeName;
