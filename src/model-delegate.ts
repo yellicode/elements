@@ -16,13 +16,15 @@ import * as utils from './utils';
  * Internal class to which all behaviour of the model classes is delegated.
  */
 export class ModelDelegate {
-    constructor(private elementMap: ElementMap) {
-
+    constructor(private elementMap: ElementMap | null) {
+        // Note that elementMap is null when not initialized through the DataToModelConverter
     }
 
     // ************************  Document **************************** //     
     
     public findElementById(id: string): Interfaces.Element | null {
+        if (!this.elementMap) return null;
+
         return this.elementMap.getElementById(id);
     }
 
@@ -207,10 +209,12 @@ export class ModelDelegate {
     }
 
     public getSpecializations(classifier: Interfaces.Classifier): Interfaces.Classifier[] {
+        if (!this.elementMap) return [];
         return this.elementMap.getSpecializationsOf(classifier.id);
     }
 
     public getAllSpecializations(classifier: Interfaces.Classifier): Interfaces.Classifier[] {
+        if (!this.elementMap) return [];
         return this.elementMap.getAllSpecializationsOf(classifier.id);
     }
 
@@ -403,12 +407,16 @@ export class ModelDelegate {
     }
 
     // ********************  Property **************************** //     
-    public getAssociation(property: Interfaces.Property): Interfaces.Association | null {
-        const owner = property.owner;
-        if ((owner == null) || !ElementTypeUtility.isAssociation(owner.elementType))
-            return null;
-
-        return owner as Interfaces.Association;
+    public getAssociation(property: Interfaces.Property): Interfaces.Association | null {        
+        // The property can be owned by an association (association.ownedEnds) or by a classifier
+        // If owned by an association, the path is short.
+        if (utils.isAssociation(property.owner)){
+            return property.owner;
+        }
+        // The property is not owned by an association, but can still be part of one
+        // (association.memberEnds)
+        if (!this.elementMap) return null;
+        return this.elementMap.getAssociationHavingMemberEnd(property);        
     }
 
     // ********************  Operation **************************** //     

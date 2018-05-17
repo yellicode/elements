@@ -12,6 +12,7 @@ import { ElementTypeUtility } from './utils';
 export class ElementMap {
     private elementsById: { [key: string]: Interfaces.Element } = {};
     private specializationsById: { [generalId: string]: Interfaces.Classifier[] } = {};
+    private associationsByEndId: { [endId: string]: Interfaces.Association } = {};
 
     public addElement(element: Interfaces.Element, elementData: Data.ElementData | null) {
         if (this.elementsById.hasOwnProperty(element.id)) {
@@ -24,6 +25,25 @@ export class ElementMap {
         if (ElementTypeUtility.isClassifier(element.elementType) && elementData) {
             this.addSpecializations(element as Interfaces.Classifier, elementData as Data.ClassifierData);
         }
+        // Add association ends to the assciationEnd map
+        if (ElementTypeUtility.isAssociation(element.elementType) && elementData) {
+            this.addAssociationEnds(element as Interfaces.Association, elementData as Data.AssociationData);
+        }
+    }
+
+    private addAssociationEnds(association: Interfaces.Association, associationData: Data.AssociationData) {
+        // Get memberEnds of assocationData instead of association itself: the ends  will not be set here as they are not resolved yet
+        // by DataToModelConverter.resolveAssociationReferences().        
+        if (!associationData.memberEnds)
+            return;
+
+        associationData.memberEnds.forEach(endId => {
+            // An association end can only be part of one association.
+            if (this.associationsByEndId.hasOwnProperty(endId)) {
+                console.warn(`Association end with id '${endId}' is already part of another association than ${associationData.id}.`);
+            }
+            this.associationsByEndId[endId] = association;
+        })
     }
 
     private addSpecializations(classifier: Interfaces.Classifier, classifierData: Data.ClassifierData) {
@@ -42,6 +62,12 @@ export class ElementMap {
                 this.specializationsById[g.general] = [classifier];
             }
         });
+    }
+
+    public getAssociationHavingMemberEnd(end: Interfaces.Property): Interfaces.Association | null {
+        if (!end || !end.id) return null;
+        if (!this.associationsByEndId.hasOwnProperty(end.id)) return null;
+        return this.associationsByEndId[end.id];
     }
 
     public hasElement(id: string): boolean {
