@@ -1,15 +1,15 @@
 {
-  "name": "@yellicode/model",
+  "name": "@yellicode/elements",
   "version": "0.2.1",
-  "description": "Model package for Yellicode - an extensible code generator.",
+  "description": "The meta model API for Yellicode - an extensible code generator.",
   "license": "MPL-2.0",
-  "main": "dist/bundles/model.umd.js",
-  "module": "dist/es5/model.js",
-  "es2015": "dist/es6/model.js",
-  "types": "dist/types/model.d.ts",
+  "main": "dist/bundles/elements.umd.js",
+  "module": "dist/es5/elements.js",
+  "es2015": "dist/es6/elements.js",
+  "types": "dist/types/elements.d.ts",
   "repository": {
     "type": "git",
-    "url": "github:yellicode/model.git"
+    "url": "github:yellicode/elements.git"
   },
   "dependencies": {
     "@yellicode/core": "^0.1.2",
