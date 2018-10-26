@@ -391,7 +391,7 @@ export class ModelDelegate {
 
     public getStringValue(valueSpecification: Interfaces.ValueSpecification): any | null {
         const rawValue = valueSpecification.getValue();
-        if (!rawValue && rawValue !== 0)
+        if (rawValue === null)
             return null;
 
         if (valueSpecification.elementType === Interfaces.ElementType.literalUnlimitedNatural) {
