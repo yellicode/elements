@@ -190,16 +190,21 @@ export class ModelDelegate {
     */
     public getAllParents(classifier: Interfaces.Classifier): Interfaces.Classifier[] {
         const allParents: Interfaces.Classifier[] = [];
-        this.getAllParentsRecursive(classifier, allParents);
+        this.getAllParentsRecursive(classifier, allParents);      
         return allParents;
     }
 
     private getAllParentsRecursive(classifier: Interfaces.Classifier, allParents: Interfaces.Classifier[]) {
         const ownParents = this.getParents(classifier);
         if (ownParents != null) {
-            // more specific parents first
-            ownParents.forEach(p => {
-                if (allParents.indexOf(p) === -1) allParents.push(p);
+            // More specific parents first.
+            ownParents.forEach(p => {                                
+                const ix = allParents.indexOf(p);
+                // If the parent is already there, remove it and add it again at the end of the list.
+                if (ix > -1) {                   
+                    allParents.splice(ix, 1);
+                }
+                allParents.push(p);                
             });
             // add the parents of each parent
             ownParents.forEach(p => {
