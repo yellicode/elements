@@ -306,7 +306,8 @@ export class ModelDelegate {
                 return (lowerValue as Interfaces.LiteralInteger).value;
             case Interfaces.ElementType.literalString:
                 const stringValue = lowerValue.getStringValue();
-                return Number.parseInt(stringValue) || null;
+                const parsed = Number.parseInt(stringValue);
+                return isNaN(parsed) ? null : parsed;
             default:
                 return null;
         }
