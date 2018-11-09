@@ -6,10 +6,10 @@
 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-import * as Interfaces from "./interfaces";
-import { ModelDelegate } from "./model-delegate";
+import * as elements from "./interfaces";
+import { ModelDelegate } from './model-delegate-interface';
 
-export class Document implements Interfaces.Document {
+export class Document implements elements.Document {
     constructor(private modelDelegate: ModelDelegate) {
 
     }
@@ -18,17 +18,17 @@ export class Document implements Interfaces.Document {
     public creator: string = '';
     public modelTypeName: string = '';
     public modelTypeVersion: string = '';
-    public model: Interfaces.Model | null = null;
-    public profiles: Interfaces.Model | null = null;
-    public references: Interfaces.DocumentReference[] = [];
+    public model: elements.Model | null = null;
+    public profiles: elements.Model | null = null;
+    public references: elements.DocumentReference[] = [];
 
 	/**
 	* Returns an Element representing the element whose id property matches the specified string.
-	* @returns {Interfaces.Element} The model element matching the specified ID, or null if no matching
+	* @returns {elements.Element} The model element matching the specified ID, or null if no matching
 	* element was found in the model.
 	* @param {string} id The ID of the element to search for.
 	*/
-    public findElementById(id: string): Interfaces.Element | null {
+    public findElementById(id: string): elements.Element | null {
         return this.modelDelegate.findElementById(id);
     }
 }

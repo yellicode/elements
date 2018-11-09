@@ -11,7 +11,7 @@
 * 
 * Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
 */
-import * as model from './interfaces';
+import * as elements from './interfaces';
 
 const PRIMITIVE_BOOLEAN_ID = "boolean_id";
 const PRIMITIVE_INTEGER_ID = "integer_id";
@@ -22,7 +22,7 @@ const PRIMITIVE_OBJECT_ID = "object_id";
 /**
 * Returns a boolean value indicating if the element is a built in primitive boolean.
 */
-export function isPrimitiveBoolean(element: model.Element | null): boolean {
+export function isPrimitiveBoolean(element: elements.Element | null): boolean {
 	if (!element) return false;
 	return element.id === PRIMITIVE_BOOLEAN_ID;
 }
@@ -30,7 +30,7 @@ export function isPrimitiveBoolean(element: model.Element | null): boolean {
 /**
 * Returns a boolean value indicating if the element is a built in primitive integer.
 */
-export function isPrimitiveInteger(element: model.Element | null): boolean {
+export function isPrimitiveInteger(element: elements.Element | null): boolean {
 	if (!element) return false;
 	return element.id === PRIMITIVE_INTEGER_ID;
 }
@@ -38,7 +38,7 @@ export function isPrimitiveInteger(element: model.Element | null): boolean {
 /**
 * Returns a boolean value indicating if the element is a built in primitive real.
 */
-export function isPrimitiveReal(element: model.Element | null): boolean {
+export function isPrimitiveReal(element: elements.Element | null): boolean {
 	if (!element) return false;
 	return element.id === PRIMITIVE_REAL_ID;
 }
@@ -46,7 +46,7 @@ export function isPrimitiveReal(element: model.Element | null): boolean {
 /**
 * Returns a boolean value indicating if the element is a built in primitive string.
 */
-export function isPrimitiveString(element: model.Element | null): boolean {
+export function isPrimitiveString(element: elements.Element | null): boolean {
 	if (!element) return false;
 	return element.id === PRIMITIVE_STRING_ID;
 }
@@ -54,7 +54,7 @@ export function isPrimitiveString(element: model.Element | null): boolean {
 /**
 * Returns a boolean value indicating if the element is a built in primitive object.
 */
-export function isPrimitiveObject(element: model.Element | null): boolean {
+export function isPrimitiveObject(element: elements.Element | null): boolean {
 	if (!element) return false;
 	return element.id === PRIMITIVE_OBJECT_ID;
 }

@@ -11,34 +11,35 @@
 * 
 * Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
 */
+
 /**
 * Enumerates all non-abstract element types in the model. Each model element has an elementType field
 * with an ElementType value.
 */
 export enum ElementType {
-	class = 1,
-	stereotype = 2,
-	package = 3,
-	profile = 4,
-	property = 5,
-	dataType = 6,
-	primitiveType = 7,
-	parameter = 8,
-	operation = 9,
-	model = 10,
-	literalUnlimitedNatural = 11,
-	literalString = 12,
+	association = 1,
+	class = 2,
+	comment = 3,
+	dataType = 4,
+	enumeration = 5,
+	enumerationLiteral = 6,
+	generalization = 7,
+	interface = 8,
+	interfaceRealization = 9,
+	literalBoolean = 10,
+	literalInteger = 11,
+	literalNull = 12,
 	literalReal = 13,
-	literalNull = 14,
-	literalInteger = 15,
-	literalBoolean = 16,
-	interfaceRealization = 17,
-	interface = 18,
-	generalization = 19,
-	enumerationLiteral = 20,
-	enumeration = 21,
-	comment = 22,
-	association = 23
+	literalString = 14,
+	literalUnlimitedNatural = 15,
+	model = 16,
+	operation = 17,
+	package = 18,
+	parameter = 19,
+	primitiveType = 20,
+	profile = 21,
+	property = 22,
+	stereotype = 23
 }
 
 
@@ -83,483 +84,6 @@ export class UnlimitedNatural {
 
 
 /**
-*/
-export enum DocumentLocationKind
-{
-	/**
-	*/
-	local = 1,
-	/**
-	*/
-	npm = 2
-}
-
-
-/**
-*/
-export interface DocumentReference
-{
-	/**
-	*/
-	path: string;
-	/**
-	* Gets the name of the reference. If the reference is a NPM reference, this field contains the package
-	* name (including any @scope). If the reference is a local one, this field contains the file name
-	* without extension.
-	*/
-	name: string;
-	/**
-	*/
-	location: DocumentLocationKind;
-}
-
-
-/**
-* Each stereotype may extend one or more metaclasses through a StereoTypeExtension.
-*/
-export interface StereotypeExtension
-{
-	/**
-	* A required extension means that an instance of a stereotype must always be linked to an instance of
-	* the extended metaclass. The instance of the stereotype is typically deleted only when either the
-	* instance of the extended metaclass is deleted, or when the profile defining the stereotype is
-	* removed from the applied profiles of the package.  
-	*/
-	isRequired: boolean;
-	/**
-	*/
-	metaClass: ElementType;
-}
-
-
-/**
-* Specifies the value of a meta attribute (tagged value) for a particular element.
-*/
-export interface TaggedValueSpecification
-{
-	/**
-	* Refers to the tagged value definition (metaattribute) of the tagged value's stereotype.
-	*/
-	definition: Property;
-	/**
-	* Specifies the actual tagged value.
-	*/
-	specification: ValueSpecification;
-}
-
-
-/**
-*/
-export interface Document
-{
-	/**
-	* Gets the unique ID of the document.
-	*/
-	id: string;
-	/**
-	*/
-	creator: string;
-	/**
-	*/
-	modelTypeName: string;
-	/**
-	*/
-	modelTypeVersion: string;
-	/**
-	* Contains the main model structure.
-	*/
-	model: Model | null;
-	/**
-	* Contains a model with 0 or more profiles (packages) in it.
-	*/
-	profiles: Model | null;
-	/**
-	*/
-	references: DocumentReference[];
-	/**
-	* Returns an Element representing the element whose id property matches the specified string.
-	* @returns {Element} The model element matching the specified ID, or null if no matching element was
-	* found in the model.
-	* @param {string} id The ID of the element to search for.
-	*/
-	findElementById(id: string): Element | null;
-}
-
-
-/**
-* An Element is a constituent of a model. As such, it has the capability of owning other Elements.
-*/
-export interface Element
-{
-	/**
-	* Gets the element type.
-	*/
-	readonly elementType: ElementType;
-	/**
-	* Gets the unique ID of the element.
-	*/
-	id: string;
-	/**
-	* The Comments owned by this Element.
-	*/
-	ownedComments: Comment[];
-	/**
-	* Gets the element that owns this element.
-	*/
-	readonly owner: Element | null;
-	/**
-	* Indicates which stereotypes from the selected profile (or profiles) are applied to the element. The
-	* selected profiles are the profiles that are applied to the containing package.
-	*/
-	appliedStereotypes: Stereotype[];
-	/**
-	* Contains 0 or more tagged values for the element.
-	*/
-	taggedValues: TaggedValueSpecification[];
-	/**
-	* Gets the text contents of the first comment in the element's owned comments, or an empty string if
-	* the element has no comments.
-	* @returns {string} The body string of the first comment. If the element has no comments, an empty
-	* string is returned.
-	*/
-	getFirstCommentBody(): string;
-}
-
-
-/**
-* A NamedElement is an Element in a model that may have a name. The name may be given directly and/or
-* via the use of a StringExpression.
-*/
-export interface NamedElement extends Element
-{
-	/**
-	* The name of the NamedElement.
-	*/
-	name: string;
-	/**
-	* Determines whether and how the NamedElement is visible outside its owning Namespace.
-	*/
-	visibility: VisibilityKind | null;
-}
-
-
-/**
-* A RedefinableElement is an element that, when defined in the context of a Classifier, can be
-* redefined more specifically or differently in the context of another Classifier that specializes
-* (directly or indirectly) the context Classifier.
-*/
-export interface RedefinableElement extends NamedElement
-{
-	/**
-	* Indicates whether it is possible to further redefine a RedefinableElement. If the value is true,
-	* then it is not possible to further redefine the RedefinableElement.
-	*/
-	isLeaf: boolean;
-}
-
-
-/**
-* A PackageableElement is a NamedElement that may be owned directly by a Package.
-*/
-export interface PackageableElement extends NamedElement
-{
-	/**
-	* Gets the package that owns the packageable element. This property is derived.
-	*/
-	readonly package: Package;
-	/**
-	* Gets all packages that contain this Package, working inwards from the top Package to the owning
-	* package.
-	* @returns {Package[]} A collection of Packages.
-	*/
-	getNestingPackages(): Package[];
-	/**
-	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
-	* from the package that is defined as namespace root up to but not including the PackageableElement
-	* itself.
-	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
-	* used.
-	* @returns {string} A single string with all the names separated.
-	*/
-	getNamespaceName(separator?: string): string;
-	/**
-	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
-	* constructed working inwards from the package that is defined as namespace root up to and including
-	* the PackageableElement itself.
-	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
-	* used.
-	* @returns {string} A single string with all the names separated.
-	*/
-	getQualifiedName(separator?: string): string;
-}
-
-
-/**
-* A Type constrains the values represented by a TypedElement.
-*/
-export interface Type extends PackageableElement
-{
-	/**
-	* If true, the type was inferred by a tool, for example during data import. An inferred type is never
-	* owned by any Package.
-	*/
-	isInferred: boolean;
-}
-
-
-/**
-* A Classifier represents a classification of instances according to their Features.
-*/
-export interface Classifier extends Type, RedefinableElement
-{
-	/**
-	* If true, the Classifier can only be instantiated by instantiating one of its specializations. An
-	* abstract Classifier is intended to be used by other Classifiers e.g., as the target of Associations
-	* or Generalizations.
-	*/
-	isAbstract: boolean;
-	/**
-	* If true, the Classifier cannot be specialized.
-	*/
-	isFinalSpecialization: boolean;
-	/**
-	* The Generalization relationships for this Classifier. These Generalizations navigate to more general
-	* Classifiers in the generalization hierarchy.
-	*/
-	generalizations: Generalization[];
-	/**
-	* Gets the first direct generalization relationship of the element.
-	* @returns {Generalization}
-	*/
-	getFirstGeneralization(): Generalization | null;
-	/**
-	* Gets the first classifier that is an immediate general of the current element.
-	* @returns {Classifier}
-	*/
-	getFirstParent(): Classifier | null;
-	/**
-	* Gives all of the immediate ancestors of a generalized Classifier.
-	* @returns {Classifier[]}
-	*/
-	getParents(): Classifier[];
-	/**
-	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
-	* specific classifiers will appear before more general classifiers.
-	* @returns {Classifier[]}
-	*/
-	getAllParents(): Classifier[];
-	/**
-	* Gets all classifiers of which this classifier is a direct general.
-	* @returns {Classifier[]}
-	*/
-	getSpecializations(): Classifier[];
-	/**
-	* Gets all classifiers of which this element is a direct or indirect general.
-	* @returns {Classifier[]}
-	*/
-	getAllSpecializations(): Classifier[];
-}
-
-
-/**
-* Defines a common interface for Classifiers (Class, DataType and Interface) that have attributes and
-* operations.
-*/
-export interface MemberedClassifier extends Classifier
-{
-	/**
-	* The attributes owned by the Element. Note that in UML, OwnedAttributes is a property of derived
-	* classes of Classifier (Class, DataType and Interface).
-	*/
-	ownedAttributes: Property[];
-	/**
-	* The Operations owned by the Element. Note that in UML, OwnedOperations is a property of derived
-	* classes of Classifier (Class, DataType and Interface).
-	*/
-	ownedOperations: Operation[];
-	/**
-	* Returns both inherited and owned attributes.
-	* @returns {Property[]}
-	*/
-	getAllAttributes(): Property[];
-	/**
-	* Returns both inherited and owned operations. Any inherited operation that has the same signature
-	* (having the same name and parameter type order) in an inheriting type is not included.
-	* @returns {Operation[]}
-	*/
-	getAllOperations(): Operation[];
-}
-
-
-/**
-* StructuredClassifiers may contain an internal structure of connected elements each of which plays a
-* role in the overall Behavior modeled by the StructuredClassifier.
-*/
-export interface StructuredClassifier extends Classifier
-{
-}
-
-
-/**
-* A BehavioredClassifier may have InterfaceRealizations, and owns a set of Behaviors one of which may
-* specify the behavior of the BehavioredClassifier itself.
-*/
-export interface BehavioredClassifier extends Classifier
-{
-	/**
-	* The set of InterfaceRealizations owned by the BehavioredClassifier. Interface realizations reference
-	* the Interfaces of which the BehavioredClassifier is an implementation.
-	*/
-	interfaceRealizations: InterfaceRealization[];
-}
-
-
-/**
-* A Class classifies a set of objects and specifies the features that characterize the structure and
-* behavior of those objects. A Class may have an internal structure and Ports.
-*/
-export interface Class extends BehavioredClassifier, StructuredClassifier, MemberedClassifier
-{
-	/**
-	* Determines whether an object specified by this Class is active or not. If true, then the owning
-	* Class is referred to as an active Class. If false, then such a Class is referred to as a passive
-	* Class.
-	*/
-	isActive: boolean;
-	/**
-	* Gets the superclasses of a Class, derived from its Generalizations.
-	* @returns {Class[]}
-	*/
-	getSuperClasses(): Class[];
-}
-
-
-/**
-* Stereotype is a profile class which defines how an existing metaclass may be extended as part of a
-* profile. It enables the use of a platform or domain specific terminology or notation in place of, or
-* in addition to, the ones used for the extended metaclass.
-*/
-export interface Stereotype extends Class
-{
-	/**
-	* Gets a name for the stereotype that is safe to use in Javascript.
-	*/
-	safeName: string;
-	/**
-	*/
-	extends: StereotypeExtension[];
-}
-
-
-/**
-* A package is used to group elements, and provides a namespace for the grouped elements.
-* A package can have one or more profile applications to indicate which profiles have been applied.
-* Because a profile is a package, it is possible to apply a profile not only to packages, but also to
-* profiles.
-*/
-export interface Package extends PackageableElement
-{
-	/**
-	* Denotes where the namespace structure for your class model starts; all nested packages below a
-	* namespace root will form the namespace hierarchy for contained types.
-	*/
-	isNamespaceRoot: boolean;
-	/**
-	* Specifies the packageable elements that are owned by this Package.
-	*/
-	packagedElements: PackageableElement[];
-	/**
-	*/
-	appliedProfiles: Profile[];
-	/**
-	* Gets all packages that are owned by this Package.
-	* @returns {Package[]} A subset of PackagedElements.
-	*/
-	getNestedPackages(): Package[];
-	/**
-	* Gets all classes that are owned by this Package.
-	* @returns {Class[]} A subset of PackagedElements.
-	*/
-	getClasses(): Class[];
-	/**
-	* Gets all classes that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Class[]}
-	*/
-	getAllClasses(): Class[];
-	/**
-	* Gets all interfaces that are owned by this Package.
-	* @returns {Interface[]} A subset of PackagedElements.
-	*/
-	getInterfaces(): Interface[];
-	/**
-	* Gets all interfaces that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interface[]}
-	*/
-	getAllInterfaces(): Interface[];
-	/**
-	* Gets all data types that are owned by this Package.
-	* @returns {DataType[]} A subset of PackagedElements.
-	*/
-	getDataTypes(): DataType[];
-	/**
-	* Gets all data types that are owned by this Package, including the ones owned by nested packages.
-	* @returns {DataType[]}
-	*/
-	getAllDataTypes(): DataType[];
-	/**
-	* Gets all enumerations that are owned by this Package.
-	* @returns {Enumeration[]} A subset of PackagedElements.
-	*/
-	getEnumerations(): Enumeration[];
-	/**
-	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Enumeration[]}
-	*/
-	getAllEnumerations(): Enumeration[];
-	/**
-	* Gets all types that are owned by this Package. This includes the following types of elements: Class,
-	* Interface, DataType, PrimitiveType and Enumeration.
-	* @returns {Classifier[]} A subset of PackagedElements.
-	*/
-	getTypes(): Classifier[];
-	/**
-	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
-	* Enumeration.
-	* @returns {Classifier[]} A subset of PackagedElements.
-	*/
-	getAllTypes(): Classifier[];
-}
-
-
-/**
-* Metamodel customizations are defined in a profile, which is then applied to a package. A profile can
-* define classes, stereotypes, data types, primitive types, enumerations. Stereotypes are specific
-* metaclasses, tagged values are standard metaattributes, and profiles are specific kinds of packages.
-*/
-export interface Profile extends Package
-{
-	/**
-	* Gets a name for the profile that is safe to use in Javascript.
-	*/
-	safeName: string;
-}
-
-
-/**
-* Defines a common interface for named elements that are part of an ordered collection.
-*/
-export interface OrderedElement extends Element
-{
-	/**
-	* Gets or set the sort order of the element if it is part of a collection. The value is 0 for elements
-	* to which no particular ordering applies. Elements with a lower order come before elements with a
-	* higher order.
-	*/
-	order: number;
-}
-
-/**
 * VisibilityKind is an enumeration type that defines literals to determine the visibility of Elements
 * in a model.
 */
@@ -588,12 +112,63 @@ export enum VisibilityKind
 	package = 4
 }
 
+/**
+* An Element is a constituent of a model. As such, it has the capability of owning other Elements.
+*/
+export interface Element {
+	/**
+	* Gets the element type.
+	*/
+	readonly elementType: ElementType;
+	/**
+	* Indicates which stereotypes from the selected profile (or profiles) are applied to the element. The
+	* selected profiles are the profiles that are applied to the containing package.
+	*/
+	appliedStereotypes: Stereotype[];
+	/**
+	* Gets the unique ID of the element.
+	*/
+	id: string;
+	/**
+	* The Comments owned by this Element.
+	*/
+	ownedComments: Comment[];
+	/**
+	* Gets the element that owns this element.
+	*/
+	readonly owner: Element | null;
+	/**
+	* Contains 0 or more tagged values for the element.
+	*/
+	taggedValues: TaggedValueSpecification[];
+	/**
+	* Gets the text contents of the first comment in the element's owned comments, or an empty string if
+	* the element has no comments.
+	* @returns {string} The body string of the first comment. If the element has no comments, an empty
+	* string is returned.
+	*/
+	getFirstCommentBody(): string;
+}
+
+/**
+* A NamedElement is an Element in a model that may have a name. The name may be given directly and/or
+* via the use of a StringExpression.
+*/
+export interface NamedElement extends Element {
+	/**
+	* The name of the NamedElement.
+	*/
+	name: string;
+	/**
+	* Determines whether and how the NamedElement is visible outside its owning Namespace.
+	*/
+	visibility: VisibilityKind | null;
+}
 
 /**
 * A TypedElement is a NamedElement that may have a Type specified for it.
 */
-export interface TypedElement extends NamedElement
-{
+export interface TypedElement extends NamedElement {
 	/**
 	* The type of the TypedElement.
 	*/
@@ -605,33 +180,160 @@ export interface TypedElement extends NamedElement
 	getTypeName(): string;
 }
 
-
 /**
 * A ValueSpecification is the specification of a (possibly empty) set of values.
 */
-export interface ValueSpecification extends TypedElement
-{
+export interface ValueSpecification extends TypedElement {
+	/**
+	* Gets the string representation of the value.
+	* @returns {string}
+	*/
+	getStringValue(): string;
 	/**
 	* Gets underlying value of the ValueSpecification. The type depends on the type of ValueSpecification.
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
 	* ValueSpecification.
 	*/
 	getValue(): any | null;
-	/**
-	* Gets the string representation of the value.
-	* @returns {string}
-	*/
-	getStringValue(): string;
 }
 
+/**
+* A PackageableElement is a NamedElement that may be owned directly by a Package.
+*/
+export interface PackageableElement extends NamedElement {
+	/**
+	* Gets the package that owns the packageable element. This property is derived.
+	*/
+	readonly package: Package;
+	/**
+	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
+	* from the package that is defined as namespace root up to but not including the PackageableElement
+	* itself.
+	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
+	* used.
+	* @returns {string} A single string with all the names separated.
+	*/
+	getNamespaceName(separator?: string): string;
+	/**
+	* Gets all packages that contain this Package, working inwards from the top Package to the owning
+	* package.
+	* @returns {Package[]} A collection of Packages.
+	*/
+	getNestingPackages(): Package[];
+	/**
+	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
+	* constructed working inwards from the package that is defined as namespace root up to and including
+	* the PackageableElement itself.
+	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
+	* used.
+	* @returns {string} A single string with all the names separated.
+	*/
+	getQualifiedName(separator?: string): string;
+}
+
+/**
+* A Type constrains the values represented by a TypedElement.
+*/
+export interface Type extends PackageableElement {
+	/**
+	* If true, the type was inferred by a tool, for example during data import. An inferred type is never
+	* owned by any Package.
+	*/
+	isInferred: boolean;
+}
+
+/**
+* Specifies the value of a meta attribute (tagged value) for a particular element.
+*/
+export interface TaggedValueSpecification {
+	/**
+	* Refers to the tagged value definition (metaattribute) of the tagged value's stereotype.
+	*/
+	definition: Property;
+	/**
+	* Specifies the actual tagged value.
+	*/
+	specification: ValueSpecification;
+}
+
+/**
+* A RedefinableElement is an element that, when defined in the context of a Classifier, can be
+* redefined more specifically or differently in the context of another Classifier that specializes
+* (directly or indirectly) the context Classifier.
+*/
+export interface RedefinableElement extends NamedElement {
+	/**
+	* Indicates whether it is possible to further redefine a RedefinableElement. If the value is true,
+	* then it is not possible to further redefine the RedefinableElement.
+	*/
+	isLeaf: boolean;
+}
+
+/**
+* A Classifier represents a classification of instances according to their Features.
+*/
+export interface Classifier extends Type, RedefinableElement {
+	/**
+	* The Generalization relationships for this Classifier. These Generalizations navigate to more general
+	* Classifiers in the generalization hierarchy.
+	*/
+	generalizations: Generalization[];
+	/**
+	* If true, the Classifier can only be instantiated by instantiating one of its specializations. An
+	* abstract Classifier is intended to be used by other Classifiers e.g., as the target of Associations
+	* or Generalizations.
+	*/
+	isAbstract: boolean;
+	/**
+	* If true, the Classifier cannot be specialized.
+	*/
+	isFinalSpecialization: boolean;
+	/**
+	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
+	* specific classifiers will appear before more general classifiers.
+	* @returns {Classifier[]}
+	*/
+	getAllParents(): Classifier[];
+	/**
+	* Gets all classifiers of which this element is a direct or indirect general.
+	* @returns {Classifier[]}
+	*/
+	getAllSpecializations(): Classifier[];
+	/**
+	* Gets the first direct generalization relationship of the element.
+	* @returns {Generalization}
+	*/
+	getFirstGeneralization(): Generalization | null;
+	/**
+	* Gets the first classifier that is an immediate general of the current element.
+	* @returns {Classifier}
+	*/
+	getFirstParent(): Classifier | null;
+	/**
+	* Gives all of the immediate ancestors of a generalized Classifier.
+	* @returns {Classifier[]}
+	*/
+	getParents(): Classifier[];
+	/**
+	* Gets all classifiers of which this classifier is a direct general.
+	* @returns {Classifier[]}
+	*/
+	getSpecializations(): Classifier[];
+}
+
+/**
+* StructuredClassifiers may contain an internal structure of connected elements each of which plays a
+* role in the overall Behavior modeled by the StructuredClassifier.
+*/
+export interface StructuredClassifier extends Classifier {
+}
 
 /**
 * A multiplicity is a definition of an inclusive interval of non-negative integers beginning with a
 * lower bound and ending with a (possibly infinite) upper bound. A MultiplicityElement embeds this
 * information to specify the allowable cardinalities for an instantiation of the Element.
 */
-export interface MultiplicityElement extends Element
-{
+export interface MultiplicityElement extends Element {
 	/**
 	* For a multivalued multiplicity, this attribute specifies whether the values in an instantiation of
 	* this MultiplicityElement are sequentially ordered.
@@ -643,21 +345,33 @@ export interface MultiplicityElement extends Element
 	*/
 	isUnique: boolean;
 	/**
-	* The upper bound of the multiplicity interval.
-	*/
-	readonly upper: UnlimitedNatural | null;
-	/**
 	* Gets the lower bound of the multiplicity interval.
 	*/
 	readonly lower: number | null;
+	/**
+	* The specification of the lower bound for this multiplicity.
+	*/
+	lowerValue: ValueSpecification | null;
+	/**
+	* The upper bound of the multiplicity interval.
+	*/
+	readonly upper: UnlimitedNatural | null;
 	/**
 	* The specification of the upper bound for this multiplicity.
 	*/
 	upperValue: ValueSpecification | null;
 	/**
-	* The specification of the lower bound for this multiplicity.
+	* The query lowerBound() returns the lower bound of the multiplicity as an integer, which is the
+	* integerValue of lowerValue, if this is given, and 1 otherwise.
+	* @returns {number}
 	*/
-	lowerValue: ValueSpecification | null;
+	getLowerBound(): number;
+	/**
+	* The query upperBound() returns the upper bound of the multiplicity for a bounded multiplicity as an
+	* unlimited natural, which is the unlimitedNaturalValue of upperValue, if given, and 1, otherwise.
+	* @returns {UnlimitedNatural}
+	*/
+	getUpperBound(): UnlimitedNatural;
 	/**
 	* The query isMultivalued() checks whether this multiplicity has an upper bound greater than one.
 	* @returns {boolean}
@@ -680,26 +394,24 @@ export interface MultiplicityElement extends Element
 	* @returns {boolean}
 	*/
 	isRequiredAndSinglevalued(): boolean;
-	/**
-	* The query lowerBound() returns the lower bound of the multiplicity as an integer, which is the
-	* integerValue of lowerValue, if this is given, and 1 otherwise.
-	* @returns {number}
-	*/
-	getLowerBound(): number;
-	/**
-	* The query upperBound() returns the upper bound of the multiplicity for a bounded multiplicity as an
-	* unlimited natural, which is the unlimitedNaturalValue of upperValue, if given, and 1, otherwise.
-	* @returns {UnlimitedNatural}
-	*/
-	getUpperBound(): UnlimitedNatural;
 }
 
+/**
+* Defines a common interface for named elements that are part of an ordered collection.
+*/
+export interface OrderedElement extends Element {
+	/**
+	* Gets or set the sort order of the element if it is part of a collection. The value is 0 for elements
+	* to which no particular ordering applies. Elements with a lower order come before elements with a
+	* higher order.
+	*/
+	order: number;
+}
 
 /**
 * A Feature declares a behavioral or structural characteristic of Classifiers.
 */
-export interface Feature extends RedefinableElement, OrderedElement
-{
+export interface Feature extends RedefinableElement, OrderedElement {
 	/**
 	* Specifies whether this Feature characterizes individual instances classified by the Classifier
 	* (false) or the Classifier itself (true).
@@ -707,27 +419,107 @@ export interface Feature extends RedefinableElement, OrderedElement
 	isStatic: boolean;
 }
 
-
 /**
 * A StructuralFeature is a typed feature of a Classifier that specifies the structure of instances of
 * the Classifier.
 */
-export interface StructuralFeature extends Feature, MultiplicityElement, TypedElement
-{
+export interface StructuralFeature extends Feature, MultiplicityElement, TypedElement {
 	/**
 	* If isReadOnly is true, the StructuralFeature may not be written to after initialization.
 	*/
 	isReadOnly: boolean;
 }
 
+/**
+* Each stereotype may extend one or more metaclasses through a StereoTypeExtension.
+*/
+export interface StereotypeExtension {
+	/**
+	* A required extension means that an instance of a stereotype must always be linked to an instance of
+	* the extended metaclass. The instance of the stereotype is typically deleted only when either the
+	* instance of the extended metaclass is deleted, or when the profile defining the stereotype is
+	* removed from the applied profiles of the package.  
+	*/
+	isRequired: boolean;
+	metaClass: ElementType;
+}
+
+/**
+* Defines a common interface for Classifiers (Class, DataType and Interface) that have attributes and
+* operations.
+*/
+export interface MemberedClassifier extends Classifier {
+	/**
+	* The attributes owned by the Element. Note that in UML, OwnedAttributes is a property of derived
+	* classes of Classifier (Class, DataType and Interface).
+	*/
+	ownedAttributes: Property[];
+	/**
+	* The Operations owned by the Element. Note that in UML, OwnedOperations is a property of derived
+	* classes of Classifier (Class, DataType and Interface).
+	*/
+	ownedOperations: Operation[];
+	/**
+	* Returns both inherited and owned attributes.
+	* @returns {Property[]}
+	*/
+	getAllAttributes(): Property[];
+	/**
+	* Returns both inherited and owned operations. Any inherited operation that has the same signature
+	* (having the same name and parameter type order) in an inheriting type is not included.
+	* @returns {Operation[]}
+	*/
+	getAllOperations(): Operation[];
+}
+
+/**
+* A BehavioredClassifier may have InterfaceRealizations, and owns a set of Behaviors one of which may
+* specify the behavior of the BehavioredClassifier itself.
+*/
+export interface BehavioredClassifier extends Classifier {
+	/**
+	* The set of InterfaceRealizations owned by the BehavioredClassifier. Interface realizations reference
+	* the Interfaces of which the BehavioredClassifier is an implementation.
+	*/
+	interfaceRealizations: InterfaceRealization[];
+}
+
+/**
+* A Class classifies a set of objects and specifies the features that characterize the structure and
+* behavior of those objects. A Class may have an internal structure and Ports.
+*/
+export interface Class extends BehavioredClassifier, StructuredClassifier, MemberedClassifier {
+	/**
+	* Determines whether an object specified by this Class is active or not. If true, then the owning
+	* Class is referred to as an active Class. If false, then such a Class is referred to as a passive
+	* Class.
+	*/
+	isActive: boolean;
+	/**
+	* Gets the superclasses of a Class, derived from its Generalizations.
+	* @returns {Class[]}
+	*/
+	getSuperClasses(): Class[];
+}
+
+/**
+* Stereotype is a profile class which defines how an existing metaclass may be extended as part of a
+* profile. It enables the use of a platform or domain specific terminology or notation in place of, or
+* in addition to, the ones used for the extended metaclass.
+*/
+export interface Stereotype extends Class {
+	extends: StereotypeExtension[];
+	/**
+	* Gets a name for the stereotype that is safe to use in Javascript.
+	*/
+	safeName: string;
+}
 
 /**
 * Relationship is an abstract concept that specifies some kind of relationship between Elements.
 */
-export interface Relationship extends Element
-{
+export interface Relationship extends Element {
 }
-
 
 /**
 * A Property is a StructuralFeature. A Property related by ownedAttribute to a Classifier (other than
@@ -736,11 +528,17 @@ export interface Relationship extends Element
 * related by memberEnd to an Association represents an end of the Association. The type of the
 * Property is the type of the end of the Association.
 */
-export interface Property extends StructuralFeature
-{
-	/**
-	*/
+export interface Property extends StructuralFeature {
 	aggregation: AggregationKind;
+	/**
+	* The Association of which this Property is a member, if any.
+	*/
+	readonly association: Association | null;
+	/**
+	* A ValueSpecification that is evaluated to give a default value for the Property when an instance of
+	* the owning Classifier is instantiated.
+	*/
+	defaultValue: ValueSpecification | null;
 	/**
 	* Specifies whether the property is derived as the union of all of the Properties that are constrained
 	* to subset it.
@@ -761,15 +559,6 @@ export interface Property extends StructuralFeature
 	*/
 	isNavigable: boolean;
 	/**
-	* The Association of which this Property is a member, if any.
-	*/
-	readonly association: Association | null;
-	/**
-	* A ValueSpecification that is evaluated to give a default value for the Property when an instance of
-	* the owning Classifier is instantiated.
-	*/
-	defaultValue: ValueSpecification | null;
-	/**
 	* Gets the value of the DefaultValue property.
 	* @returns {any} The default value (the type depending on the type of value), or null if no default
 	* value can be determined.
@@ -777,22 +566,107 @@ export interface Property extends StructuralFeature
 	getDefault(): any | null;
 }
 
+/**
+* A package is used to group elements, and provides a namespace for the grouped elements.
+* A package can have one or more profile applications to indicate which profiles have been applied.
+* Because a profile is a package, it is possible to apply a profile not only to packages, but also to
+* profiles.
+*/
+export interface Package extends PackageableElement {
+	appliedProfiles: Profile[];
+	/**
+	* Denotes where the namespace structure for your class model starts; all nested packages below a
+	* namespace root will form the namespace hierarchy for contained types.
+	*/
+	isNamespaceRoot: boolean;
+	/**
+	* Specifies the packageable elements that are owned by this Package.
+	*/
+	packagedElements: PackageableElement[];
+	/**
+	* Gets all classes that are owned by this Package, including the ones owned by nested packages.
+	* @returns {Class[]}
+	*/
+	getAllClasses(): Class[];
+	/**
+	* Gets all data types that are owned by this Package, including the ones owned by nested packages.
+	* @returns {DataType[]}
+	*/
+	getAllDataTypes(): DataType[];
+	/**
+	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
+	* @returns {Enumeration[]}
+	*/
+	getAllEnumerations(): Enumeration[];
+	/**
+	* Gets all interfaces that are owned by this Package, including the ones owned by nested packages.
+	* @returns {Interface[]}
+	*/
+	getAllInterfaces(): Interface[];
+	/**
+	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
+	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
+	* Enumeration.
+	* @returns {Classifier[]} A subset of PackagedElements.
+	*/
+	getAllTypes(): Classifier[];
+	/**
+	* Gets all classes that are owned by this Package.
+	* @returns {Class[]} A subset of PackagedElements.
+	*/
+	getClasses(): Class[];
+	/**
+	* Gets all data types that are owned by this Package.
+	* @returns {DataType[]} A subset of PackagedElements.
+	*/
+	getDataTypes(): DataType[];
+	/**
+	* Gets all enumerations that are owned by this Package.
+	* @returns {Enumeration[]} A subset of PackagedElements.
+	*/
+	getEnumerations(): Enumeration[];
+	/**
+	* Gets all interfaces that are owned by this Package.
+	* @returns {Interface[]} A subset of PackagedElements.
+	*/
+	getInterfaces(): Interface[];
+	/**
+	* Gets all packages that are owned by this Package.
+	* @returns {Package[]} A subset of PackagedElements.
+	*/
+	getNestedPackages(): Package[];
+	/**
+	* Gets all types that are owned by this Package. This includes the following types of elements: Class,
+	* Interface, DataType, PrimitiveType and Enumeration.
+	* @returns {Classifier[]} A subset of PackagedElements.
+	*/
+	getTypes(): Classifier[];
+}
+
+/**
+* Metamodel customizations are defined in a profile, which is then applied to a package. A profile can
+* define classes, stereotypes, data types, primitive types, enumerations. Stereotypes are specific
+* metaclasses, tagged values are standard metaattributes, and profiles are specific kinds of packages.
+*/
+export interface Profile extends Package {
+	/**
+	* Gets a name for the profile that is safe to use in Javascript.
+	*/
+	safeName: string;
+}
 
 /**
 * A DataType is similar to a Class; however, instances of data type are identified only by their
 * value. If two data types have the same value, the instances are considered identical.
 */
-export interface DataType extends MemberedClassifier
-{
+export interface DataType extends MemberedClassifier {
 }
-
 
 /**
 * A PrimitiveType defines a predefined DataType, without any substructure. A PrimitiveType may have an
 * algebra and operations defined outside of UML, for example, mathematically.
 */
-export interface PrimitiveType extends DataType
-{
+export interface PrimitiveType extends DataType {
 }
 
 /**
@@ -820,15 +694,16 @@ export enum ParameterDirectionKind
 	return = 4
 }
 
-
 /**
 * A Parameter is a specification of an argument used to pass information into or out of an invocation
 * of a BehavioralFeature. Parameters can be treated as ConnectableElements within Collaborations.
 */
-export interface Parameter extends TypedElement, MultiplicityElement, OrderedElement
-{
+export interface Parameter extends TypedElement, MultiplicityElement, OrderedElement {
 	/**
+	* Specifies a ValueSpecification that represents a value to be used when no argument is supplied for
+	* the Parameter.
 	*/
+	defaultValue: ValueSpecification | null;
 	direction: ParameterDirectionKind;
 	/**
 	* Tells whether an output parameter may emit a value to the exclusion of the other outputs.
@@ -840,11 +715,6 @@ export interface Parameter extends TypedElement, MultiplicityElement, OrderedEle
 	*/
 	isStream: boolean;
 	/**
-	* Specifies a ValueSpecification that represents a value to be used when no argument is supplied for
-	* the Parameter.
-	*/
-	defaultValue: ValueSpecification | null;
-	/**
 	* Gets the value of the DefaultValue property.
 	* @returns {any} The default value (the type depending on the type of value), or null if no default
 	* value can be determined.
@@ -852,15 +722,13 @@ export interface Parameter extends TypedElement, MultiplicityElement, OrderedEle
 	getDefault(): any | null;
 }
 
-
 /**
 * A BehavioralFeature is a feature of a Classifier that specifies an aspect of the behavior of its
 * instances. A BehavioralFeature is implemented (realized) by a Behavior. A BehavioralFeature
 * specifies that a Classifier will respond to a designated request by invoking its implementing
 * method.
 */
-export interface BehavioralFeature extends Feature
-{
+export interface BehavioralFeature extends Feature {
 	/**
 	* If true, then the BehavioralFeature does not have an implementation, and one must be supplied by a
 	* more specific Classifier. If false, the BehavioralFeature must have an implementation in the
@@ -873,43 +741,65 @@ export interface BehavioralFeature extends Feature
 	ownedParameters: Parameter[];
 }
 
-
 /**
 * An Operation is a BehavioralFeature of a Classifier that specifies the name, type, parameters, and
 * constraints for invoking an associated Behavior. An Operation may invoke both the execution of
 * method behaviors as well as other behavioral responses.
 */
-export interface Operation extends BehavioralFeature
-{
+export interface Operation extends BehavioralFeature {
+	/**
+	* Specifies if the operation is a class constructor.
+	*/
+	isConstructor: boolean;
 	/**
 	* Specifies whether an execution of the BehavioralFeature leaves the state of the system unchanged
 	* (isQuery=true) or whether side effects may occur (isQuery=false).
 	*/
 	isQuery: boolean;
 	/**
-	* Specifies if the operation is a class constructor.
+	* Gets the lower bound of the return parameter, if present. This information is derived from the
+	* return result for this Operation.
 	*/
-	isConstructor: boolean;
+	readonly lower: number | null;
 	/**
 	* The upper bound of the return parameter, if present. This information is derived
 	* from the return result for this Operation.
 	*/
 	readonly upper: UnlimitedNatural | null;
 	/**
-	* Gets the lower bound of the return parameter, if present. This information is derived from the
-	* return result for this Operation.
-	*/
-	readonly lower: number | null;
-	/**
 	* Returns the ownedParameters with direction in and inout.
 	* @returns {Parameter[]}
 	*/
 	getInputParameters(): Parameter[];
 	/**
+	* The query lowerBound() returns the lower bound of the return parameter as an integer, which is the
+	* integerValue of lowerValue, if this is given, and 1 otherwise. This information is derived from the
+	* return result for this Operation.
+	* @returns {number}
+	*/
+	getLowerBound(): number;
+	/**
 	* Returns the ownedParameters with direction out, inout, or return.
 	* @returns {Parameter[]}
 	*/
 	getOutputParameters(): Parameter[];
+	/**
+	* Gets the operation's return parameter, if it has one.
+	* @returns {Parameter}
+	*/
+	getReturnParameter(): Parameter | null;
+	/**
+	* Gets the type of the operation's return parameter, if it has any.
+	* @returns {Type}
+	*/
+	getReturnType(): Type | null;
+	/**
+	* The query upperBound() returns the upper bound of the return parameter for a bounded multiplicity as
+	* an unlimited natural, which is the unlimitedNaturalValue of upperValue, if given, and 1, otherwise.
+	* This information is derived from the return result for this Operation.
+	* @returns {UnlimitedNatural}
+	*/
+	getUpperBound(): UnlimitedNatural;
 	/**
 	* The query isMultivalued() checks whether the return parameter has an upper bound greater than one.
 	* @returns {boolean}
@@ -926,148 +816,101 @@ export interface Operation extends BehavioralFeature
 	* @returns {boolean}
 	*/
 	isOptionalAndSinglevalued(): boolean;
-	/**
-	* Gets the type of the operation's return parameter, if it has any.
-	* @returns {Type}
-	*/
-	getReturnType(): Type | null;
-	/**
-	* Gets the operation's return parameter, if it has one.
-	* @returns {Parameter}
-	*/
-	getReturnParameter(): Parameter | null;
-	/**
-	* The query lowerBound() returns the lower bound of the return parameter as an integer, which is the
-	* integerValue of lowerValue, if this is given, and 1 otherwise. This information is derived from the
-	* return result for this Operation.
-	* @returns {number}
-	*/
-	getLowerBound(): number;
-	/**
-	* The query upperBound() returns the upper bound of the return parameter for a bounded multiplicity as
-	* an unlimited natural, which is the unlimitedNaturalValue of upperValue, if given, and 1, otherwise.
-	* This information is derived from the return result for this Operation.
-	* @returns {UnlimitedNatural}
-	*/
-	getUpperBound(): UnlimitedNatural;
 }
-
 
 /**
 * Represents the top-level package.
 */
-export interface Model extends Package
-{
+export interface Model extends Package {
 }
-
 
 /**
 * A LiteralSpecification identifies a literal constant being modeled.
 */
-export interface LiteralSpecification extends ValueSpecification
-{
+export interface LiteralSpecification extends ValueSpecification {
 }
-
 
 /**
 * A LiteralUnlimitedNatural is a specification of an UnlimitedNatural number.
 */
-export interface LiteralUnlimitedNatural extends LiteralSpecification
-{
+export interface LiteralUnlimitedNatural extends LiteralSpecification {
 	/**
 	* The specified UnlimitedNatural value.
 	*/
 	value: UnlimitedNatural;
 }
 
-
 /**
 * A LiteralString is a specification of a String value.
 */
-export interface LiteralString extends LiteralSpecification
-{
+export interface LiteralString extends LiteralSpecification {
 	/**
 	* The specified String value.
 	*/
 	value: string;
 }
 
-
 /**
 * A LiteralReal is a specification of a Real value.
 */
-export interface LiteralReal extends LiteralSpecification
-{
+export interface LiteralReal extends LiteralSpecification {
 	/**
 	* The specified Real value.
 	*/
 	value: number;
 }
 
-
 /**
 * A LiteralNull specifies the lack of a value.
 */
-export interface LiteralNull extends LiteralSpecification
-{
+export interface LiteralNull extends LiteralSpecification {
 }
-
 
 /**
 * A LiteralInteger is a specification of an Integer value.
 */
-export interface LiteralInteger extends LiteralSpecification
-{
+export interface LiteralInteger extends LiteralSpecification {
 	/**
 	* The specified Integer value.
 	*/
 	value: number;
 }
 
-
 /**
 * A LiteralBoolean is a specification of a Boolean value.
 */
-export interface LiteralBoolean extends LiteralSpecification
-{
+export interface LiteralBoolean extends LiteralSpecification {
 	/**
 	* The specified Boolean value.
 	*/
 	value: boolean;
 }
 
-
 /**
 * A DirectedRelationship represents a relationship between a collection of source model Elements and a
 * collection of target model Elements.
 */
-export interface DirectedRelationship extends Relationship
-{
+export interface DirectedRelationship extends Relationship {
 }
-
 
 /**
 * An InterfaceRealization is a specialized realization relationship between a BehavioredClassifier and
 * an Interface. This relationship signifies that the realizing BehavioredClassifier conforms to the
 * contract specified by the Interface.
 */
-export interface InterfaceRealization extends DirectedRelationship
-{
+export interface InterfaceRealization extends DirectedRelationship {
 	/**
 	* References the Interface specifying the conformance contract.
 	*/
 	contract: Interface;
 }
 
-
 /**
 * Interfaces declare coherent services that are implemented by BehavioredClassifiers that implement
 * the Interfaces via InterfaceRealizations.
 */
-export interface Interface extends MemberedClassifier
-{
+export interface Interface extends MemberedClassifier {
 }
-
 
 /**
 * A Generalization is a taxonomic relationship between a more general Classifier and a more specific
@@ -1075,8 +918,11 @@ export interface Interface extends MemberedClassifier
 * Classifier.The specific Classifier inherits the features of the more general Classifier. A
 * Generalization is owned by the specific Classifier.
 */
-export interface Generalization extends DirectedRelationship
-{
+export interface Generalization extends DirectedRelationship {
+	/**
+	* The general classifier in the Generalization relationship.
+	*/
+	general: Classifier;
 	/**
 	* Indicates whether the specific Classifier can be used wherever the general Classifier can be used.
 	* If true, the execution traces of the specific Classifier shall be a superset of the execution traces
@@ -1088,24 +934,16 @@ export interface Generalization extends DirectedRelationship
 	* Gets the specializing Classifier in the Generalization relationship. This property is derived.
 	*/
 	readonly specific: Classifier;
-	/**
-	* The general classifier in the Generalization relationship.
-	*/
-	general: Classifier;
 }
-
 
 /**
 * An EnumerationLiteral is a user-defined data value for an Enumeration.
 */
-export interface EnumerationLiteral extends NamedElement, OrderedElement
-{
+export interface EnumerationLiteral extends NamedElement, OrderedElement {
 	/**
 	* Gets the enumeration that owns this enumeration literal. This property is derived.
 	*/
 	readonly enumeration: Enumeration;
-	/**
-	*/
 	specification: ValueSpecification;
 	/**
 	* Gets the value of the Specification property.
@@ -1115,40 +953,75 @@ export interface EnumerationLiteral extends NamedElement, OrderedElement
 	getSpecificationValue(): any | null;
 }
 
-
 /**
 * An Enumeration is a DataType whose values are enumerated in the model as EnumerationLiterals.
 */
-export interface Enumeration extends DataType
-{
-	/**
-	* The ordered set of literals owned by this Enumeration.
-	*/
-	ownedLiterals: EnumerationLiteral[];
+export interface Enumeration extends DataType {
 	/**
 	* Gets the base type of the enumeration. For most programming language, this is an integral type if
 	* not specified.
 	*/
 	baseType: Type | null;
+	/**
+	* The ordered set of literals owned by this Enumeration.
+	*/
+	ownedLiterals: EnumerationLiteral[];
 }
 
+export interface DocumentReference {
+	location: DocumentLocationKind;
+	/**
+	* Gets the name of the reference. If the reference is a NPM reference, this field contains the package
+	* name (including any @scope). If the reference is a local one, this field contains the file name
+	* without extension.
+	*/
+	name: string;
+	path: string;
+}
+
+export enum DocumentLocationKind
+{
+	local = 1,
+	npm = 2
+}
+
+export interface Document {
+	creator: string;
+	/**
+	* Gets the unique ID of the document.
+	*/
+	id: string;
+	/**
+	* Contains the main model structure.
+	*/
+	model: Model | null;
+	modelTypeName: string;
+	modelTypeVersion: string;
+	/**
+	* Contains a model with 0 or more profiles (packages) in it.
+	*/
+	profiles: Model | null;
+	references: DocumentReference[];
+	/**
+	* Returns an Element representing the element whose id property matches the specified string.
+	* @returns {Element} The model element matching the specified ID, or null if no matching element was
+	* found in the model.
+	* @param {string} id The ID of the element to search for.
+	*/
+	findElementById(id: string): Element | null;
+}
 
 /**
 * A Comment is a textual annotation that can be attached to a set of Elements.
 */
-export interface Comment extends Element
-{
-	/**
-	*/
+export interface Comment extends Element {
 	body: string;
 }
-
 
 /**
 * Associations represent relationships between classes.
 */
-export interface Association extends Relationship, Classifier
-{
+export interface Association extends Relationship, Classifier {
 	/**
 	* Gets all ends of the association, that is, ends that are either owned by the association or by a
 	* classifier (as attributes).

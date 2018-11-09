@@ -7,15 +7,16 @@
  */
 import * as Interfaces from "./interfaces";
 import { ElementTypeUtility } from './utils';
-import { ElementMap } from "./element-map";
 import * as _ from 'lodash';
-import { ElementComparer } from "./element-comparer";
+import { ElementComparerImpl } from "./element-comparer";
 import * as utils from './utils';
+import { ModelDelegate } from './model-delegate-interface';
+import { ElementMap } from './element-map-interface';
 
 /**
  * Internal class to which all behaviour of the model classes is delegated.
  */
-export class ModelDelegate {
+export class ModelDelegateImpl implements ModelDelegate {
     constructor(private elementMap: ElementMap | null) {
         // Note that elementMap is null when not initialized through the DataToModelConverter
     }
@@ -62,7 +63,7 @@ export class ModelDelegate {
                 result.push(e as TElement);
             }
             if (ElementTypeUtility.isPackage(e.elementType) && (e as Interfaces.Package).packagedElements) {
-                ModelDelegate.getAllPackagedElementsWhereRecursive(e as Interfaces.Package, predicate, result);
+                ModelDelegateImpl.getAllPackagedElementsWhereRecursive(e as Interfaces.Package, predicate, result);
             }
         })
     }
@@ -73,58 +74,58 @@ export class ModelDelegate {
 
         const result: TElement[] = [];
         if (pack.packagedElements) {
-            ModelDelegate.getAllPackagedElementsWhereRecursive(pack, predicate, result);
+            ModelDelegateImpl.getAllPackagedElementsWhereRecursive(pack, predicate, result);
         }
         return result;
     }
 
     public getNestedPackages(element: Interfaces.Package): Interfaces.Package[] {
-        return ModelDelegate.getPackagedElementsWhere<Interfaces.Package>(element, pe => pe.elementType === Interfaces.ElementType.package);
+        return ModelDelegateImpl.getPackagedElementsWhere<Interfaces.Package>(element, pe => pe.elementType === Interfaces.ElementType.package);
     }
 
     public getTypes(element: Interfaces.Package): Interfaces.Classifier[] {
-        return ModelDelegate.getPackagedElementsWhere<Interfaces.Classifier>(element, pe =>
+        return ModelDelegateImpl.getPackagedElementsWhere<Interfaces.Classifier>(element, pe =>
             // Technically, an Association is also a Type, but it does not seem to make much sense here
             ElementTypeUtility.isType(pe.elementType) && !ElementTypeUtility.isAssociation(pe.elementType)
         );
     }
 
     public getAllTypes(element: Interfaces.Package): Interfaces.Classifier[] {
-        return ModelDelegate.getAllPackagedElementsWhere<Interfaces.Classifier>(element, pe =>
+        return ModelDelegateImpl.getAllPackagedElementsWhere<Interfaces.Classifier>(element, pe =>
             // Technically, an Association is also a Type, but it does not seem to make much sense here
             ElementTypeUtility.isType(pe.elementType) && !ElementTypeUtility.isAssociation(pe.elementType));
     }
 
     public getClasses(element: Interfaces.Package): Interfaces.Class[] {
-        return ModelDelegate.getPackagedElementsWhere<Interfaces.Class>(element, pe => ElementTypeUtility.isClass(pe.elementType));
+        return ModelDelegateImpl.getPackagedElementsWhere<Interfaces.Class>(element, pe => ElementTypeUtility.isClass(pe.elementType));
     }
 
     public getAllClasses(element: Interfaces.Package): Interfaces.Class[] {
-        return ModelDelegate.getAllPackagedElementsWhere<Interfaces.Class>(element, pe => ElementTypeUtility.isClass(pe.elementType));
+        return ModelDelegateImpl.getAllPackagedElementsWhere<Interfaces.Class>(element, pe => ElementTypeUtility.isClass(pe.elementType));
     }
 
     public getInterfaces(element: Interfaces.Package): Interfaces.Interface[] {
-        return ModelDelegate.getPackagedElementsWhere<Interfaces.Interface>(element, pe => ElementTypeUtility.isInterface(pe.elementType));
+        return ModelDelegateImpl.getPackagedElementsWhere<Interfaces.Interface>(element, pe => ElementTypeUtility.isInterface(pe.elementType));
     }
 
     public getAllInterfaces(element: Interfaces.Package): Interfaces.Interface[] {
-        return ModelDelegate.getAllPackagedElementsWhere<Interfaces.Interface>(element, pe => ElementTypeUtility.isInterface(pe.elementType));
+        return ModelDelegateImpl.getAllPackagedElementsWhere<Interfaces.Interface>(element, pe => ElementTypeUtility.isInterface(pe.elementType));
     }
 
     public getDataTypes(element: Interfaces.Package): Interfaces.DataType[] {
-        return ModelDelegate.getPackagedElementsWhere<Interfaces.DataType>(element, pe => ElementTypeUtility.isDataType(pe.elementType));
+        return ModelDelegateImpl.getPackagedElementsWhere<Interfaces.DataType>(element, pe => ElementTypeUtility.isDataType(pe.elementType));
     }
 
     public getAllDataTypes(element: Interfaces.Package): Interfaces.DataType[] {
-        return ModelDelegate.getAllPackagedElementsWhere<Interfaces.DataType>(element, pe => ElementTypeUtility.isDataType(pe.elementType));
+        return ModelDelegateImpl.getAllPackagedElementsWhere<Interfaces.DataType>(element, pe => ElementTypeUtility.isDataType(pe.elementType));
     }
 
     public getEnumerations(element: Interfaces.Package): Interfaces.Enumeration[] {
-        return ModelDelegate.getPackagedElementsWhere<Interfaces.Enumeration>(element, pe => ElementTypeUtility.isEnumeration(pe.elementType));
+        return ModelDelegateImpl.getPackagedElementsWhere<Interfaces.Enumeration>(element, pe => ElementTypeUtility.isEnumeration(pe.elementType));
     }
 
     public getAllEnumerations(element: Interfaces.Package): Interfaces.Enumeration[] {
-        return ModelDelegate.getAllPackagedElementsWhere<Interfaces.Enumeration>(element, pe => ElementTypeUtility.isEnumeration(pe.elementType));
+        return ModelDelegateImpl.getAllPackagedElementsWhere<Interfaces.Enumeration>(element, pe => ElementTypeUtility.isEnumeration(pe.elementType));
     }
 
 
@@ -274,7 +275,7 @@ export class ModelDelegate {
         memberedClassifier.ownedOperations.forEach(op => {
             // Is there an operation in the result that has the same signature? Then replace it.
             // TODO: can we set a "redefines" reference (referring to the base operation)?             
-            _.remove(result, (baseOperation) => ElementComparer.haveEqualSignatures(baseOperation, op));
+            _.remove(result, (baseOperation) => ElementComparerImpl.haveEqualSignatures(baseOperation, op));
             result.push(op);
         })
     }

@@ -11,40 +11,27 @@
 * 
 * Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
 */
-import * as Interfaces from "./interfaces";
-import {ModelDelegate} from "./model-delegate";
+import * as elements from './interfaces';
+import { ModelDelegate } from './model-delegate-interface';
 
-export class DocumentReference implements Interfaces.DocumentReference
-{
-	public path: string = '';
-	public name: string = '';
-	public location!: Interfaces.DocumentLocationKind;
-}
-
-export class StereotypeExtension implements Interfaces.StereotypeExtension
-{
-	public isRequired: boolean = false;
-	public metaClass!: Interfaces.ElementType;
-}
-
-export class TaggedValueSpecification implements Interfaces.TaggedValueSpecification
-{
-	public definition!: Interfaces.Property;
-	public specification!: Interfaces.ValueSpecification;
-}
-
-export abstract class Element implements Interfaces.Element
-{
-	constructor(protected modelDelegate:ModelDelegate, owner: Interfaces.Element | null)
+export abstract class Element implements elements.Element {
+	constructor(protected modelDelegate:ModelDelegate, owner: elements.Element | null)
 	{
 		this.owner = owner;
 	}
-	public abstract readonly elementType: Interfaces.ElementType;
+
+	public abstract readonly elementType: elements.ElementType;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
 	public id: string = '';
-	public ownedComments: Interfaces.Comment[] = [];
-	public readonly owner: Interfaces.Element | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+
+	public ownedComments: elements.Comment[] = [];
+
+	public readonly owner: elements.Element | null = null;
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
 	/**
 	* Gets the text contents of the first comment in the element's owned comments, or an empty string if
 	* the element has no comments.
@@ -57,223 +44,111 @@ export abstract class Element implements Interfaces.Element
 	}
 }
 
-export class Class extends Element implements Interfaces.Class
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.class;
-	public isActive: boolean = false;
-	public interfaceRealizations: Interfaces.InterfaceRealization[] = [];
+export class TaggedValueSpecification implements elements.TaggedValueSpecification {
+
+	public definition!: elements.Property;
+
+	public specification!: elements.ValueSpecification;
+}
+
+export class StereotypeExtension implements elements.StereotypeExtension {
+
+	public isRequired: boolean = false;
+
+	public metaClass!: elements.ElementType;
+}
+
+export class Class extends Element implements elements.Class {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.class;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public generalizations: elements.Generalization[] = [];
+
+	public interfaceRealizations: elements.InterfaceRealization[] = [];
+
 	public isAbstract: boolean = false;
+
+	public isActive: boolean = false;
+
 	public isFinalSpecialization: boolean = false;
-	public generalizations: Interfaces.Generalization[] = [];
+
 	public isInferred: boolean = false;
-	public get package(): Interfaces.Package {
+
+	public isLeaf: boolean = false;
+
+	public name: string = '';
+
+	public ownedAttributes: elements.Property[] = [];
+
+	public ownedOperations: elements.Operation[] = [];
+
+	public get package(): elements.Package {
 		return this.modelDelegate.getPackage(this);
 	}
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
-	public isLeaf: boolean = false;
-	public ownedAttributes: Interfaces.Property[] = [];
-	public ownedOperations: Interfaces.Operation[] = [];
-	/**
-	* Gets the superclasses of a Class, derived from its Generalizations.
-	* @returns {Interfaces.Class[]}
-	*/
-	public getSuperClasses(): Interfaces.Class[]
-	{
-		return this.modelDelegate.getSuperClasses(this);
-	}
-	/**
-	* Gets the first direct generalization relationship of the element.
-	* @returns {Interfaces.Generalization}
-	*/
-	public getFirstGeneralization(): Interfaces.Generalization | null
-	{
-		return this.modelDelegate.getFirstGeneralization(this);
-	}
-	/**
-	* Gets the first classifier that is an immediate general of the current element.
-	* @returns {Interfaces.Classifier}
-	*/
-	public getFirstParent(): Interfaces.Classifier | null
-	{
-		return this.modelDelegate.getFirstParent(this);
-	}
-	/**
-	* Gives all of the immediate ancestors of a generalized Classifier.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getParents(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getParents(this);
-	}
-	/**
-	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
-	* specific classifiers will appear before more general classifiers.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getAllParents(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getAllParents(this);
-	}
-	/**
-	* Gets all classifiers of which this classifier is a direct general.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getSpecializations(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getSpecializations(this);
-	}
-	/**
-	* Gets all classifiers of which this element is a direct or indirect general.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getAllSpecializations(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getAllSpecializations(this);
-	}
-	/**
-	* Gets all packages that contain this Package, working inwards from the top Package to the owning
-	* package.
-	* @returns {Interfaces.Package[]} A collection of Packages.
-	*/
-	public getNestingPackages(): Interfaces.Package[]
-	{
-		return this.modelDelegate.getNestingPackages(this);
-	}
-	/**
-	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
-	* from the package that is defined as namespace root up to but not including the PackageableElement
-	* itself.
-	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
-	* used.
-	* @returns {string} A single string with all the names separated.
-	*/
-	public getNamespaceName(separator?: string): string
-	{
-		return this.modelDelegate.getNamespaceName(this, separator);
-	}
-	/**
-	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
-	* constructed working inwards from the package that is defined as namespace root up to and including
-	* the PackageableElement itself.
-	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
-	* used.
-	* @returns {string} A single string with all the names separated.
-	*/
-	public getQualifiedName(separator?: string): string
-	{
-		return this.modelDelegate.getQualifiedName(this, separator);
-	}
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
 	* Returns both inherited and owned attributes.
-	* @returns {Interfaces.Property[]}
+	* @returns {elements.Property[]}
 	*/
-	public getAllAttributes(): Interfaces.Property[]
+	public getAllAttributes(): elements.Property[]
 	{
 		return this.modelDelegate.getAllAttributes(this);
 	}
+
 	/**
 	* Returns both inherited and owned operations. Any inherited operation that has the same signature
 	* (having the same name and parameter type order) in an inheriting type is not included.
-	* @returns {Interfaces.Operation[]}
+	* @returns {elements.Operation[]}
 	*/
-	public getAllOperations(): Interfaces.Operation[]
+	public getAllOperations(): elements.Operation[]
 	{
 		return this.modelDelegate.getAllOperations(this);
 	}
-}
 
-export class Stereotype extends Element implements Interfaces.Stereotype
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.stereotype;
-	public safeName: string = '';
-	public extends: Interfaces.StereotypeExtension[] = [];
-	public isActive: boolean = false;
-	public interfaceRealizations: Interfaces.InterfaceRealization[] = [];
-	public isAbstract: boolean = false;
-	public isFinalSpecialization: boolean = false;
-	public generalizations: Interfaces.Generalization[] = [];
-	public isInferred: boolean = false;
-	public get package(): Interfaces.Package {
-		return this.modelDelegate.getPackage(this);
-	}
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
-	public isLeaf: boolean = false;
-	public ownedAttributes: Interfaces.Property[] = [];
-	public ownedOperations: Interfaces.Operation[] = [];
-	/**
-	* Gets the superclasses of a Class, derived from its Generalizations.
-	* @returns {Interfaces.Class[]}
-	*/
-	public getSuperClasses(): Interfaces.Class[]
-	{
-		return this.modelDelegate.getSuperClasses(this);
-	}
-	/**
-	* Gets the first direct generalization relationship of the element.
-	* @returns {Interfaces.Generalization}
-	*/
-	public getFirstGeneralization(): Interfaces.Generalization | null
-	{
-		return this.modelDelegate.getFirstGeneralization(this);
-	}
-	/**
-	* Gets the first classifier that is an immediate general of the current element.
-	* @returns {Interfaces.Classifier}
-	*/
-	public getFirstParent(): Interfaces.Classifier | null
-	{
-		return this.modelDelegate.getFirstParent(this);
-	}
-	/**
-	* Gives all of the immediate ancestors of a generalized Classifier.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getParents(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getParents(this);
-	}
 	/**
 	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
 	* specific classifiers will appear before more general classifiers.
-	* @returns {Interfaces.Classifier[]}
+	* @returns {elements.Classifier[]}
 	*/
-	public getAllParents(): Interfaces.Classifier[]
+	public getAllParents(): elements.Classifier[]
 	{
 		return this.modelDelegate.getAllParents(this);
 	}
-	/**
-	* Gets all classifiers of which this classifier is a direct general.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getSpecializations(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getSpecializations(this);
-	}
+
 	/**
 	* Gets all classifiers of which this element is a direct or indirect general.
-	* @returns {Interfaces.Classifier[]}
+	* @returns {elements.Classifier[]}
 	*/
-	public getAllSpecializations(): Interfaces.Classifier[]
+	public getAllSpecializations(): elements.Classifier[]
 	{
 		return this.modelDelegate.getAllSpecializations(this);
 	}
+
 	/**
-	* Gets all packages that contain this Package, working inwards from the top Package to the owning
-	* package.
-	* @returns {Interfaces.Package[]} A collection of Packages.
+	* Gets the first direct generalization relationship of the element.
+	* @returns {elements.Generalization}
 	*/
-	public getNestingPackages(): Interfaces.Package[]
+	public getFirstGeneralization(): elements.Generalization | null
 	{
-		return this.modelDelegate.getNestingPackages(this);
+		return this.modelDelegate.getFirstGeneralization(this);
 	}
+
+	/**
+	* Gets the first classifier that is an immediate general of the current element.
+	* @returns {elements.Classifier}
+	*/
+	public getFirstParent(): elements.Classifier | null
+	{
+		return this.modelDelegate.getFirstParent(this);
+	}
+
 	/**
 	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
 	* from the package that is defined as namespace root up to but not including the PackageableElement
@@ -286,6 +161,26 @@ export class Stereotype extends Element implements Interfaces.Stereotype
 	{
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
+
+	/**
+	* Gets all packages that contain this Package, working inwards from the top Package to the owning
+	* package.
+	* @returns {elements.Package[]} A collection of Packages.
+	*/
+	public getNestingPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestingPackages(this);
+	}
+
+	/**
+	* Gives all of the immediate ancestors of a generalized Classifier.
+	* @returns {elements.Classifier[]}
+	*/
+	public getParents(): elements.Classifier[]
+	{
+		return this.modelDelegate.getParents(this);
+	}
+
 	/**
 	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
 	* constructed working inwards from the package that is defined as namespace root up to and including
@@ -298,139 +193,121 @@ export class Stereotype extends Element implements Interfaces.Stereotype
 	{
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
+
+	/**
+	* Gets all classifiers of which this classifier is a direct general.
+	* @returns {elements.Classifier[]}
+	*/
+	public getSpecializations(): elements.Classifier[]
+	{
+		return this.modelDelegate.getSpecializations(this);
+	}
+
+	/**
+	* Gets the superclasses of a Class, derived from its Generalizations.
+	* @returns {elements.Class[]}
+	*/
+	public getSuperClasses(): elements.Class[]
+	{
+		return this.modelDelegate.getSuperClasses(this);
+	}
+}
+
+export class Stereotype extends Element implements elements.Stereotype {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.stereotype;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public extends: elements.StereotypeExtension[] = [];
+
+	public generalizations: elements.Generalization[] = [];
+
+	public interfaceRealizations: elements.InterfaceRealization[] = [];
+
+	public isAbstract: boolean = false;
+
+	public isActive: boolean = false;
+
+	public isFinalSpecialization: boolean = false;
+
+	public isInferred: boolean = false;
+
+	public isLeaf: boolean = false;
+
+	public name: string = '';
+
+	public ownedAttributes: elements.Property[] = [];
+
+	public ownedOperations: elements.Operation[] = [];
+
+	public get package(): elements.Package {
+		return this.modelDelegate.getPackage(this);
+	}
+
+	public safeName: string = '';
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
 	* Returns both inherited and owned attributes.
-	* @returns {Interfaces.Property[]}
+	* @returns {elements.Property[]}
 	*/
-	public getAllAttributes(): Interfaces.Property[]
+	public getAllAttributes(): elements.Property[]
 	{
 		return this.modelDelegate.getAllAttributes(this);
 	}
+
 	/**
 	* Returns both inherited and owned operations. Any inherited operation that has the same signature
 	* (having the same name and parameter type order) in an inheriting type is not included.
-	* @returns {Interfaces.Operation[]}
+	* @returns {elements.Operation[]}
 	*/
-	public getAllOperations(): Interfaces.Operation[]
+	public getAllOperations(): elements.Operation[]
 	{
 		return this.modelDelegate.getAllOperations(this);
 	}
-}
 
-export class Package extends Element implements Interfaces.Package
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.package;
-	public isNamespaceRoot: boolean = false;
-	public packagedElements: Interfaces.PackageableElement[] = [];
-	public appliedProfiles: Interfaces.Profile[] = [];
-	public get package(): Interfaces.Package {
-		return this.modelDelegate.getPackage(this);
-	}
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
 	/**
-	* Gets all packages that are owned by this Package.
-	* @returns {Interfaces.Package[]} A subset of PackagedElements.
+	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
+	* specific classifiers will appear before more general classifiers.
+	* @returns {elements.Classifier[]}
 	*/
-	public getNestedPackages(): Interfaces.Package[]
+	public getAllParents(): elements.Classifier[]
 	{
-		return this.modelDelegate.getNestedPackages(this);
+		return this.modelDelegate.getAllParents(this);
 	}
+
 	/**
-	* Gets all classes that are owned by this Package.
-	* @returns {Interfaces.Class[]} A subset of PackagedElements.
+	* Gets all classifiers of which this element is a direct or indirect general.
+	* @returns {elements.Classifier[]}
 	*/
-	public getClasses(): Interfaces.Class[]
+	public getAllSpecializations(): elements.Classifier[]
 	{
-		return this.modelDelegate.getClasses(this);
+		return this.modelDelegate.getAllSpecializations(this);
 	}
+
 	/**
-	* Gets all classes that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.Class[]}
+	* Gets the first direct generalization relationship of the element.
+	* @returns {elements.Generalization}
 	*/
-	public getAllClasses(): Interfaces.Class[]
+	public getFirstGeneralization(): elements.Generalization | null
 	{
-		return this.modelDelegate.getAllClasses(this);
+		return this.modelDelegate.getFirstGeneralization(this);
 	}
+
 	/**
-	* Gets all interfaces that are owned by this Package.
-	* @returns {Interfaces.Interface[]} A subset of PackagedElements.
+	* Gets the first classifier that is an immediate general of the current element.
+	* @returns {elements.Classifier}
 	*/
-	public getInterfaces(): Interfaces.Interface[]
+	public getFirstParent(): elements.Classifier | null
 	{
-		return this.modelDelegate.getInterfaces(this);
+		return this.modelDelegate.getFirstParent(this);
 	}
-	/**
-	* Gets all interfaces that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.Interface[]}
-	*/
-	public getAllInterfaces(): Interfaces.Interface[]
-	{
-		return this.modelDelegate.getAllInterfaces(this);
-	}
-	/**
-	* Gets all data types that are owned by this Package.
-	* @returns {Interfaces.DataType[]} A subset of PackagedElements.
-	*/
-	public getDataTypes(): Interfaces.DataType[]
-	{
-		return this.modelDelegate.getDataTypes(this);
-	}
-	/**
-	* Gets all data types that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.DataType[]}
-	*/
-	public getAllDataTypes(): Interfaces.DataType[]
-	{
-		return this.modelDelegate.getAllDataTypes(this);
-	}
-	/**
-	* Gets all enumerations that are owned by this Package.
-	* @returns {Interfaces.Enumeration[]} A subset of PackagedElements.
-	*/
-	public getEnumerations(): Interfaces.Enumeration[]
-	{
-		return this.modelDelegate.getEnumerations(this);
-	}
-	/**
-	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.Enumeration[]}
-	*/
-	public getAllEnumerations(): Interfaces.Enumeration[]
-	{
-		return this.modelDelegate.getAllEnumerations(this);
-	}
-	/**
-	* Gets all types that are owned by this Package. This includes the following types of elements: Class,
-	* Interface, DataType, PrimitiveType and Enumeration.
-	* @returns {Interfaces.Classifier[]} A subset of PackagedElements.
-	*/
-	public getTypes(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getTypes(this);
-	}
-	/**
-	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
-	* Enumeration.
-	* @returns {Interfaces.Classifier[]} A subset of PackagedElements.
-	*/
-	public getAllTypes(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getAllTypes(this);
-	}
-	/**
-	* Gets all packages that contain this Package, working inwards from the top Package to the owning
-	* package.
-	* @returns {Interfaces.Package[]} A collection of Packages.
-	*/
-	public getNestingPackages(): Interfaces.Package[]
-	{
-		return this.modelDelegate.getNestingPackages(this);
-	}
+
 	/**
 	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
 	* from the package that is defined as namespace root up to but not including the PackageableElement
@@ -443,147 +320,26 @@ export class Package extends Element implements Interfaces.Package
 	{
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
-	/**
-	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
-	* constructed working inwards from the package that is defined as namespace root up to and including
-	* the PackageableElement itself.
-	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
-	* used.
-	* @returns {string} A single string with all the names separated.
-	*/
-	public getQualifiedName(separator?: string): string
-	{
-		return this.modelDelegate.getQualifiedName(this, separator);
-	}
-}
 
-export class Profile extends Element implements Interfaces.Profile
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.profile;
-	public safeName: string = '';
-	public isNamespaceRoot: boolean = false;
-	public packagedElements: Interfaces.PackageableElement[] = [];
-	public appliedProfiles: Interfaces.Profile[] = [];
-	public get package(): Interfaces.Package {
-		return this.modelDelegate.getPackage(this);
-	}
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
-	/**
-	* Gets all packages that are owned by this Package.
-	* @returns {Interfaces.Package[]} A subset of PackagedElements.
-	*/
-	public getNestedPackages(): Interfaces.Package[]
-	{
-		return this.modelDelegate.getNestedPackages(this);
-	}
-	/**
-	* Gets all classes that are owned by this Package.
-	* @returns {Interfaces.Class[]} A subset of PackagedElements.
-	*/
-	public getClasses(): Interfaces.Class[]
-	{
-		return this.modelDelegate.getClasses(this);
-	}
-	/**
-	* Gets all classes that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.Class[]}
-	*/
-	public getAllClasses(): Interfaces.Class[]
-	{
-		return this.modelDelegate.getAllClasses(this);
-	}
-	/**
-	* Gets all interfaces that are owned by this Package.
-	* @returns {Interfaces.Interface[]} A subset of PackagedElements.
-	*/
-	public getInterfaces(): Interfaces.Interface[]
-	{
-		return this.modelDelegate.getInterfaces(this);
-	}
-	/**
-	* Gets all interfaces that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.Interface[]}
-	*/
-	public getAllInterfaces(): Interfaces.Interface[]
-	{
-		return this.modelDelegate.getAllInterfaces(this);
-	}
-	/**
-	* Gets all data types that are owned by this Package.
-	* @returns {Interfaces.DataType[]} A subset of PackagedElements.
-	*/
-	public getDataTypes(): Interfaces.DataType[]
-	{
-		return this.modelDelegate.getDataTypes(this);
-	}
-	/**
-	* Gets all data types that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.DataType[]}
-	*/
-	public getAllDataTypes(): Interfaces.DataType[]
-	{
-		return this.modelDelegate.getAllDataTypes(this);
-	}
-	/**
-	* Gets all enumerations that are owned by this Package.
-	* @returns {Interfaces.Enumeration[]} A subset of PackagedElements.
-	*/
-	public getEnumerations(): Interfaces.Enumeration[]
-	{
-		return this.modelDelegate.getEnumerations(this);
-	}
-	/**
-	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.Enumeration[]}
-	*/
-	public getAllEnumerations(): Interfaces.Enumeration[]
-	{
-		return this.modelDelegate.getAllEnumerations(this);
-	}
-	/**
-	* Gets all types that are owned by this Package. This includes the following types of elements: Class,
-	* Interface, DataType, PrimitiveType and Enumeration.
-	* @returns {Interfaces.Classifier[]} A subset of PackagedElements.
-	*/
-	public getTypes(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getTypes(this);
-	}
-	/**
-	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
-	* Enumeration.
-	* @returns {Interfaces.Classifier[]} A subset of PackagedElements.
-	*/
-	public getAllTypes(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getAllTypes(this);
-	}
 	/**
 	* Gets all packages that contain this Package, working inwards from the top Package to the owning
 	* package.
-	* @returns {Interfaces.Package[]} A collection of Packages.
+	* @returns {elements.Package[]} A collection of Packages.
 	*/
-	public getNestingPackages(): Interfaces.Package[]
+	public getNestingPackages(): elements.Package[]
 	{
 		return this.modelDelegate.getNestingPackages(this);
 	}
+
 	/**
-	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
-	* from the package that is defined as namespace root up to but not including the PackageableElement
-	* itself.
-	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
-	* used.
-	* @returns {string} A single string with all the names separated.
+	* Gives all of the immediate ancestors of a generalized Classifier.
+	* @returns {elements.Classifier[]}
 	*/
-	public getNamespaceName(separator?: string): string
+	public getParents(): elements.Classifier[]
 	{
-		return this.modelDelegate.getNamespaceName(this, separator);
+		return this.modelDelegate.getParents(this);
 	}
+
 	/**
 	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
 	* constructed working inwards from the package that is defined as namespace root up to and including
@@ -596,40 +352,81 @@ export class Profile extends Element implements Interfaces.Profile
 	{
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
+
+	/**
+	* Gets all classifiers of which this classifier is a direct general.
+	* @returns {elements.Classifier[]}
+	*/
+	public getSpecializations(): elements.Classifier[]
+	{
+		return this.modelDelegate.getSpecializations(this);
+	}
+
+	/**
+	* Gets the superclasses of a Class, derived from its Generalizations.
+	* @returns {elements.Class[]}
+	*/
+	public getSuperClasses(): elements.Class[]
+	{
+		return this.modelDelegate.getSuperClasses(this);
+	}
 }
 
-export class Property extends Element implements Interfaces.Property
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.property;
-	public aggregation: Interfaces.AggregationKind = Interfaces.AggregationKind.none;
-	public isDerived: boolean = false;
-	public isDerivedUnion: boolean = false;
-	public isID: boolean = false;
-	public isNavigable: boolean = false;
-	public get association(): Interfaces.Association | null {
+export class Property extends Element implements elements.Property {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.property;
+
+	public aggregation: elements.AggregationKind = elements.AggregationKind.none;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public get association(): elements.Association | null {
 		return this.modelDelegate.getAssociation(this);
 	}
-	public defaultValue: Interfaces.ValueSpecification | null = null;
+
+	public defaultValue: elements.ValueSpecification | null = null;
+
+	public isDerived: boolean = false;
+
+	public isDerivedUnion: boolean = false;
+
+	public isID: boolean = false;
+
+	public isLeaf: boolean = false;
+
+	public isNavigable: boolean = false;
+
+	public isOrdered: boolean = false;
+
 	public isReadOnly: boolean = false;
+
 	public isStatic: boolean = false;
-	public isLeaf: boolean = false;
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
-	public order: number = 0;
-	public isOrdered: boolean = false;
+
 	public isUnique: boolean = false;
-	public get upper(): Interfaces.UnlimitedNatural | null {
-		return this.modelDelegate.getUpper(this);
-	}
+
 	public get lower(): number | null {
 		return this.modelDelegate.getLower(this);
 	}
-	public upperValue: Interfaces.ValueSpecification | null = null;
-	public lowerValue: Interfaces.ValueSpecification | null = null;
-	public type: Interfaces.Type | null = null;
+
+	public lowerValue: elements.ValueSpecification | null = null;
+
+	public name: string = '';
+
+	public order: number = 0;
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public type: elements.Type | null = null;
+
+	public get upper(): elements.UnlimitedNatural | null {
+		return this.modelDelegate.getUpper(this);
+	}
+
+	public upperValue: elements.ValueSpecification | null = null;
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
 	* Gets the value of the DefaultValue property.
 	* @returns {any} The default value (the type depending on the type of value), or null if no default
@@ -639,40 +436,7 @@ export class Property extends Element implements Interfaces.Property
 	{
 		return this.modelDelegate.getDefault(this);
 	}
-	/**
-	* The query isMultivalued() checks whether this multiplicity has an upper bound greater than one.
-	* @returns {boolean}
-	*/
-	public isMultivalued(): boolean
-	{
-		return this.modelDelegate.isMultivalued(this);
-	}
-	/**
-	* The query isOptional checks whether this multiplicity has a lower bound of 0 (0..n).
-	* @returns {boolean}
-	*/
-	public isOptional(): boolean
-	{
-		return this.modelDelegate.isOptional(this);
-	}
-	/**
-	* The query isOptionalAndSingleValued checks whether this multiplicity has a lower bound of 0 and an
-	* upper bound of 1 (0..1).
-	* @returns {boolean}
-	*/
-	public isOptionalAndSinglevalued(): boolean
-	{
-		return this.modelDelegate.isOptionalAndSinglevalued(this);
-	}
-	/**
-	* The query isRequiredAndSinglevalued checks whether this multiplicity has a lower bound of 1 and an
-	* upper bound of 1 (1..1).
-	* @returns {boolean}
-	*/
-	public isRequiredAndSinglevalued(): boolean
-	{
-		return this.modelDelegate.isRequiredAndSinglevalued(this);
-	}
+
 	/**
 	* The query lowerBound() returns the lower bound of the multiplicity as an integer, which is the
 	* integerValue of lowerValue, if this is given, and 1 otherwise.
@@ -682,15 +446,7 @@ export class Property extends Element implements Interfaces.Property
 	{
 		return this.modelDelegate.getLowerBound(this);
 	}
-	/**
-	* The query upperBound() returns the upper bound of the multiplicity for a bounded multiplicity as an
-	* unlimited natural, which is the unlimitedNaturalValue of upperValue, if given, and 1, otherwise.
-	* @returns {Interfaces.UnlimitedNatural}
-	*/
-	public getUpperBound(): Interfaces.UnlimitedNatural
-	{
-		return this.modelDelegate.getUpperBound(this);
-	}
+
 	/**
 	* Gets the name of the typed element's type.
 	* @returns {string} The type name, or an empty string if the element has no type.
@@ -699,101 +455,162 @@ export class Property extends Element implements Interfaces.Property
 	{
 		return this.modelDelegate.getTypeName(this);
 	}
+
+	/**
+	* The query upperBound() returns the upper bound of the multiplicity for a bounded multiplicity as an
+	* unlimited natural, which is the unlimitedNaturalValue of upperValue, if given, and 1, otherwise.
+	* @returns {elements.UnlimitedNatural}
+	*/
+	public getUpperBound(): elements.UnlimitedNatural
+	{
+		return this.modelDelegate.getUpperBound(this);
+	}
+
+	/**
+	* The query isMultivalued() checks whether this multiplicity has an upper bound greater than one.
+	* @returns {boolean}
+	*/
+	public isMultivalued(): boolean
+	{
+		return this.modelDelegate.isMultivalued(this);
+	}
+
+	/**
+	* The query isOptional checks whether this multiplicity has a lower bound of 0 (0..n).
+	* @returns {boolean}
+	*/
+	public isOptional(): boolean
+	{
+		return this.modelDelegate.isOptional(this);
+	}
+
+	/**
+	* The query isOptionalAndSingleValued checks whether this multiplicity has a lower bound of 0 and an
+	* upper bound of 1 (0..1).
+	* @returns {boolean}
+	*/
+	public isOptionalAndSinglevalued(): boolean
+	{
+		return this.modelDelegate.isOptionalAndSinglevalued(this);
+	}
+
+	/**
+	* The query isRequiredAndSinglevalued checks whether this multiplicity has a lower bound of 1 and an
+	* upper bound of 1 (1..1).
+	* @returns {boolean}
+	*/
+	public isRequiredAndSinglevalued(): boolean
+	{
+		return this.modelDelegate.isRequiredAndSinglevalued(this);
+	}
 }
 
-export class DataType extends Element implements Interfaces.DataType
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.dataType;
-	public ownedAttributes: Interfaces.Property[] = [];
-	public ownedOperations: Interfaces.Operation[] = [];
-	public isAbstract: boolean = false;
-	public isFinalSpecialization: boolean = false;
-	public generalizations: Interfaces.Generalization[] = [];
-	public isInferred: boolean = false;
-	public get package(): Interfaces.Package {
+export class Package extends Element implements elements.Package {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.package;
+
+	public appliedProfiles: elements.Profile[] = [];
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public isNamespaceRoot: boolean = false;
+
+	public name: string = '';
+
+	public get package(): elements.Package {
 		return this.modelDelegate.getPackage(this);
 	}
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
-	public isLeaf: boolean = false;
+
+	public packagedElements: elements.PackageableElement[] = [];
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
-	* Returns both inherited and owned attributes.
-	* @returns {Interfaces.Property[]}
+	* Gets all classes that are owned by this Package, including the ones owned by nested packages.
+	* @returns {elements.Class[]}
 	*/
-	public getAllAttributes(): Interfaces.Property[]
+	public getAllClasses(): elements.Class[]
 	{
-		return this.modelDelegate.getAllAttributes(this);
+		return this.modelDelegate.getAllClasses(this);
 	}
+
 	/**
-	* Returns both inherited and owned operations. Any inherited operation that has the same signature
-	* (having the same name and parameter type order) in an inheriting type is not included.
-	* @returns {Interfaces.Operation[]}
+	* Gets all data types that are owned by this Package, including the ones owned by nested packages.
+	* @returns {elements.DataType[]}
 	*/
-	public getAllOperations(): Interfaces.Operation[]
+	public getAllDataTypes(): elements.DataType[]
 	{
-		return this.modelDelegate.getAllOperations(this);
+		return this.modelDelegate.getAllDataTypes(this);
 	}
+
 	/**
-	* Gets the first direct generalization relationship of the element.
-	* @returns {Interfaces.Generalization}
+	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
+	* @returns {elements.Enumeration[]}
 	*/
-	public getFirstGeneralization(): Interfaces.Generalization | null
+	public getAllEnumerations(): elements.Enumeration[]
 	{
-		return this.modelDelegate.getFirstGeneralization(this);
+		return this.modelDelegate.getAllEnumerations(this);
 	}
+
 	/**
-	* Gets the first classifier that is an immediate general of the current element.
-	* @returns {Interfaces.Classifier}
+	* Gets all interfaces that are owned by this Package, including the ones owned by nested packages.
+	* @returns {elements.Interface[]}
 	*/
-	public getFirstParent(): Interfaces.Classifier | null
+	public getAllInterfaces(): elements.Interface[]
 	{
-		return this.modelDelegate.getFirstParent(this);
+		return this.modelDelegate.getAllInterfaces(this);
 	}
+
 	/**
-	* Gives all of the immediate ancestors of a generalized Classifier.
-	* @returns {Interfaces.Classifier[]}
+	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
+	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
+	* Enumeration.
+	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
-	public getParents(): Interfaces.Classifier[]
+	public getAllTypes(): elements.Classifier[]
 	{
-		return this.modelDelegate.getParents(this);
+		return this.modelDelegate.getAllTypes(this);
 	}
+
 	/**
-	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
-	* specific classifiers will appear before more general classifiers.
-	* @returns {Interfaces.Classifier[]}
+	* Gets all classes that are owned by this Package.
+	* @returns {elements.Class[]} A subset of PackagedElements.
 	*/
-	public getAllParents(): Interfaces.Classifier[]
+	public getClasses(): elements.Class[]
 	{
-		return this.modelDelegate.getAllParents(this);
+		return this.modelDelegate.getClasses(this);
 	}
+
 	/**
-	* Gets all classifiers of which this classifier is a direct general.
-	* @returns {Interfaces.Classifier[]}
+	* Gets all data types that are owned by this Package.
+	* @returns {elements.DataType[]} A subset of PackagedElements.
 	*/
-	public getSpecializations(): Interfaces.Classifier[]
+	public getDataTypes(): elements.DataType[]
 	{
-		return this.modelDelegate.getSpecializations(this);
+		return this.modelDelegate.getDataTypes(this);
 	}
+
 	/**
-	* Gets all classifiers of which this element is a direct or indirect general.
-	* @returns {Interfaces.Classifier[]}
+	* Gets all enumerations that are owned by this Package.
+	* @returns {elements.Enumeration[]} A subset of PackagedElements.
 	*/
-	public getAllSpecializations(): Interfaces.Classifier[]
+	public getEnumerations(): elements.Enumeration[]
 	{
-		return this.modelDelegate.getAllSpecializations(this);
+		return this.modelDelegate.getEnumerations(this);
 	}
+
 	/**
-	* Gets all packages that contain this Package, working inwards from the top Package to the owning
-	* package.
-	* @returns {Interfaces.Package[]} A collection of Packages.
+	* Gets all interfaces that are owned by this Package.
+	* @returns {elements.Interface[]} A subset of PackagedElements.
 	*/
-	public getNestingPackages(): Interfaces.Package[]
+	public getInterfaces(): elements.Interface[]
 	{
-		return this.modelDelegate.getNestingPackages(this);
+		return this.modelDelegate.getInterfaces(this);
 	}
+
 	/**
 	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
 	* from the package that is defined as namespace root up to but not including the PackageableElement
@@ -806,6 +623,26 @@ export class DataType extends Element implements Interfaces.DataType
 	{
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
+
+	/**
+	* Gets all packages that are owned by this Package.
+	* @returns {elements.Package[]} A subset of PackagedElements.
+	*/
+	public getNestedPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestedPackages(this);
+	}
+
+	/**
+	* Gets all packages that contain this Package, working inwards from the top Package to the owning
+	* package.
+	* @returns {elements.Package[]} A collection of Packages.
+	*/
+	public getNestingPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestingPackages(this);
+	}
+
 	/**
 	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
 	* constructed working inwards from the package that is defined as namespace root up to and including
@@ -818,101 +655,126 @@ export class DataType extends Element implements Interfaces.DataType
 	{
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
+
+	/**
+	* Gets all types that are owned by this Package. This includes the following types of elements: Class,
+	* Interface, DataType, PrimitiveType and Enumeration.
+	* @returns {elements.Classifier[]} A subset of PackagedElements.
+	*/
+	public getTypes(): elements.Classifier[]
+	{
+		return this.modelDelegate.getTypes(this);
+	}
 }
 
-export class PrimitiveType extends Element implements Interfaces.PrimitiveType
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.primitiveType;
-	public ownedAttributes: Interfaces.Property[] = [];
-	public ownedOperations: Interfaces.Operation[] = [];
-	public isAbstract: boolean = false;
-	public isFinalSpecialization: boolean = false;
-	public generalizations: Interfaces.Generalization[] = [];
-	public isInferred: boolean = false;
-	public get package(): Interfaces.Package {
+export class Profile extends Element implements elements.Profile {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.profile;
+
+	public appliedProfiles: elements.Profile[] = [];
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public isNamespaceRoot: boolean = false;
+
+	public name: string = '';
+
+	public get package(): elements.Package {
 		return this.modelDelegate.getPackage(this);
 	}
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
-	public isLeaf: boolean = false;
+
+	public packagedElements: elements.PackageableElement[] = [];
+
+	public safeName: string = '';
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
-	* Returns both inherited and owned attributes.
-	* @returns {Interfaces.Property[]}
+	* Gets all classes that are owned by this Package, including the ones owned by nested packages.
+	* @returns {elements.Class[]}
 	*/
-	public getAllAttributes(): Interfaces.Property[]
+	public getAllClasses(): elements.Class[]
 	{
-		return this.modelDelegate.getAllAttributes(this);
+		return this.modelDelegate.getAllClasses(this);
 	}
+
 	/**
-	* Returns both inherited and owned operations. Any inherited operation that has the same signature
-	* (having the same name and parameter type order) in an inheriting type is not included.
-	* @returns {Interfaces.Operation[]}
+	* Gets all data types that are owned by this Package, including the ones owned by nested packages.
+	* @returns {elements.DataType[]}
 	*/
-	public getAllOperations(): Interfaces.Operation[]
+	public getAllDataTypes(): elements.DataType[]
 	{
-		return this.modelDelegate.getAllOperations(this);
+		return this.modelDelegate.getAllDataTypes(this);
 	}
+
 	/**
-	* Gets the first direct generalization relationship of the element.
-	* @returns {Interfaces.Generalization}
+	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
+	* @returns {elements.Enumeration[]}
 	*/
-	public getFirstGeneralization(): Interfaces.Generalization | null
+	public getAllEnumerations(): elements.Enumeration[]
 	{
-		return this.modelDelegate.getFirstGeneralization(this);
+		return this.modelDelegate.getAllEnumerations(this);
 	}
+
 	/**
-	* Gets the first classifier that is an immediate general of the current element.
-	* @returns {Interfaces.Classifier}
+	* Gets all interfaces that are owned by this Package, including the ones owned by nested packages.
+	* @returns {elements.Interface[]}
 	*/
-	public getFirstParent(): Interfaces.Classifier | null
+	public getAllInterfaces(): elements.Interface[]
 	{
-		return this.modelDelegate.getFirstParent(this);
+		return this.modelDelegate.getAllInterfaces(this);
 	}
+
 	/**
-	* Gives all of the immediate ancestors of a generalized Classifier.
-	* @returns {Interfaces.Classifier[]}
+	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
+	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
+	* Enumeration.
+	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
-	public getParents(): Interfaces.Classifier[]
+	public getAllTypes(): elements.Classifier[]
 	{
-		return this.modelDelegate.getParents(this);
+		return this.modelDelegate.getAllTypes(this);
 	}
+
 	/**
-	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
-	* specific classifiers will appear before more general classifiers.
-	* @returns {Interfaces.Classifier[]}
+	* Gets all classes that are owned by this Package.
+	* @returns {elements.Class[]} A subset of PackagedElements.
 	*/
-	public getAllParents(): Interfaces.Classifier[]
+	public getClasses(): elements.Class[]
 	{
-		return this.modelDelegate.getAllParents(this);
+		return this.modelDelegate.getClasses(this);
 	}
+
 	/**
-	* Gets all classifiers of which this classifier is a direct general.
-	* @returns {Interfaces.Classifier[]}
+	* Gets all data types that are owned by this Package.
+	* @returns {elements.DataType[]} A subset of PackagedElements.
 	*/
-	public getSpecializations(): Interfaces.Classifier[]
+	public getDataTypes(): elements.DataType[]
 	{
-		return this.modelDelegate.getSpecializations(this);
+		return this.modelDelegate.getDataTypes(this);
 	}
+
 	/**
-	* Gets all classifiers of which this element is a direct or indirect general.
-	* @returns {Interfaces.Classifier[]}
+	* Gets all enumerations that are owned by this Package.
+	* @returns {elements.Enumeration[]} A subset of PackagedElements.
 	*/
-	public getAllSpecializations(): Interfaces.Classifier[]
+	public getEnumerations(): elements.Enumeration[]
 	{
-		return this.modelDelegate.getAllSpecializations(this);
+		return this.modelDelegate.getEnumerations(this);
 	}
+
 	/**
-	* Gets all packages that contain this Package, working inwards from the top Package to the owning
-	* package.
-	* @returns {Interfaces.Package[]} A collection of Packages.
+	* Gets all interfaces that are owned by this Package.
+	* @returns {elements.Interface[]} A subset of PackagedElements.
 	*/
-	public getNestingPackages(): Interfaces.Package[]
+	public getInterfaces(): elements.Interface[]
 	{
-		return this.modelDelegate.getNestingPackages(this);
+		return this.modelDelegate.getInterfaces(this);
 	}
+
 	/**
 	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
 	* from the package that is defined as namespace root up to but not including the PackageableElement
@@ -925,6 +787,26 @@ export class PrimitiveType extends Element implements Interfaces.PrimitiveType
 	{
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
+
+	/**
+	* Gets all packages that are owned by this Package.
+	* @returns {elements.Package[]} A subset of PackagedElements.
+	*/
+	public getNestedPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestedPackages(this);
+	}
+
+	/**
+	* Gets all packages that contain this Package, working inwards from the top Package to the owning
+	* package.
+	* @returns {elements.Package[]} A collection of Packages.
+	*/
+	public getNestingPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestingPackages(this);
+	}
+
 	/**
 	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
 	* constructed working inwards from the package that is defined as namespace root up to and including
@@ -937,32 +819,343 @@ export class PrimitiveType extends Element implements Interfaces.PrimitiveType
 	{
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
+
+	/**
+	* Gets all types that are owned by this Package. This includes the following types of elements: Class,
+	* Interface, DataType, PrimitiveType and Enumeration.
+	* @returns {elements.Classifier[]} A subset of PackagedElements.
+	*/
+	public getTypes(): elements.Classifier[]
+	{
+		return this.modelDelegate.getTypes(this);
+	}
 }
 
-export class Parameter extends Element implements Interfaces.Parameter
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.parameter;
-	public direction: Interfaces.ParameterDirectionKind = Interfaces.ParameterDirectionKind.in;
+export class DataType extends Element implements elements.DataType {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.dataType;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public generalizations: elements.Generalization[] = [];
+
+	public isAbstract: boolean = false;
+
+	public isFinalSpecialization: boolean = false;
+
+	public isInferred: boolean = false;
+
+	public isLeaf: boolean = false;
+
+	public name: string = '';
+
+	public ownedAttributes: elements.Property[] = [];
+
+	public ownedOperations: elements.Operation[] = [];
+
+	public get package(): elements.Package {
+		return this.modelDelegate.getPackage(this);
+	}
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
+	/**
+	* Returns both inherited and owned attributes.
+	* @returns {elements.Property[]}
+	*/
+	public getAllAttributes(): elements.Property[]
+	{
+		return this.modelDelegate.getAllAttributes(this);
+	}
+
+	/**
+	* Returns both inherited and owned operations. Any inherited operation that has the same signature
+	* (having the same name and parameter type order) in an inheriting type is not included.
+	* @returns {elements.Operation[]}
+	*/
+	public getAllOperations(): elements.Operation[]
+	{
+		return this.modelDelegate.getAllOperations(this);
+	}
+
+	/**
+	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
+	* specific classifiers will appear before more general classifiers.
+	* @returns {elements.Classifier[]}
+	*/
+	public getAllParents(): elements.Classifier[]
+	{
+		return this.modelDelegate.getAllParents(this);
+	}
+
+	/**
+	* Gets all classifiers of which this element is a direct or indirect general.
+	* @returns {elements.Classifier[]}
+	*/
+	public getAllSpecializations(): elements.Classifier[]
+	{
+		return this.modelDelegate.getAllSpecializations(this);
+	}
+
+	/**
+	* Gets the first direct generalization relationship of the element.
+	* @returns {elements.Generalization}
+	*/
+	public getFirstGeneralization(): elements.Generalization | null
+	{
+		return this.modelDelegate.getFirstGeneralization(this);
+	}
+
+	/**
+	* Gets the first classifier that is an immediate general of the current element.
+	* @returns {elements.Classifier}
+	*/
+	public getFirstParent(): elements.Classifier | null
+	{
+		return this.modelDelegate.getFirstParent(this);
+	}
+
+	/**
+	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
+	* from the package that is defined as namespace root up to but not including the PackageableElement
+	* itself.
+	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
+	* used.
+	* @returns {string} A single string with all the names separated.
+	*/
+	public getNamespaceName(separator?: string): string
+	{
+		return this.modelDelegate.getNamespaceName(this, separator);
+	}
+
+	/**
+	* Gets all packages that contain this Package, working inwards from the top Package to the owning
+	* package.
+	* @returns {elements.Package[]} A collection of Packages.
+	*/
+	public getNestingPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestingPackages(this);
+	}
+
+	/**
+	* Gives all of the immediate ancestors of a generalized Classifier.
+	* @returns {elements.Classifier[]}
+	*/
+	public getParents(): elements.Classifier[]
+	{
+		return this.modelDelegate.getParents(this);
+	}
+
+	/**
+	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
+	* constructed working inwards from the package that is defined as namespace root up to and including
+	* the PackageableElement itself.
+	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
+	* used.
+	* @returns {string} A single string with all the names separated.
+	*/
+	public getQualifiedName(separator?: string): string
+	{
+		return this.modelDelegate.getQualifiedName(this, separator);
+	}
+
+	/**
+	* Gets all classifiers of which this classifier is a direct general.
+	* @returns {elements.Classifier[]}
+	*/
+	public getSpecializations(): elements.Classifier[]
+	{
+		return this.modelDelegate.getSpecializations(this);
+	}
+}
+
+export class PrimitiveType extends Element implements elements.PrimitiveType {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.primitiveType;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public generalizations: elements.Generalization[] = [];
+
+	public isAbstract: boolean = false;
+
+	public isFinalSpecialization: boolean = false;
+
+	public isInferred: boolean = false;
+
+	public isLeaf: boolean = false;
+
+	public name: string = '';
+
+	public ownedAttributes: elements.Property[] = [];
+
+	public ownedOperations: elements.Operation[] = [];
+
+	public get package(): elements.Package {
+		return this.modelDelegate.getPackage(this);
+	}
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
+	/**
+	* Returns both inherited and owned attributes.
+	* @returns {elements.Property[]}
+	*/
+	public getAllAttributes(): elements.Property[]
+	{
+		return this.modelDelegate.getAllAttributes(this);
+	}
+
+	/**
+	* Returns both inherited and owned operations. Any inherited operation that has the same signature
+	* (having the same name and parameter type order) in an inheriting type is not included.
+	* @returns {elements.Operation[]}
+	*/
+	public getAllOperations(): elements.Operation[]
+	{
+		return this.modelDelegate.getAllOperations(this);
+	}
+
+	/**
+	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
+	* specific classifiers will appear before more general classifiers.
+	* @returns {elements.Classifier[]}
+	*/
+	public getAllParents(): elements.Classifier[]
+	{
+		return this.modelDelegate.getAllParents(this);
+	}
+
+	/**
+	* Gets all classifiers of which this element is a direct or indirect general.
+	* @returns {elements.Classifier[]}
+	*/
+	public getAllSpecializations(): elements.Classifier[]
+	{
+		return this.modelDelegate.getAllSpecializations(this);
+	}
+
+	/**
+	* Gets the first direct generalization relationship of the element.
+	* @returns {elements.Generalization}
+	*/
+	public getFirstGeneralization(): elements.Generalization | null
+	{
+		return this.modelDelegate.getFirstGeneralization(this);
+	}
+
+	/**
+	* Gets the first classifier that is an immediate general of the current element.
+	* @returns {elements.Classifier}
+	*/
+	public getFirstParent(): elements.Classifier | null
+	{
+		return this.modelDelegate.getFirstParent(this);
+	}
+
+	/**
+	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
+	* from the package that is defined as namespace root up to but not including the PackageableElement
+	* itself.
+	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
+	* used.
+	* @returns {string} A single string with all the names separated.
+	*/
+	public getNamespaceName(separator?: string): string
+	{
+		return this.modelDelegate.getNamespaceName(this, separator);
+	}
+
+	/**
+	* Gets all packages that contain this Package, working inwards from the top Package to the owning
+	* package.
+	* @returns {elements.Package[]} A collection of Packages.
+	*/
+	public getNestingPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestingPackages(this);
+	}
+
+	/**
+	* Gives all of the immediate ancestors of a generalized Classifier.
+	* @returns {elements.Classifier[]}
+	*/
+	public getParents(): elements.Classifier[]
+	{
+		return this.modelDelegate.getParents(this);
+	}
+
+	/**
+	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
+	* constructed working inwards from the package that is defined as namespace root up to and including
+	* the PackageableElement itself.
+	* @param {string} separator The string to use to separate names. If not specified, a dot "." will be
+	* used.
+	* @returns {string} A single string with all the names separated.
+	*/
+	public getQualifiedName(separator?: string): string
+	{
+		return this.modelDelegate.getQualifiedName(this, separator);
+	}
+
+	/**
+	* Gets all classifiers of which this classifier is a direct general.
+	* @returns {elements.Classifier[]}
+	*/
+	public getSpecializations(): elements.Classifier[]
+	{
+		return this.modelDelegate.getSpecializations(this);
+	}
+}
+
+export class Parameter extends Element implements elements.Parameter {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.parameter;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public defaultValue: elements.ValueSpecification | null = null;
+
+	public direction: elements.ParameterDirectionKind = elements.ParameterDirectionKind.in;
+
 	public isException: boolean = false;
-	public isStream: boolean = false;
-	public defaultValue: Interfaces.ValueSpecification | null = null;
-	public type: Interfaces.Type | null = null;
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+
 	public isOrdered: boolean = false;
+
+	public isStream: boolean = false;
+
 	public isUnique: boolean = false;
-	public get upper(): Interfaces.UnlimitedNatural | null {
-		return this.modelDelegate.getUpper(this);
-	}
+
 	public get lower(): number | null {
 		return this.modelDelegate.getLower(this);
 	}
-	public upperValue: Interfaces.ValueSpecification | null = null;
-	public lowerValue: Interfaces.ValueSpecification | null = null;
+
+	public lowerValue: elements.ValueSpecification | null = null;
+
+	public name: string = '';
+
 	public order: number = 0;
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public type: elements.Type | null = null;
+
+	public get upper(): elements.UnlimitedNatural | null {
+		return this.modelDelegate.getUpper(this);
+	}
+
+	public upperValue: elements.ValueSpecification | null = null;
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
 	* Gets the value of the DefaultValue property.
 	* @returns {any} The default value (the type depending on the type of value), or null if no default
@@ -972,48 +1165,7 @@ export class Parameter extends Element implements Interfaces.Parameter
 	{
 		return this.modelDelegate.getDefault(this);
 	}
-	/**
-	* Gets the name of the typed element's type.
-	* @returns {string} The type name, or an empty string if the element has no type.
-	*/
-	public getTypeName(): string
-	{
-		return this.modelDelegate.getTypeName(this);
-	}
-	/**
-	* The query isMultivalued() checks whether this multiplicity has an upper bound greater than one.
-	* @returns {boolean}
-	*/
-	public isMultivalued(): boolean
-	{
-		return this.modelDelegate.isMultivalued(this);
-	}
-	/**
-	* The query isOptional checks whether this multiplicity has a lower bound of 0 (0..n).
-	* @returns {boolean}
-	*/
-	public isOptional(): boolean
-	{
-		return this.modelDelegate.isOptional(this);
-	}
-	/**
-	* The query isOptionalAndSingleValued checks whether this multiplicity has a lower bound of 0 and an
-	* upper bound of 1 (0..1).
-	* @returns {boolean}
-	*/
-	public isOptionalAndSinglevalued(): boolean
-	{
-		return this.modelDelegate.isOptionalAndSinglevalued(this);
-	}
-	/**
-	* The query isRequiredAndSinglevalued checks whether this multiplicity has a lower bound of 1 and an
-	* upper bound of 1 (1..1).
-	* @returns {boolean}
-	*/
-	public isRequiredAndSinglevalued(): boolean
-	{
-		return this.modelDelegate.isRequiredAndSinglevalued(this);
-	}
+
 	/**
 	* The query lowerBound() returns the lower bound of the multiplicity as an integer, which is the
 	* integerValue of lowerValue, if this is given, and 1 otherwise.
@@ -1023,95 +1175,109 @@ export class Parameter extends Element implements Interfaces.Parameter
 	{
 		return this.modelDelegate.getLowerBound(this);
 	}
+
+	/**
+	* Gets the name of the typed element's type.
+	* @returns {string} The type name, or an empty string if the element has no type.
+	*/
+	public getTypeName(): string
+	{
+		return this.modelDelegate.getTypeName(this);
+	}
+
 	/**
 	* The query upperBound() returns the upper bound of the multiplicity for a bounded multiplicity as an
 	* unlimited natural, which is the unlimitedNaturalValue of upperValue, if given, and 1, otherwise.
-	* @returns {Interfaces.UnlimitedNatural}
+	* @returns {elements.UnlimitedNatural}
 	*/
-	public getUpperBound(): Interfaces.UnlimitedNatural
+	public getUpperBound(): elements.UnlimitedNatural
 	{
 		return this.modelDelegate.getUpperBound(this);
 	}
+
+	/**
+	* The query isMultivalued() checks whether this multiplicity has an upper bound greater than one.
+	* @returns {boolean}
+	*/
+	public isMultivalued(): boolean
+	{
+		return this.modelDelegate.isMultivalued(this);
+	}
+
+	/**
+	* The query isOptional checks whether this multiplicity has a lower bound of 0 (0..n).
+	* @returns {boolean}
+	*/
+	public isOptional(): boolean
+	{
+		return this.modelDelegate.isOptional(this);
+	}
+
+	/**
+	* The query isOptionalAndSingleValued checks whether this multiplicity has a lower bound of 0 and an
+	* upper bound of 1 (0..1).
+	* @returns {boolean}
+	*/
+	public isOptionalAndSinglevalued(): boolean
+	{
+		return this.modelDelegate.isOptionalAndSinglevalued(this);
+	}
+
+	/**
+	* The query isRequiredAndSinglevalued checks whether this multiplicity has a lower bound of 1 and an
+	* upper bound of 1 (1..1).
+	* @returns {boolean}
+	*/
+	public isRequiredAndSinglevalued(): boolean
+	{
+		return this.modelDelegate.isRequiredAndSinglevalued(this);
+	}
 }
 
-export class Operation extends Element implements Interfaces.Operation
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.operation;
-	public isQuery: boolean = false;
+export class Operation extends Element implements elements.Operation {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.operation;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public isAbstract: boolean = false;
+
 	public isConstructor: boolean = false;
-	public get upper(): Interfaces.UnlimitedNatural | null {
-		return this.modelDelegate.getUpper(this);
-	}
+
+	public isLeaf: boolean = false;
+
+	public isQuery: boolean = false;
+
+	public isStatic: boolean = false;
+
 	public get lower(): number | null {
 		return this.modelDelegate.getLower(this);
 	}
-	public isAbstract: boolean = false;
-	public ownedParameters: Interfaces.Parameter[] = [];
-	public isStatic: boolean = false;
-	public isLeaf: boolean = false;
+
 	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+
 	public order: number = 0;
+
+	public ownedParameters: elements.Parameter[] = [];
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public get upper(): elements.UnlimitedNatural | null {
+		return this.modelDelegate.getUpper(this);
+	}
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
 	* Returns the ownedParameters with direction in and inout.
-	* @returns {Interfaces.Parameter[]}
+	* @returns {elements.Parameter[]}
 	*/
-	public getInputParameters(): Interfaces.Parameter[]
+	public getInputParameters(): elements.Parameter[]
 	{
 		return this.modelDelegate.getInputParameters(this);
 	}
-	/**
-	* Returns the ownedParameters with direction out, inout, or return.
-	* @returns {Interfaces.Parameter[]}
-	*/
-	public getOutputParameters(): Interfaces.Parameter[]
-	{
-		return this.modelDelegate.getOutputParameters(this);
-	}
-	/**
-	* The query isMultivalued() checks whether the return parameter has an upper bound greater than one.
-	* @returns {boolean}
-	*/
-	public isMultivalued(): boolean
-	{
-		return this.modelDelegate.isMultivalued(this);
-	}
-	/**
-	* The query isOptional checks whether he return parameter has a lower bound of 0 (0..n).
-	* @returns {boolean}
-	*/
-	public isOptional(): boolean
-	{
-		return this.modelDelegate.isOptional(this);
-	}
-	/**
-	* The query isOptional checks whether he return parameter has a lower bound of 0 and an upper bound of
-	* 1 (0..1).
-	* @returns {boolean}
-	*/
-	public isOptionalAndSinglevalued(): boolean
-	{
-		return this.modelDelegate.isOptionalAndSinglevalued(this);
-	}
-	/**
-	* Gets the type of the operation's return parameter, if it has any.
-	* @returns {Interfaces.Type}
-	*/
-	public getReturnType(): Interfaces.Type | null
-	{
-		return this.modelDelegate.getReturnType(this);
-	}
-	/**
-	* Gets the operation's return parameter, if it has one.
-	* @returns {Interfaces.Parameter}
-	*/
-	public getReturnParameter(): Interfaces.Parameter | null
-	{
-		return this.modelDelegate.getReturnParameter(this);
-	}
+
 	/**
 	* The query lowerBound() returns the lower bound of the return parameter as an integer, which is the
 	* integerValue of lowerValue, if this is given, and 1 otherwise. This information is derived from the
@@ -1122,132 +1288,180 @@ export class Operation extends Element implements Interfaces.Operation
 	{
 		return this.modelDelegate.getLowerBound(this);
 	}
+
+	/**
+	* Returns the ownedParameters with direction out, inout, or return.
+	* @returns {elements.Parameter[]}
+	*/
+	public getOutputParameters(): elements.Parameter[]
+	{
+		return this.modelDelegate.getOutputParameters(this);
+	}
+
+	/**
+	* Gets the operation's return parameter, if it has one.
+	* @returns {elements.Parameter}
+	*/
+	public getReturnParameter(): elements.Parameter | null
+	{
+		return this.modelDelegate.getReturnParameter(this);
+	}
+
+	/**
+	* Gets the type of the operation's return parameter, if it has any.
+	* @returns {elements.Type}
+	*/
+	public getReturnType(): elements.Type | null
+	{
+		return this.modelDelegate.getReturnType(this);
+	}
+
 	/**
 	* The query upperBound() returns the upper bound of the return parameter for a bounded multiplicity as
 	* an unlimited natural, which is the unlimitedNaturalValue of upperValue, if given, and 1, otherwise.
 	* This information is derived from the return result for this Operation.
-	* @returns {Interfaces.UnlimitedNatural}
+	* @returns {elements.UnlimitedNatural}
 	*/
-	public getUpperBound(): Interfaces.UnlimitedNatural
+	public getUpperBound(): elements.UnlimitedNatural
 	{
 		return this.modelDelegate.getUpperBound(this);
 	}
+
+	/**
+	* The query isMultivalued() checks whether the return parameter has an upper bound greater than one.
+	* @returns {boolean}
+	*/
+	public isMultivalued(): boolean
+	{
+		return this.modelDelegate.isMultivalued(this);
+	}
+
+	/**
+	* The query isOptional checks whether he return parameter has a lower bound of 0 (0..n).
+	* @returns {boolean}
+	*/
+	public isOptional(): boolean
+	{
+		return this.modelDelegate.isOptional(this);
+	}
+
+	/**
+	* The query isOptional checks whether he return parameter has a lower bound of 0 and an upper bound of
+	* 1 (0..1).
+	* @returns {boolean}
+	*/
+	public isOptionalAndSinglevalued(): boolean
+	{
+		return this.modelDelegate.isOptionalAndSinglevalued(this);
+	}
 }
 
-export class Model extends Element implements Interfaces.Model
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.model;
+export class Model extends Element implements elements.Model {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.model;
+
+	public appliedProfiles: elements.Profile[] = [];
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
 	public isNamespaceRoot: boolean = false;
-	public packagedElements: Interfaces.PackageableElement[] = [];
-	public appliedProfiles: Interfaces.Profile[] = [];
-	public get package(): Interfaces.Package {
+
+	public name: string = '';
+
+	public get package(): elements.Package {
 		return this.modelDelegate.getPackage(this);
 	}
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
-	/**
-	* Gets all packages that are owned by this Package.
-	* @returns {Interfaces.Package[]} A subset of PackagedElements.
-	*/
-	public getNestedPackages(): Interfaces.Package[]
-	{
-		return this.modelDelegate.getNestedPackages(this);
-	}
-	/**
-	* Gets all classes that are owned by this Package.
-	* @returns {Interfaces.Class[]} A subset of PackagedElements.
-	*/
-	public getClasses(): Interfaces.Class[]
-	{
-		return this.modelDelegate.getClasses(this);
-	}
+
+	public packagedElements: elements.PackageableElement[] = [];
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
 	* Gets all classes that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.Class[]}
+	* @returns {elements.Class[]}
 	*/
-	public getAllClasses(): Interfaces.Class[]
+	public getAllClasses(): elements.Class[]
 	{
 		return this.modelDelegate.getAllClasses(this);
 	}
-	/**
-	* Gets all interfaces that are owned by this Package.
-	* @returns {Interfaces.Interface[]} A subset of PackagedElements.
-	*/
-	public getInterfaces(): Interfaces.Interface[]
-	{
-		return this.modelDelegate.getInterfaces(this);
-	}
-	/**
-	* Gets all interfaces that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.Interface[]}
-	*/
-	public getAllInterfaces(): Interfaces.Interface[]
-	{
-		return this.modelDelegate.getAllInterfaces(this);
-	}
-	/**
-	* Gets all data types that are owned by this Package.
-	* @returns {Interfaces.DataType[]} A subset of PackagedElements.
-	*/
-	public getDataTypes(): Interfaces.DataType[]
-	{
-		return this.modelDelegate.getDataTypes(this);
-	}
+
 	/**
 	* Gets all data types that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.DataType[]}
+	* @returns {elements.DataType[]}
 	*/
-	public getAllDataTypes(): Interfaces.DataType[]
+	public getAllDataTypes(): elements.DataType[]
 	{
 		return this.modelDelegate.getAllDataTypes(this);
 	}
-	/**
-	* Gets all enumerations that are owned by this Package.
-	* @returns {Interfaces.Enumeration[]} A subset of PackagedElements.
-	*/
-	public getEnumerations(): Interfaces.Enumeration[]
-	{
-		return this.modelDelegate.getEnumerations(this);
-	}
+
 	/**
 	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* @returns {Interfaces.Enumeration[]}
+	* @returns {elements.Enumeration[]}
 	*/
-	public getAllEnumerations(): Interfaces.Enumeration[]
+	public getAllEnumerations(): elements.Enumeration[]
 	{
 		return this.modelDelegate.getAllEnumerations(this);
 	}
+
 	/**
-	* Gets all types that are owned by this Package. This includes the following types of elements: Class,
-	* Interface, DataType, PrimitiveType and Enumeration.
-	* @returns {Interfaces.Classifier[]} A subset of PackagedElements.
+	* Gets all interfaces that are owned by this Package, including the ones owned by nested packages.
+	* @returns {elements.Interface[]}
 	*/
-	public getTypes(): Interfaces.Classifier[]
+	public getAllInterfaces(): elements.Interface[]
 	{
-		return this.modelDelegate.getTypes(this);
+		return this.modelDelegate.getAllInterfaces(this);
 	}
+
 	/**
 	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
 	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
 	* Enumeration.
-	* @returns {Interfaces.Classifier[]} A subset of PackagedElements.
+	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
-	public getAllTypes(): Interfaces.Classifier[]
+	public getAllTypes(): elements.Classifier[]
 	{
 		return this.modelDelegate.getAllTypes(this);
 	}
+
 	/**
-	* Gets all packages that contain this Package, working inwards from the top Package to the owning
-	* package.
-	* @returns {Interfaces.Package[]} A collection of Packages.
+	* Gets all classes that are owned by this Package.
+	* @returns {elements.Class[]} A subset of PackagedElements.
 	*/
-	public getNestingPackages(): Interfaces.Package[]
+	public getClasses(): elements.Class[]
 	{
-		return this.modelDelegate.getNestingPackages(this);
+		return this.modelDelegate.getClasses(this);
 	}
+
+	/**
+	* Gets all data types that are owned by this Package.
+	* @returns {elements.DataType[]} A subset of PackagedElements.
+	*/
+	public getDataTypes(): elements.DataType[]
+	{
+		return this.modelDelegate.getDataTypes(this);
+	}
+
+	/**
+	* Gets all enumerations that are owned by this Package.
+	* @returns {elements.Enumeration[]} A subset of PackagedElements.
+	*/
+	public getEnumerations(): elements.Enumeration[]
+	{
+		return this.modelDelegate.getEnumerations(this);
+	}
+
+	/**
+	* Gets all interfaces that are owned by this Package.
+	* @returns {elements.Interface[]} A subset of PackagedElements.
+	*/
+	public getInterfaces(): elements.Interface[]
+	{
+		return this.modelDelegate.getInterfaces(this);
+	}
+
 	/**
 	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
 	* from the package that is defined as namespace root up to but not including the PackageableElement
@@ -1260,6 +1474,26 @@ export class Model extends Element implements Interfaces.Model
 	{
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
+
+	/**
+	* Gets all packages that are owned by this Package.
+	* @returns {elements.Package[]} A subset of PackagedElements.
+	*/
+	public getNestedPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestedPackages(this);
+	}
+
+	/**
+	* Gets all packages that contain this Package, working inwards from the top Package to the owning
+	* package.
+	* @returns {elements.Package[]} A collection of Packages.
+	*/
+	public getNestingPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestingPackages(this);
+	}
+
 	/**
 	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
 	* constructed working inwards from the package that is defined as namespace root up to and including
@@ -1272,18 +1506,53 @@ export class Model extends Element implements Interfaces.Model
 	{
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
+
+	/**
+	* Gets all types that are owned by this Package. This includes the following types of elements: Class,
+	* Interface, DataType, PrimitiveType and Enumeration.
+	* @returns {elements.Classifier[]} A subset of PackagedElements.
+	*/
+	public getTypes(): elements.Classifier[]
+	{
+		return this.modelDelegate.getTypes(this);
+	}
 }
 
-export class LiteralUnlimitedNatural extends Element implements Interfaces.LiteralUnlimitedNatural
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.literalUnlimitedNatural;
-	public value!: Interfaces.UnlimitedNatural;
-	public type: Interfaces.Type | null = null;
+export class LiteralUnlimitedNatural extends Element implements elements.LiteralUnlimitedNatural {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.literalUnlimitedNatural;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
 	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public type: elements.Type | null = null;
+
+	public value!: elements.UnlimitedNatural;
+
+	public visibility: elements.VisibilityKind | null = null;
+
+	/**
+	* Gets the string representation of the value.
+	* @returns {string}
+	*/
+	public getStringValue(): string
+	{
+		return this.modelDelegate.getStringValue(this);
+	}
+
+	/**
+	* Gets the name of the typed element's type.
+	* @returns {string} The type name, or an empty string if the element has no type.
+	*/
+	public getTypeName(): string
+	{
+		return this.modelDelegate.getTypeName(this);
+	}
+
 	/**
 	* Gets underlying value of the ValueSpecification. The type depends on the type of ValueSpecification.
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
@@ -1293,34 +1562,43 @@ export class LiteralUnlimitedNatural extends Element implements Interfaces.Liter
 	{
 		return this.modelDelegate.getValue(this);
 	}
-	/**
-	* Gets the string representation of the value.
-	* @returns {string}
-	*/
-	public getStringValue(): string
-	{
-		return this.modelDelegate.getStringValue(this);
-	}
-	/**
-	* Gets the name of the typed element's type.
-	* @returns {string} The type name, or an empty string if the element has no type.
-	*/
-	public getTypeName(): string
-	{
-		return this.modelDelegate.getTypeName(this);
-	}
 }
 
-export class LiteralString extends Element implements Interfaces.LiteralString
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.literalString;
+export class LiteralString extends Element implements elements.LiteralString {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.literalString;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public name: string = '';
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public type: elements.Type | null = null;
+
 	public value: string = '';
-	public type: Interfaces.Type | null = null;
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
+	/**
+	* Gets the string representation of the value.
+	* @returns {string}
+	*/
+	public getStringValue(): string
+	{
+		return this.modelDelegate.getStringValue(this);
+	}
+
+	/**
+	* Gets the name of the typed element's type.
+	* @returns {string} The type name, or an empty string if the element has no type.
+	*/
+	public getTypeName(): string
+	{
+		return this.modelDelegate.getTypeName(this);
+	}
+
 	/**
 	* Gets underlying value of the ValueSpecification. The type depends on the type of ValueSpecification.
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
@@ -1330,34 +1608,43 @@ export class LiteralString extends Element implements Interfaces.LiteralString
 	{
 		return this.modelDelegate.getValue(this);
 	}
-	/**
-	* Gets the string representation of the value.
-	* @returns {string}
-	*/
-	public getStringValue(): string
-	{
-		return this.modelDelegate.getStringValue(this);
-	}
-	/**
-	* Gets the name of the typed element's type.
-	* @returns {string} The type name, or an empty string if the element has no type.
-	*/
-	public getTypeName(): string
-	{
-		return this.modelDelegate.getTypeName(this);
-	}
 }
 
-export class LiteralReal extends Element implements Interfaces.LiteralReal
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.literalReal;
+export class LiteralReal extends Element implements elements.LiteralReal {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.literalReal;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public name: string = '';
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public type: elements.Type | null = null;
+
 	public value: number = 0;
-	public type: Interfaces.Type | null = null;
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
+	/**
+	* Gets the string representation of the value.
+	* @returns {string}
+	*/
+	public getStringValue(): string
+	{
+		return this.modelDelegate.getStringValue(this);
+	}
+
+	/**
+	* Gets the name of the typed element's type.
+	* @returns {string} The type name, or an empty string if the element has no type.
+	*/
+	public getTypeName(): string
+	{
+		return this.modelDelegate.getTypeName(this);
+	}
+
 	/**
 	* Gets underlying value of the ValueSpecification. The type depends on the type of ValueSpecification.
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
@@ -1367,6 +1654,23 @@ export class LiteralReal extends Element implements Interfaces.LiteralReal
 	{
 		return this.modelDelegate.getValue(this);
 	}
+}
+
+export class LiteralNull extends Element implements elements.LiteralNull {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.literalNull;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public name: string = '';
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public type: elements.Type | null = null;
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
 	* Gets the string representation of the value.
 	* @returns {string}
@@ -1375,6 +1679,7 @@ export class LiteralReal extends Element implements Interfaces.LiteralReal
 	{
 		return this.modelDelegate.getStringValue(this);
 	}
+
 	/**
 	* Gets the name of the typed element's type.
 	* @returns {string} The type name, or an empty string if the element has no type.
@@ -1383,17 +1688,7 @@ export class LiteralReal extends Element implements Interfaces.LiteralReal
 	{
 		return this.modelDelegate.getTypeName(this);
 	}
-}
 
-export class LiteralNull extends Element implements Interfaces.LiteralNull
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.literalNull;
-	public type: Interfaces.Type | null = null;
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
 	/**
 	* Gets underlying value of the ValueSpecification. The type depends on the type of ValueSpecification.
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
@@ -1403,34 +1698,43 @@ export class LiteralNull extends Element implements Interfaces.LiteralNull
 	{
 		return this.modelDelegate.getValue(this);
 	}
-	/**
-	* Gets the string representation of the value.
-	* @returns {string}
-	*/
-	public getStringValue(): string
-	{
-		return this.modelDelegate.getStringValue(this);
-	}
-	/**
-	* Gets the name of the typed element's type.
-	* @returns {string} The type name, or an empty string if the element has no type.
-	*/
-	public getTypeName(): string
-	{
-		return this.modelDelegate.getTypeName(this);
-	}
 }
 
-export class LiteralInteger extends Element implements Interfaces.LiteralInteger
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.literalInteger;
+export class LiteralInteger extends Element implements elements.LiteralInteger {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.literalInteger;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public name: string = '';
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public type: elements.Type | null = null;
+
 	public value: number = 0;
-	public type: Interfaces.Type | null = null;
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
+	/**
+	* Gets the string representation of the value.
+	* @returns {string}
+	*/
+	public getStringValue(): string
+	{
+		return this.modelDelegate.getStringValue(this);
+	}
+
+	/**
+	* Gets the name of the typed element's type.
+	* @returns {string} The type name, or an empty string if the element has no type.
+	*/
+	public getTypeName(): string
+	{
+		return this.modelDelegate.getTypeName(this);
+	}
+
 	/**
 	* Gets underlying value of the ValueSpecification. The type depends on the type of ValueSpecification.
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
@@ -1440,34 +1744,43 @@ export class LiteralInteger extends Element implements Interfaces.LiteralInteger
 	{
 		return this.modelDelegate.getValue(this);
 	}
-	/**
-	* Gets the string representation of the value.
-	* @returns {string}
-	*/
-	public getStringValue(): string
-	{
-		return this.modelDelegate.getStringValue(this);
-	}
-	/**
-	* Gets the name of the typed element's type.
-	* @returns {string} The type name, or an empty string if the element has no type.
-	*/
-	public getTypeName(): string
-	{
-		return this.modelDelegate.getTypeName(this);
-	}
 }
 
-export class LiteralBoolean extends Element implements Interfaces.LiteralBoolean
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.literalBoolean;
+export class LiteralBoolean extends Element implements elements.LiteralBoolean {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.literalBoolean;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public name: string = '';
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public type: elements.Type | null = null;
+
 	public value: boolean = false;
-	public type: Interfaces.Type | null = null;
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
+	/**
+	* Gets the string representation of the value.
+	* @returns {string}
+	*/
+	public getStringValue(): string
+	{
+		return this.modelDelegate.getStringValue(this);
+	}
+
+	/**
+	* Gets the name of the typed element's type.
+	* @returns {string} The type name, or an empty string if the element has no type.
+	*/
+	public getTypeName(): string
+	{
+		return this.modelDelegate.getTypeName(this);
+	}
+
 	/**
 	* Gets underlying value of the ValueSpecification. The type depends on the type of ValueSpecification.
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
@@ -1477,126 +1790,107 @@ export class LiteralBoolean extends Element implements Interfaces.LiteralBoolean
 	{
 		return this.modelDelegate.getValue(this);
 	}
-	/**
-	* Gets the string representation of the value.
-	* @returns {string}
-	*/
-	public getStringValue(): string
-	{
-		return this.modelDelegate.getStringValue(this);
-	}
-	/**
-	* Gets the name of the typed element's type.
-	* @returns {string} The type name, or an empty string if the element has no type.
-	*/
-	public getTypeName(): string
-	{
-		return this.modelDelegate.getTypeName(this);
-	}
 }
 
-export class InterfaceRealization extends Element implements Interfaces.InterfaceRealization
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.interfaceRealization;
-	public contract!: Interfaces.Interface;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+export class InterfaceRealization extends Element implements elements.InterfaceRealization {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.interfaceRealization;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public contract!: elements.Interface;
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
 }
 
-export class Interface extends Element implements Interfaces.Interface
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.interface;
-	public ownedAttributes: Interfaces.Property[] = [];
-	public ownedOperations: Interfaces.Operation[] = [];
+export class Interface extends Element implements elements.Interface {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.interface;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public generalizations: elements.Generalization[] = [];
+
 	public isAbstract: boolean = false;
+
 	public isFinalSpecialization: boolean = false;
-	public generalizations: Interfaces.Generalization[] = [];
+
 	public isInferred: boolean = false;
-	public get package(): Interfaces.Package {
+
+	public isLeaf: boolean = false;
+
+	public name: string = '';
+
+	public ownedAttributes: elements.Property[] = [];
+
+	public ownedOperations: elements.Operation[] = [];
+
+	public get package(): elements.Package {
 		return this.modelDelegate.getPackage(this);
 	}
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
-	public isLeaf: boolean = false;
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
 	* Returns both inherited and owned attributes.
-	* @returns {Interfaces.Property[]}
+	* @returns {elements.Property[]}
 	*/
-	public getAllAttributes(): Interfaces.Property[]
+	public getAllAttributes(): elements.Property[]
 	{
 		return this.modelDelegate.getAllAttributes(this);
 	}
+
 	/**
 	* Returns both inherited and owned operations. Any inherited operation that has the same signature
 	* (having the same name and parameter type order) in an inheriting type is not included.
-	* @returns {Interfaces.Operation[]}
+	* @returns {elements.Operation[]}
 	*/
-	public getAllOperations(): Interfaces.Operation[]
+	public getAllOperations(): elements.Operation[]
 	{
 		return this.modelDelegate.getAllOperations(this);
 	}
-	/**
-	* Gets the first direct generalization relationship of the element.
-	* @returns {Interfaces.Generalization}
-	*/
-	public getFirstGeneralization(): Interfaces.Generalization | null
-	{
-		return this.modelDelegate.getFirstGeneralization(this);
-	}
-	/**
-	* Gets the first classifier that is an immediate general of the current element.
-	* @returns {Interfaces.Classifier}
-	*/
-	public getFirstParent(): Interfaces.Classifier | null
-	{
-		return this.modelDelegate.getFirstParent(this);
-	}
-	/**
-	* Gives all of the immediate ancestors of a generalized Classifier.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getParents(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getParents(this);
-	}
+
 	/**
 	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
 	* specific classifiers will appear before more general classifiers.
-	* @returns {Interfaces.Classifier[]}
+	* @returns {elements.Classifier[]}
 	*/
-	public getAllParents(): Interfaces.Classifier[]
+	public getAllParents(): elements.Classifier[]
 	{
 		return this.modelDelegate.getAllParents(this);
 	}
-	/**
-	* Gets all classifiers of which this classifier is a direct general.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getSpecializations(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getSpecializations(this);
-	}
+
 	/**
 	* Gets all classifiers of which this element is a direct or indirect general.
-	* @returns {Interfaces.Classifier[]}
+	* @returns {elements.Classifier[]}
 	*/
-	public getAllSpecializations(): Interfaces.Classifier[]
+	public getAllSpecializations(): elements.Classifier[]
 	{
 		return this.modelDelegate.getAllSpecializations(this);
 	}
+
 	/**
-	* Gets all packages that contain this Package, working inwards from the top Package to the owning
-	* package.
-	* @returns {Interfaces.Package[]} A collection of Packages.
+	* Gets the first direct generalization relationship of the element.
+	* @returns {elements.Generalization}
 	*/
-	public getNestingPackages(): Interfaces.Package[]
+	public getFirstGeneralization(): elements.Generalization | null
 	{
-		return this.modelDelegate.getNestingPackages(this);
+		return this.modelDelegate.getFirstGeneralization(this);
 	}
+
+	/**
+	* Gets the first classifier that is an immediate general of the current element.
+	* @returns {elements.Classifier}
+	*/
+	public getFirstParent(): elements.Classifier | null
+	{
+		return this.modelDelegate.getFirstParent(this);
+	}
+
 	/**
 	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
 	* from the package that is defined as namespace root up to but not including the PackageableElement
@@ -1609,6 +1903,26 @@ export class Interface extends Element implements Interfaces.Interface
 	{
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
+
+	/**
+	* Gets all packages that contain this Package, working inwards from the top Package to the owning
+	* package.
+	* @returns {elements.Package[]} A collection of Packages.
+	*/
+	public getNestingPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestingPackages(this);
+	}
+
+	/**
+	* Gives all of the immediate ancestors of a generalized Classifier.
+	* @returns {elements.Classifier[]}
+	*/
+	public getParents(): elements.Classifier[]
+	{
+		return this.modelDelegate.getParents(this);
+	}
+
 	/**
 	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
 	* constructed working inwards from the package that is defined as namespace root up to and including
@@ -1621,34 +1935,56 @@ export class Interface extends Element implements Interfaces.Interface
 	{
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
+
+	/**
+	* Gets all classifiers of which this classifier is a direct general.
+	* @returns {elements.Classifier[]}
+	*/
+	public getSpecializations(): elements.Classifier[]
+	{
+		return this.modelDelegate.getSpecializations(this);
+	}
 }
 
-export class Generalization extends Element implements Interfaces.Generalization
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.generalization;
+export class Generalization extends Element implements elements.Generalization {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.generalization;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public general!: elements.Classifier;
+
 	public isSubstitutable: boolean = false;
-	public get specific(): Interfaces.Classifier {
+
+	public get specific(): elements.Classifier {
 		return this.modelDelegate.getSpecific(this);
 	}
-	public general!: Interfaces.Classifier;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
 }
 
-export class EnumerationLiteral extends Element implements Interfaces.EnumerationLiteral
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.enumerationLiteral;
-	public get enumeration(): Interfaces.Enumeration {
+export class EnumerationLiteral extends Element implements elements.EnumerationLiteral {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.enumerationLiteral;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public get enumeration(): elements.Enumeration {
 		return this.modelDelegate.getEnumeration(this);
 	}
-	public specification!: Interfaces.ValueSpecification;
+
 	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+
 	public order: number = 0;
+
+	public specification!: elements.ValueSpecification;
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
 	* Gets the value of the Specification property.
 	* @returns {any} The default value (the type depending on the type of value), or null if no default
@@ -1660,101 +1996,97 @@ export class EnumerationLiteral extends Element implements Interfaces.Enumeratio
 	}
 }
 
-export class Enumeration extends Element implements Interfaces.Enumeration
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.enumeration;
-	public ownedLiterals: Interfaces.EnumerationLiteral[] = [];
-	public baseType: Interfaces.Type | null = null;
-	public ownedAttributes: Interfaces.Property[] = [];
-	public ownedOperations: Interfaces.Operation[] = [];
+export class Enumeration extends Element implements elements.Enumeration {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.enumeration;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public baseType: elements.Type | null = null;
+
+	public generalizations: elements.Generalization[] = [];
+
 	public isAbstract: boolean = false;
+
 	public isFinalSpecialization: boolean = false;
-	public generalizations: Interfaces.Generalization[] = [];
+
 	public isInferred: boolean = false;
-	public get package(): Interfaces.Package {
+
+	public isLeaf: boolean = false;
+
+	public name: string = '';
+
+	public ownedAttributes: elements.Property[] = [];
+
+	public ownedLiterals: elements.EnumerationLiteral[] = [];
+
+	public ownedOperations: elements.Operation[] = [];
+
+	public get package(): elements.Package {
 		return this.modelDelegate.getPackage(this);
 	}
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
-	public isLeaf: boolean = false;
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
 	* Returns both inherited and owned attributes.
-	* @returns {Interfaces.Property[]}
+	* @returns {elements.Property[]}
 	*/
-	public getAllAttributes(): Interfaces.Property[]
+	public getAllAttributes(): elements.Property[]
 	{
 		return this.modelDelegate.getAllAttributes(this);
 	}
+
 	/**
 	* Returns both inherited and owned operations. Any inherited operation that has the same signature
 	* (having the same name and parameter type order) in an inheriting type is not included.
-	* @returns {Interfaces.Operation[]}
+	* @returns {elements.Operation[]}
 	*/
-	public getAllOperations(): Interfaces.Operation[]
+	public getAllOperations(): elements.Operation[]
 	{
 		return this.modelDelegate.getAllOperations(this);
 	}
-	/**
-	* Gets the first direct generalization relationship of the element.
-	* @returns {Interfaces.Generalization}
-	*/
-	public getFirstGeneralization(): Interfaces.Generalization | null
-	{
-		return this.modelDelegate.getFirstGeneralization(this);
-	}
-	/**
-	* Gets the first classifier that is an immediate general of the current element.
-	* @returns {Interfaces.Classifier}
-	*/
-	public getFirstParent(): Interfaces.Classifier | null
-	{
-		return this.modelDelegate.getFirstParent(this);
-	}
-	/**
-	* Gives all of the immediate ancestors of a generalized Classifier.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getParents(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getParents(this);
-	}
+
 	/**
 	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
 	* specific classifiers will appear before more general classifiers.
-	* @returns {Interfaces.Classifier[]}
+	* @returns {elements.Classifier[]}
 	*/
-	public getAllParents(): Interfaces.Classifier[]
+	public getAllParents(): elements.Classifier[]
 	{
 		return this.modelDelegate.getAllParents(this);
 	}
-	/**
-	* Gets all classifiers of which this classifier is a direct general.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getSpecializations(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getSpecializations(this);
-	}
+
 	/**
 	* Gets all classifiers of which this element is a direct or indirect general.
-	* @returns {Interfaces.Classifier[]}
+	* @returns {elements.Classifier[]}
 	*/
-	public getAllSpecializations(): Interfaces.Classifier[]
+	public getAllSpecializations(): elements.Classifier[]
 	{
 		return this.modelDelegate.getAllSpecializations(this);
 	}
+
 	/**
-	* Gets all packages that contain this Package, working inwards from the top Package to the owning
-	* package.
-	* @returns {Interfaces.Package[]} A collection of Packages.
+	* Gets the first direct generalization relationship of the element.
+	* @returns {elements.Generalization}
 	*/
-	public getNestingPackages(): Interfaces.Package[]
+	public getFirstGeneralization(): elements.Generalization | null
 	{
-		return this.modelDelegate.getNestingPackages(this);
+		return this.modelDelegate.getFirstGeneralization(this);
 	}
+
+	/**
+	* Gets the first classifier that is an immediate general of the current element.
+	* @returns {elements.Classifier}
+	*/
+	public getFirstParent(): elements.Classifier | null
+	{
+		return this.modelDelegate.getFirstParent(this);
+	}
+
 	/**
 	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
 	* from the package that is defined as namespace root up to but not including the PackageableElement
@@ -1767,6 +2099,26 @@ export class Enumeration extends Element implements Interfaces.Enumeration
 	{
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
+
+	/**
+	* Gets all packages that contain this Package, working inwards from the top Package to the owning
+	* package.
+	* @returns {elements.Package[]} A collection of Packages.
+	*/
+	public getNestingPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestingPackages(this);
+	}
+
+	/**
+	* Gives all of the immediate ancestors of a generalized Classifier.
+	* @returns {elements.Classifier[]}
+	*/
+	public getParents(): elements.Classifier[]
+	{
+		return this.modelDelegate.getParents(this);
+	}
+
 	/**
 	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
 	* constructed working inwards from the package that is defined as namespace root up to and including
@@ -1779,93 +2131,106 @@ export class Enumeration extends Element implements Interfaces.Enumeration
 	{
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
+
+	/**
+	* Gets all classifiers of which this classifier is a direct general.
+	* @returns {elements.Classifier[]}
+	*/
+	public getSpecializations(): elements.Classifier[]
+	{
+		return this.modelDelegate.getSpecializations(this);
+	}
 }
 
-export class Comment extends Element implements Interfaces.Comment
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.comment;
+export class DocumentReference implements elements.DocumentReference {
+
+	public location!: elements.DocumentLocationKind;
+
+	public name: string = '';
+
+	public path: string = '';
+}
+
+export class Comment extends Element implements elements.Comment {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.comment;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
 	public body: string = '';
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
 }
 
-export class Association extends Element implements Interfaces.Association
-{
-	constructor(modelDelegate:ModelDelegate, owner: Interfaces.Element | null) {super(modelDelegate, owner);}
-	public readonly elementType:Interfaces.ElementType = Interfaces.ElementType.association;
-	public memberEnds: Interfaces.Property[] = [];
-	public ownedEnds: Interfaces.Property[] = [];
-	public appliedStereotypes: Interfaces.Stereotype[] = [];
-	public taggedValues: Interfaces.TaggedValueSpecification[] = [];
+export class Association extends Element implements elements.Association {
+	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
+
+	public readonly elementType:elements.ElementType = elements.ElementType.association;
+
+	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public generalizations: elements.Generalization[] = [];
+
 	public isAbstract: boolean = false;
+
 	public isFinalSpecialization: boolean = false;
-	public generalizations: Interfaces.Generalization[] = [];
+
 	public isInferred: boolean = false;
-	public get package(): Interfaces.Package {
+
+	public isLeaf: boolean = false;
+
+	public memberEnds: elements.Property[] = [];
+
+	public name: string = '';
+
+	public ownedEnds: elements.Property[] = [];
+
+	public get package(): elements.Package {
 		return this.modelDelegate.getPackage(this);
 	}
-	public name: string = '';
-	public visibility: Interfaces.VisibilityKind | null = null;
-	public isLeaf: boolean = false;
-	/**
-	* Gets the first direct generalization relationship of the element.
-	* @returns {Interfaces.Generalization}
-	*/
-	public getFirstGeneralization(): Interfaces.Generalization | null
-	{
-		return this.modelDelegate.getFirstGeneralization(this);
-	}
-	/**
-	* Gets the first classifier that is an immediate general of the current element.
-	* @returns {Interfaces.Classifier}
-	*/
-	public getFirstParent(): Interfaces.Classifier | null
-	{
-		return this.modelDelegate.getFirstParent(this);
-	}
-	/**
-	* Gives all of the immediate ancestors of a generalized Classifier.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getParents(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getParents(this);
-	}
+
+	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public visibility: elements.VisibilityKind | null = null;
+
 	/**
 	* Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more
 	* specific classifiers will appear before more general classifiers.
-	* @returns {Interfaces.Classifier[]}
+	* @returns {elements.Classifier[]}
 	*/
-	public getAllParents(): Interfaces.Classifier[]
+	public getAllParents(): elements.Classifier[]
 	{
 		return this.modelDelegate.getAllParents(this);
 	}
-	/**
-	* Gets all classifiers of which this classifier is a direct general.
-	* @returns {Interfaces.Classifier[]}
-	*/
-	public getSpecializations(): Interfaces.Classifier[]
-	{
-		return this.modelDelegate.getSpecializations(this);
-	}
+
 	/**
 	* Gets all classifiers of which this element is a direct or indirect general.
-	* @returns {Interfaces.Classifier[]}
+	* @returns {elements.Classifier[]}
 	*/
-	public getAllSpecializations(): Interfaces.Classifier[]
+	public getAllSpecializations(): elements.Classifier[]
 	{
 		return this.modelDelegate.getAllSpecializations(this);
 	}
+
 	/**
-	* Gets all packages that contain this Package, working inwards from the top Package to the owning
-	* package.
-	* @returns {Interfaces.Package[]} A collection of Packages.
+	* Gets the first direct generalization relationship of the element.
+	* @returns {elements.Generalization}
 	*/
-	public getNestingPackages(): Interfaces.Package[]
+	public getFirstGeneralization(): elements.Generalization | null
 	{
-		return this.modelDelegate.getNestingPackages(this);
+		return this.modelDelegate.getFirstGeneralization(this);
 	}
+
+	/**
+	* Gets the first classifier that is an immediate general of the current element.
+	* @returns {elements.Classifier}
+	*/
+	public getFirstParent(): elements.Classifier | null
+	{
+		return this.modelDelegate.getFirstParent(this);
+	}
+
 	/**
 	* Constructs a name from the names of the nesting packages. The name is constructed working inwards
 	* from the package that is defined as namespace root up to but not including the PackageableElement
@@ -1878,6 +2243,26 @@ export class Association extends Element implements Interfaces.Association
 	{
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
+
+	/**
+	* Gets all packages that contain this Package, working inwards from the top Package to the owning
+	* package.
+	* @returns {elements.Package[]} A collection of Packages.
+	*/
+	public getNestingPackages(): elements.Package[]
+	{
+		return this.modelDelegate.getNestingPackages(this);
+	}
+
+	/**
+	* Gives all of the immediate ancestors of a generalized Classifier.
+	* @returns {elements.Classifier[]}
+	*/
+	public getParents(): elements.Classifier[]
+	{
+		return this.modelDelegate.getParents(this);
+	}
+
 	/**
 	* Constructs a name from the PackageableElement and the names of the nesting packages. The name is
 	* constructed working inwards from the package that is defined as namespace root up to and including
@@ -1889,5 +2274,14 @@ export class Association extends Element implements Interfaces.Association
 	public getQualifiedName(separator?: string): string
 	{
 		return this.modelDelegate.getQualifiedName(this, separator);
+	}
+
+	/**
+	* Gets all classifiers of which this classifier is a direct general.
+	* @returns {elements.Classifier[]}
+	*/
+	public getSpecializations(): elements.Classifier[]
+	{
+		return this.modelDelegate.getSpecializations(this);
 	}
 }

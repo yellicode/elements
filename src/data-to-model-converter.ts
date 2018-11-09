@@ -11,14 +11,12 @@
 * 
 * Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
 */
-import { StringUtility } from '@yellicode/core';
-import * as Interfaces from "./interfaces";
-import * as Data from "./data-interfaces";
-import * as Classes from "./classes";
-import { ModelDelegate } from "./model-delegate";
-import { ElementMap}  from "./element-map";
-import { ProfileExtender } from "./profile-extender";
-import { ElementComparer } from "./element-comparer";
+import * as elements from './interfaces';
+import * as data from './data-interfaces';
+import * as classes from './classes';
+import { ModelDelegate } from './model-delegate-interface';
+import { ElementMap } from './element-map-interface';
+import { ElementComparer } from './element-comparer-interface';
 
 const PRIMITIVE_BOOLEAN_ID = "boolean_id";
 const PRIMITIVE_INTEGER_ID = "integer_id";
@@ -30,78 +28,76 @@ const PRIMITIVE_UNLIMITEDNATURAL_ID = "unlimitednatural_id";
 export class DataToModelConverter
 {
 	private referencesToResolve: {target:any, data:any, resolvefn: (target:any, element:any) => void }[] = [];
-	private elementMap: ElementMap = new ElementMap();
-	public modelDelegate: ModelDelegate = new ModelDelegate(this.elementMap);
 
-	private createPrimitiveTypes(): Interfaces.PrimitiveType[]
+	private createPrimitiveTypes(): elements.PrimitiveType[]
 	{
-		const result:Interfaces.PrimitiveType[] = [];
+		const result:elements.PrimitiveType[] = [];
 
-		const booleanType = new Classes.PrimitiveType(this.modelDelegate, null);
+		const booleanType = new classes.PrimitiveType(this.modelDelegate, null);
 		booleanType.id = PRIMITIVE_BOOLEAN_ID;
 		booleanType.name = 'boolean';
 		result.push(booleanType);
 
-		const integerType = new Classes.PrimitiveType(this.modelDelegate, null);
+		const integerType = new classes.PrimitiveType(this.modelDelegate, null);
 		integerType.id = PRIMITIVE_INTEGER_ID;
 		integerType.name = 'integer';
 		result.push(integerType);
 
-		const realType = new Classes.PrimitiveType(this.modelDelegate, null);
+		const realType = new classes.PrimitiveType(this.modelDelegate, null);
 		realType.id = PRIMITIVE_REAL_ID;
 		realType.name = 'real';
 		result.push(realType);
 
-		const stringType = new Classes.PrimitiveType(this.modelDelegate, null);
+		const stringType = new classes.PrimitiveType(this.modelDelegate, null);
 		stringType.id = PRIMITIVE_STRING_ID;
 		stringType.name = 'string';
 		result.push(stringType);
 
-		const objectType = new Classes.PrimitiveType(this.modelDelegate, null);
+		const objectType = new classes.PrimitiveType(this.modelDelegate, null);
 		objectType.id = PRIMITIVE_OBJECT_ID;
 		objectType.name = 'object';
 		result.push(objectType);
 
-		const unlimitedNaturalType = new Classes.PrimitiveType(this.modelDelegate, null);
+		const unlimitedNaturalType = new classes.PrimitiveType(this.modelDelegate, null);
 		unlimitedNaturalType.id = PRIMITIVE_UNLIMITEDNATURAL_ID;
 		unlimitedNaturalType.name = 'UnlimitedNatural';
 		result.push(unlimitedNaturalType);
 		return result;
 	}
 
-	private createElementType(data: Data.ElementType): Interfaces.ElementType
+	private createElementType(elementData: data.ElementType): elements.ElementType
 	{
-		switch (data) // serialized as string
+		switch (elementData) // serialized as string
 		{
-			case 'class': return Interfaces.ElementType.class;
-			case 'stereotype': return Interfaces.ElementType.stereotype;
-			case 'package': return Interfaces.ElementType.package;
-			case 'profile': return Interfaces.ElementType.profile;
-			case 'property': return Interfaces.ElementType.property;
-			case 'dataType': return Interfaces.ElementType.dataType;
-			case 'primitiveType': return Interfaces.ElementType.primitiveType;
-			case 'parameter': return Interfaces.ElementType.parameter;
-			case 'operation': return Interfaces.ElementType.operation;
-			case 'model': return Interfaces.ElementType.model;
-			case 'literalUnlimitedNatural': return Interfaces.ElementType.literalUnlimitedNatural;
-			case 'literalString': return Interfaces.ElementType.literalString;
-			case 'literalReal': return Interfaces.ElementType.literalReal;
-			case 'literalNull': return Interfaces.ElementType.literalNull;
-			case 'literalInteger': return Interfaces.ElementType.literalInteger;
-			case 'literalBoolean': return Interfaces.ElementType.literalBoolean;
-			case 'interfaceRealization': return Interfaces.ElementType.interfaceRealization;
-			case 'interface': return Interfaces.ElementType.interface;
-			case 'generalization': return Interfaces.ElementType.generalization;
-			case 'enumerationLiteral': return Interfaces.ElementType.enumerationLiteral;
-			case 'enumeration': return Interfaces.ElementType.enumeration;
-			case 'comment': return Interfaces.ElementType.comment;
-			case 'association': return Interfaces.ElementType.association;
-			default: throw `Error reading model. Could not map ElementType value '${data}'.`;
+			case 'class': return elements.ElementType.class;
+			case 'stereotype': return elements.ElementType.stereotype;
+			case 'property': return elements.ElementType.property;
+			case 'package': return elements.ElementType.package;
+			case 'profile': return elements.ElementType.profile;
+			case 'dataType': return elements.ElementType.dataType;
+			case 'primitiveType': return elements.ElementType.primitiveType;
+			case 'parameter': return elements.ElementType.parameter;
+			case 'operation': return elements.ElementType.operation;
+			case 'model': return elements.ElementType.model;
+			case 'literalUnlimitedNatural': return elements.ElementType.literalUnlimitedNatural;
+			case 'literalString': return elements.ElementType.literalString;
+			case 'literalReal': return elements.ElementType.literalReal;
+			case 'literalNull': return elements.ElementType.literalNull;
+			case 'literalInteger': return elements.ElementType.literalInteger;
+			case 'literalBoolean': return elements.ElementType.literalBoolean;
+			case 'interfaceRealization': return elements.ElementType.interfaceRealization;
+			case 'interface': return elements.ElementType.interface;
+			case 'generalization': return elements.ElementType.generalization;
+			case 'enumerationLiteral': return elements.ElementType.enumerationLiteral;
+			case 'enumeration': return elements.ElementType.enumeration;
+			case 'comment': return elements.ElementType.comment;
+			case 'association': return elements.ElementType.association;
+			default: throw `Error reading model. Could not map ElementType value '${elementData}'.`;
 		}
 	}
 
 
-    constructor() {
+    constructor(private elementMap: ElementMap, private modelDelegate: ModelDelegate, private elementComparer: ElementComparer) {
         const primitiveTypes = this.createPrimitiveTypes();
         primitiveTypes.forEach(t => {
             this.elementMap.addElement(t, null);
@@ -121,17 +117,17 @@ export class DataToModelConverter
     /**
      * NOTE: this function must be edited in the partial template file.
      */
-    public convert(data: Data.ModelData, profiles: Interfaces.Profile[] | null): Interfaces.Model {
+    public convert(elementData: data.ModelData, profiles: elements.Profile[] | null): elements.Model {
 
         // this.elementIdPrefix = elementIdPrefix;
 
-        // Extend prototypes with profile specific accessors
-        if (profiles) {
-            ProfileExtender.applyProfiles(profiles);
-        }
+        // Deprecated: Extend prototypes with profile specific accessors
+        // if (profiles) {
+        //     ProfileExtender.applyProfiles(profiles);
+        // }
 
         // Load the object tree recursively. This will fill elementMap and referencesToResolve.
-        const model = this.createModel(data);
+        const model = this.createModel(elementData);
         
         // Now the object tree is loaded, set references between objects
         this.referencesToResolve.forEach((item) => {
@@ -145,22 +141,22 @@ export class DataToModelConverter
     /**
      * NOTE: this function must be edited in the partial template file.
      */
-    private addElementById(data: Data.ElementData, element: Interfaces.Element) {
-        if ((!data.id || data.id.length === 0)) {
+    private addElementById(elementData: data.ElementData, element: elements.Element) {
+        if ((!elementData.id || elementData.id.length === 0)) {
             // The following element types do not require an id 
-            if (data.elementType !== 'enumerationLiteral' && data.elementType !== 'comment' && !DataToModelConverter.isValueSpecification(data.elementType)) {
-                console.warn(`Mising id on element of type '${data.elementType}'.`);
+            if (elementData.elementType !== 'enumerationLiteral' && elementData.elementType !== 'comment' && !DataToModelConverter.isValueSpecification(elementData.elementType)) {
+                console.warn(`Mising id on element of type '${elementData.elementType}'.`);
             }
             return;
         }
-        this.elementMap.addElement(element, data);
+        this.elementMap.addElement(element, elementData);
     }
 
     /**
      * Gets the id of the matching built-in primitive type if the element type is a literal type.
      * NOTE: this function must be edited in the partial template file.
      */
-    private static getTypeIdIfLiteralType(elementType: Data.ElementType): string | undefined {
+    private static getTypeIdIfLiteralType(elementType: data.ElementType): string | undefined {
         switch (elementType) {
             case 'literalBoolean':
                 return PRIMITIVE_BOOLEAN_ID;
@@ -182,16 +178,16 @@ export class DataToModelConverter
    * Custom function to create element properties from tagged values. 
    * NOTE: this function must be edited in the partial template file.
    */
-    private mapTaggedValues(data: Data.ElementData, element: Interfaces.Element): void {
-        if (!data.appliedStereotypes)
+    private mapTaggedValues(elementData: data.ElementData, element: elements.Element): void {
+        if (!elementData.appliedStereotypes)
             return;
 
         // Get the stereotypes applied to this element. For each stereotype, get the meta properties.	
         // Note that we should not use element.appliedStereotypes because that data is not available
         // at this point.
-        data.appliedStereotypes.forEach(stereotypeId => {
+        elementData.appliedStereotypes.forEach(stereotypeId => {
             // Lookup the stereotype by id. It should be indexed because the profiles are loaded first
-            const st: Interfaces.Stereotype | null = this.elementMap.getElementById<Interfaces.Stereotype>(stereotypeId);
+            const st: elements.Stereotype | null = this.elementMap.getElementById<elements.Stereotype>(stereotypeId);
             if (!st) {
                 return console.warn(`Element ${element.id} refers to undefined stereotype ${stereotypeId}.`);
             }
@@ -202,8 +198,8 @@ export class DataToModelConverter
                     return;
 
                 //  Extend the element with the property. But determine the value first.				
-                let valueSpecification: Interfaces.ValueSpecification | null = null;
-                const taggedValue = data.taggedValues ? data.taggedValues.find(v => v.definition === metaProperty.id) : null;
+                let valueSpecification: elements.ValueSpecification | null = null;
+                const taggedValue = elementData.taggedValues ? elementData.taggedValues.find(v => v.definition === metaProperty.id) : null;
                 if (taggedValue) {
                     valueSpecification = this.createValueSpecification(taggedValue.specification, element);
                 }
@@ -215,298 +211,70 @@ export class DataToModelConverter
         });
     }
     
-	private createDocumentLocationKind(data: Data.DocumentLocationKind): Interfaces.DocumentLocationKind
+	private createVisibilityKind(elementData: data.VisibilityKind): elements.VisibilityKind
 	{
-		switch (data) // serialized as string
+		switch (elementData) // serialized as string
 		{
-			case 'local': return Interfaces.DocumentLocationKind.local;
-			case 'npm': return Interfaces.DocumentLocationKind.npm;
-			default: throw `Error reading model. Could not map DocumentLocationKind value '${data}'.`;
+			case 'public': return elements.VisibilityKind.public;
+			case 'private': return elements.VisibilityKind.private;
+			case 'protected': return elements.VisibilityKind.protected;
+			case 'package': return elements.VisibilityKind.package;
+			default: throw `Error reading model. Could not map VisibilityKind value '${elementData}'.`;
 		}
 	}
 
-	private mapDocumentReference(data: Data.DocumentReferenceData, target: Interfaces.DocumentReference, owner: Interfaces.Element): void
+	private mapElement(elementData: data.ElementData, target: elements.Element, owner: elements.Element): void
 	{
-		if (data.location) { target.location = this.createDocumentLocationKind(data.location);}
-		if (data.name) { target.name = data.name; }
-		if (data.path) { target.path = data.path; }
+		target.id = this.createElementId(elementData.id);
+		if (elementData.ownedComments) { target.ownedComments.push(...elementData.ownedComments.map((e) => { return this.createComment(e, target); }));}
+		if (elementData.taggedValues) { target.taggedValues.push(...elementData.taggedValues.map((e) => { return this.createTaggedValueSpecification(e, target); }));}
+		this.referencesToResolve.push({target:target, data:elementData, resolvefn: this.resolveElementReferences});
 	}
 
-	private createDocumentReference(data: Data.DocumentReferenceData, owner: Interfaces.Element): Interfaces.DocumentReference
+	private resolveElementReferences(target: elements.Element, elementData: data.ElementData): void
 	{
-		const element = new Classes.DocumentReference();
-		this.mapDocumentReference(data, element, owner);
-		return element;
+		if (elementData.appliedStereotypes) { target.appliedStereotypes.push(...this.elementMap.getElementsByIdList<elements.Stereotype>(elementData.appliedStereotypes));}
 	}
 
-	private mapStereotypeExtension(data: Data.StereotypeExtensionData, target: Interfaces.StereotypeExtension, owner: Interfaces.Element): void
+	private mapNamedElement(elementData: data.NamedElementData, target: elements.NamedElement, owner: elements.Element): void
 	{
-		if (data.isRequired) { target.isRequired = data.isRequired; }
-		if (data.metaClass) { target.metaClass = this.createElementType(data.metaClass);}
+		if (elementData.name) { target.name = elementData.name; }
+		if (elementData.visibility) { target.visibility = this.createVisibilityKind(elementData.visibility);}
 	}
 
-	private createStereotypeExtension(data: Data.StereotypeExtensionData, owner: Interfaces.Element): Interfaces.StereotypeExtension
+	private mapTypedElement(elementData: data.TypedElementData, target: elements.TypedElement, owner: elements.Element): void
 	{
-		const element = new Classes.StereotypeExtension();
-		this.mapStereotypeExtension(data, element, owner);
-		return element;
+		this.referencesToResolve.push({target:target, data:elementData, resolvefn: this.resolveTypedElementReferences});
 	}
 
-	private mapTaggedValueSpecification(data: Data.TaggedValueSpecificationData, target: Interfaces.TaggedValueSpecification, owner: Interfaces.Element): void
-	{
-		if (data.specification) { target.specification = this.createValueSpecification(data.specification, owner);}
-		this.referencesToResolve.push({target:target, data:data, resolvefn: this.resolveTaggedValueSpecificationReferences});
-	}
-
-	private resolveTaggedValueSpecificationReferences(target: Interfaces.TaggedValueSpecification, data: Data.TaggedValueSpecificationData): void
-	{
-		if (!data.definition) console.error(`Unable to set property 'definition'. The following data is missing a 'definition' field: ${JSON.stringify(data)}.`);
-		const definition = this.elementMap.getElementById<Interfaces.Property>(data.definition);
-		if (definition) { target.definition = definition } else console.error(`Unable to set property 'definition'. Property with id '${data.definition}' does not exist.`);
-	}
-
-	private createTaggedValueSpecification(data: Data.TaggedValueSpecificationData, owner: Interfaces.Element): Interfaces.TaggedValueSpecification
-	{
-		const element = new Classes.TaggedValueSpecification();
-		this.mapTaggedValueSpecification(data, element, owner);
-		return element;
-	}
-
-	private mapElement(data: Data.ElementData, target: Interfaces.Element, owner: Interfaces.Element): void
-	{
-		target.id = this.createElementId(data.id);
-		if (data.ownedComments) { target.ownedComments.push(...data.ownedComments.map((e) => { return this.createComment(e, target); }));}
-		if (data.taggedValues) { target.taggedValues.push(...data.taggedValues.map((e) => { return this.createTaggedValueSpecification(e, target); }));}
-		this.referencesToResolve.push({target:target, data:data, resolvefn: this.resolveElementReferences});
-	}
-
-	private resolveElementReferences(target: Interfaces.Element, data: Data.ElementData): void
-	{
-		if (data.appliedStereotypes) { target.appliedStereotypes.push(...this.elementMap.getElementsByIdList<Interfaces.Stereotype>(data.appliedStereotypes));}
-	}
-
-	private mapNamedElement(data: Data.NamedElementData, target: Interfaces.NamedElement, owner: Interfaces.Element): void
-	{
-		if (data.name) { target.name = data.name; }
-		if (data.visibility) { target.visibility = this.createVisibilityKind(data.visibility);}
-	}
-
-	private mapRedefinableElement(data: Data.RedefinableElementData, target: Interfaces.RedefinableElement, owner: Interfaces.Element): void
-	{
-		if (data.isLeaf) { target.isLeaf = data.isLeaf; }
-	}
-
-	private mapPackageableElement(data: Data.PackageableElementData, target: Interfaces.PackageableElement, owner: Interfaces.Element): void
-	{
-	}
-
-	private createPackageableElement(data: Data.PackageableElementData, owner: Interfaces.Element): Interfaces.PackageableElement
-	{
-		let result: Interfaces.PackageableElement;
-		switch (data.elementType)
-		{
-			case "class":
-				return this.createClass(<Data.ClassData>data, owner);
-			case "stereotype":
-				return this.createStereotype(<Data.StereotypeData>data, owner);
-			case "dataType":
-				return this.createDataType(<Data.DataTypeData>data, owner);
-			case "primitiveType":
-				return this.createPrimitiveType(<Data.PrimitiveTypeData>data, owner);
-			case "enumeration":
-				return this.createEnumeration(<Data.EnumerationData>data, owner);
-			case "interface":
-				return this.createInterface(<Data.InterfaceData>data, owner);
-			case "association":
-				return this.createAssociation(<Data.AssociationData>data, owner);
-			case "package":
-				return this.createPackage(<Data.PackageData>data, owner);
-			case "profile":
-				return this.createProfile(<Data.ProfileData>data, owner);
-			default: throw `Error reading model. Could not map PackageableElement of type ${data.elementType}.`;
-		}
-	}
-
-	private static isPackageableElement(elementType: Data.ElementType): boolean
-	{
-		switch (elementType)
-		{
-			case "class":
-			case "stereotype":
-			case "dataType":
-			case "primitiveType":
-			case "enumeration":
-			case "interface":
-			case "association":
-			case "package":
-			case "profile":
-				return true;
-			default: return false;
-		}
-	}
-
-	private mapType(data: Data.TypeData, target: Interfaces.Type, owner: Interfaces.Element): void
-	{
-		if (data.isInferred) { target.isInferred = data.isInferred; }
-	}
-
-	private mapClassifier(data: Data.ClassifierData, target: Interfaces.Classifier, owner: Interfaces.Element): void
-	{
-		if (data.generalizations) { target.generalizations.push(...data.generalizations.map((e) => { return this.createGeneralization(e, target); }));}
-		if (data.isAbstract) { target.isAbstract = data.isAbstract; }
-		if (data.isFinalSpecialization) { target.isFinalSpecialization = data.isFinalSpecialization; }
-	}
-
-	private mapMemberedClassifier(data: Data.MemberedClassifierData, target: Interfaces.MemberedClassifier, owner: Interfaces.Element): void
-	{
-		if (data.ownedAttributes) { target.ownedAttributes.push(...data.ownedAttributes.map((e) => { return this.createProperty(e, target); }).sort(ElementComparer.compareOrderedElements));}
-		if (data.ownedOperations) { target.ownedOperations.push(...data.ownedOperations.map((e) => { return this.createOperation(e, target); }).sort(ElementComparer.compareOrderedElements));}
-	}
-
-	private mapBehavioredClassifier(data: Data.BehavioredClassifierData, target: Interfaces.BehavioredClassifier, owner: Interfaces.Element): void
-	{
-		if (data.interfaceRealizations) { target.interfaceRealizations.push(...data.interfaceRealizations.map((e) => { return this.createInterfaceRealization(e, target); }));}
-	}
-
-	private mapClass(data: Data.ClassData, target: Interfaces.Class, owner: Interfaces.Element): void
-	{
-		if (data.isActive) { target.isActive = data.isActive; }
-	}
-
-	private createClass(data: Data.ClassData, owner: Interfaces.Element): Interfaces.Class
-	{
-		const element = new Classes.Class(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapPackageableElement(data, element, element);
-		this.mapType(data, element, element);
-		this.mapRedefinableElement(data, element, element);
-		this.mapClassifier(data, element, element);
-		this.mapBehavioredClassifier(data, element, element);
-		this.mapMemberedClassifier(data, element, element);
-		this.mapClass(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapStereotype(data: Data.StereotypeData, target: Interfaces.Stereotype, owner: Interfaces.Element): void
-	{
-		if (data.extends) { target.extends.push(...data.extends.map((e) => { return this.createStereotypeExtension(e, target); }));}
-		if (data.safeName) { target.safeName = data.safeName; }
-	}
-
-	private createStereotype(data: Data.StereotypeData, owner: Interfaces.Element): Interfaces.Stereotype
-	{
-		const element = new Classes.Stereotype(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapPackageableElement(data, element, element);
-		this.mapType(data, element, element);
-		this.mapRedefinableElement(data, element, element);
-		this.mapClassifier(data, element, element);
-		this.mapBehavioredClassifier(data, element, element);
-		this.mapMemberedClassifier(data, element, element);
-		this.mapClass(data, element, element);
-		this.mapStereotype(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapPackage(data: Data.PackageData, target: Interfaces.Package, owner: Interfaces.Element): void
-	{
-		if (data.isNamespaceRoot) { target.isNamespaceRoot = data.isNamespaceRoot; }
-		if (data.packagedElements) { target.packagedElements.push(...data.packagedElements.map((e) => { return this.createPackageableElement(e, target); }).sort(ElementComparer.comparePackageableElements));}
-		this.referencesToResolve.push({target:target, data:data, resolvefn: this.resolvePackageReferences});
-	}
-
-	private resolvePackageReferences(target: Interfaces.Package, data: Data.PackageData): void
-	{
-		if (data.appliedProfiles) { target.appliedProfiles.push(...this.elementMap.getElementsByIdList<Interfaces.Profile>(data.appliedProfiles));}
-	}
-
-	private createPackage(data: Data.PackageData, owner: Interfaces.Element): Interfaces.Package
-	{
-		const element = new Classes.Package(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapPackageableElement(data, element, element);
-		this.mapPackage(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapProfile(data: Data.ProfileData, target: Interfaces.Profile, owner: Interfaces.Element): void
-	{
-		if (data.safeName) { target.safeName = data.safeName; }
-	}
-
-	private createProfile(data: Data.ProfileData, owner: Interfaces.Element): Interfaces.Profile
-	{
-		const element = new Classes.Profile(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapPackageableElement(data, element, element);
-		this.mapPackage(data, element, element);
-		this.mapProfile(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapOrderedElement(data: Data.OrderedElementData, target: Interfaces.OrderedElement, owner: Interfaces.Element): void
-	{
-		if (data.order) { target.order = data.order; }
-	}
-
-	private createVisibilityKind(data: Data.VisibilityKind): Interfaces.VisibilityKind
-	{
-		switch (data) // serialized as string
-		{
-			case 'public': return Interfaces.VisibilityKind.public;
-			case 'private': return Interfaces.VisibilityKind.private;
-			case 'protected': return Interfaces.VisibilityKind.protected;
-			case 'package': return Interfaces.VisibilityKind.package;
-			default: throw `Error reading model. Could not map VisibilityKind value '${data}'.`;
-		}
-	}
-
-	private mapTypedElement(data: Data.TypedElementData, target: Interfaces.TypedElement, owner: Interfaces.Element): void
-	{
-		this.referencesToResolve.push({target:target, data:data, resolvefn: this.resolveTypedElementReferences});
-	}
-
-	private resolveTypedElementReferences(target: Interfaces.TypedElement, data: Data.TypedElementData): void
+	private resolveTypedElementReferences(target: elements.TypedElement, elementData: data.TypedElementData): void
 	{
 		// Special case for TypedElement: if this is a literal specification, the type can be a predefined primitive.
-		if (!data.type) {data.type = DataToModelConverter.getTypeIdIfLiteralType(data.elementType);}
-		target.type = data.type ? this.elementMap.getElementById<Interfaces.Type>(data.type) : null;
+		if (!elementData.type) {elementData.type = DataToModelConverter.getTypeIdIfLiteralType(elementData.elementType);}
+		target.type = elementData.type ? this.elementMap.getElementById<elements.Type>(elementData.type) : null;
 	}
 
-	private createValueSpecification(data: Data.ValueSpecificationData, owner: Interfaces.Element): Interfaces.ValueSpecification
+	private createValueSpecification(elementData: data.ValueSpecificationData, owner: elements.Element): elements.ValueSpecification
 	{
-		let result: Interfaces.ValueSpecification;
-		switch (data.elementType)
+		switch (elementData.elementType)
 		{
 			case "literalUnlimitedNatural":
-				return this.createLiteralUnlimitedNatural(<Data.LiteralUnlimitedNaturalData>data, owner);
+				return this.createLiteralUnlimitedNatural(<data.LiteralUnlimitedNaturalData>elementData, owner);
 			case "literalString":
-				return this.createLiteralString(<Data.LiteralStringData>data, owner);
+				return this.createLiteralString(<data.LiteralStringData>elementData, owner);
 			case "literalReal":
-				return this.createLiteralReal(<Data.LiteralRealData>data, owner);
+				return this.createLiteralReal(<data.LiteralRealData>elementData, owner);
 			case "literalNull":
-				return this.createLiteralNull(<Data.LiteralNullData>data, owner);
+				return this.createLiteralNull(<data.LiteralNullData>elementData, owner);
 			case "literalInteger":
-				return this.createLiteralInteger(<Data.LiteralIntegerData>data, owner);
+				return this.createLiteralInteger(<data.LiteralIntegerData>elementData, owner);
 			case "literalBoolean":
-				return this.createLiteralBoolean(<Data.LiteralBooleanData>data, owner);
-			default: throw `Error reading model. Could not map ValueSpecification of type ${data.elementType}.`;
+				return this.createLiteralBoolean(<data.LiteralBooleanData>elementData, owner);
+			default: throw `Error reading model. Could not map ValueSpecification of type ${elementData.elementType}.`;
 		}
 	}
 
-	private static isValueSpecification(elementType: Data.ElementType): boolean
+	private static isValueSpecification(elementType: data.ElementType): boolean
 	{
 		switch (elementType)
 		{
@@ -521,403 +289,629 @@ export class DataToModelConverter
 		}
 	}
 
-	private mapMultiplicityElement(data: Data.MultiplicityElementData, target: Interfaces.MultiplicityElement, owner: Interfaces.Element): void
+	private mapPackageableElement(elementData: data.PackageableElementData, target: elements.PackageableElement, owner: elements.Element): void
 	{
-		if (data.isOrdered) { target.isOrdered = data.isOrdered; }
-		if (data.isUnique) { target.isUnique = data.isUnique; }
-		if (data.lowerValue) { target.lowerValue = this.createValueSpecification(data.lowerValue, target);}
-		if (data.upperValue) { target.upperValue = this.createValueSpecification(data.upperValue, target);}
 	}
 
-	private mapFeature(data: Data.FeatureData, target: Interfaces.Feature, owner: Interfaces.Element): void
+	private createPackageableElement(elementData: data.PackageableElementData, owner: elements.Element): elements.PackageableElement
 	{
-		if (data.isStatic) { target.isStatic = data.isStatic; }
-	}
-
-	private mapStructuralFeature(data: Data.StructuralFeatureData, target: Interfaces.StructuralFeature, owner: Interfaces.Element): void
-	{
-		if (data.isReadOnly) { target.isReadOnly = data.isReadOnly; }
-	}
-
-	private mapProperty(data: Data.PropertyData, target: Interfaces.Property, owner: Interfaces.Element): void
-	{
-		if (data.aggregation) { target.aggregation = this.createAggregationKind(data.aggregation);}
-		if (data.defaultValue) { target.defaultValue = this.createValueSpecification(data.defaultValue, target);}
-		if (data.isDerived) { target.isDerived = data.isDerived; }
-		if (data.isDerivedUnion) { target.isDerivedUnion = data.isDerivedUnion; }
-		if (data.isID) { target.isID = data.isID; }
-		if (data.isNavigable) { target.isNavigable = data.isNavigable; }
-	}
-
-	private createProperty(data: Data.PropertyData, owner: Interfaces.Element): Interfaces.Property
-	{
-		const element = new Classes.Property(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapRedefinableElement(data, element, element);
-		this.mapOrderedElement(data, element, element);
-		this.mapFeature(data, element, element);
-		this.mapMultiplicityElement(data, element, element);
-		this.mapTypedElement(data, element, element);
-		this.mapStructuralFeature(data, element, element);
-		this.mapProperty(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private createDataType(data: Data.DataTypeData, owner: Interfaces.Element): Interfaces.DataType
-	{
-		const element = new Classes.DataType(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapPackageableElement(data, element, element);
-		this.mapType(data, element, element);
-		this.mapRedefinableElement(data, element, element);
-		this.mapClassifier(data, element, element);
-		this.mapMemberedClassifier(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private createPrimitiveType(data: Data.PrimitiveTypeData, owner: Interfaces.Element): Interfaces.PrimitiveType
-	{
-		const element = new Classes.PrimitiveType(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapPackageableElement(data, element, element);
-		this.mapType(data, element, element);
-		this.mapRedefinableElement(data, element, element);
-		this.mapClassifier(data, element, element);
-		this.mapMemberedClassifier(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private createParameterDirectionKind(data: Data.ParameterDirectionKind): Interfaces.ParameterDirectionKind
-	{
-		switch (data) // serialized as string
+		switch (elementData.elementType)
 		{
-			case 'in': return Interfaces.ParameterDirectionKind.in;
-			case 'inout': return Interfaces.ParameterDirectionKind.inout;
-			case 'out': return Interfaces.ParameterDirectionKind.out;
-			case 'return': return Interfaces.ParameterDirectionKind.return;
-			default: throw `Error reading model. Could not map ParameterDirectionKind value '${data}'.`;
+			case "interface":
+				return this.createInterface(<data.InterfaceData>elementData, owner);
+			case "primitiveType":
+				return this.createPrimitiveType(<data.PrimitiveTypeData>elementData, owner);
+			case "enumeration":
+				return this.createEnumeration(<data.EnumerationData>elementData, owner);
+			case "dataType":
+				return this.createDataType(<data.DataTypeData>elementData, owner);
+			case "stereotype":
+				return this.createStereotype(<data.StereotypeData>elementData, owner);
+			case "class":
+				return this.createClass(<data.ClassData>elementData, owner);
+			case "association":
+				return this.createAssociation(<data.AssociationData>elementData, owner);
+			case "profile":
+				return this.createProfile(<data.ProfileData>elementData, owner);
+			case "package":
+				return this.createPackage(<data.PackageData>elementData, owner);
+			default: throw `Error reading model. Could not map PackageableElement of type ${elementData.elementType}.`;
 		}
 	}
 
-	private mapParameter(data: Data.ParameterData, target: Interfaces.Parameter, owner: Interfaces.Element): void
+	private static isPackageableElement(elementType: data.ElementType): boolean
 	{
-		if (data.defaultValue) { target.defaultValue = this.createValueSpecification(data.defaultValue, target);}
-		if (data.direction) { target.direction = this.createParameterDirectionKind(data.direction);}
-		if (data.isException) { target.isException = data.isException; }
-		if (data.isStream) { target.isStream = data.isStream; }
-	}
-
-	private createParameter(data: Data.ParameterData, owner: Interfaces.Element): Interfaces.Parameter
-	{
-		const element = new Classes.Parameter(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapTypedElement(data, element, element);
-		this.mapMultiplicityElement(data, element, element);
-		this.mapOrderedElement(data, element, element);
-		this.mapParameter(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapBehavioralFeature(data: Data.BehavioralFeatureData, target: Interfaces.BehavioralFeature, owner: Interfaces.Element): void
-	{
-		if (data.isAbstract) { target.isAbstract = data.isAbstract; }
-		if (data.ownedParameters) { target.ownedParameters.push(...data.ownedParameters.map((e) => { return this.createParameter(e, target); }).sort(ElementComparer.compareOrderedElements));}
-	}
-
-	private mapOperation(data: Data.OperationData, target: Interfaces.Operation, owner: Interfaces.Element): void
-	{
-		if (data.isConstructor) { target.isConstructor = data.isConstructor; }
-		if (data.isQuery) { target.isQuery = data.isQuery; }
-	}
-
-	private createOperation(data: Data.OperationData, owner: Interfaces.Element): Interfaces.Operation
-	{
-		const element = new Classes.Operation(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapRedefinableElement(data, element, element);
-		this.mapOrderedElement(data, element, element);
-		this.mapFeature(data, element, element);
-		this.mapBehavioralFeature(data, element, element);
-		this.mapOperation(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private createModel(data: Data.ModelData): Interfaces.Model
-	{
-		const element = new Classes.Model(this.modelDelegate, null);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapPackageableElement(data, element, element);
-		this.mapPackage(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapLiteralUnlimitedNatural(data: Data.LiteralUnlimitedNaturalData, target: Interfaces.LiteralUnlimitedNatural, owner: Interfaces.Element): void
-	{
-		if (data.value) { target.value = new Interfaces.UnlimitedNatural(data.value); }
-	}
-
-	private createLiteralUnlimitedNatural(data: Data.LiteralUnlimitedNaturalData, owner: Interfaces.Element): Interfaces.LiteralUnlimitedNatural
-	{
-		const element = new Classes.LiteralUnlimitedNatural(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapTypedElement(data, element, element);
-		this.mapLiteralUnlimitedNatural(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapLiteralString(data: Data.LiteralStringData, target: Interfaces.LiteralString, owner: Interfaces.Element): void
-	{
-		if (data.value) { target.value = data.value; }
-	}
-
-	private createLiteralString(data: Data.LiteralStringData, owner: Interfaces.Element): Interfaces.LiteralString
-	{
-		const element = new Classes.LiteralString(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapTypedElement(data, element, element);
-		this.mapLiteralString(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapLiteralReal(data: Data.LiteralRealData, target: Interfaces.LiteralReal, owner: Interfaces.Element): void
-	{
-		if (data.value) { target.value = data.value; }
-	}
-
-	private createLiteralReal(data: Data.LiteralRealData, owner: Interfaces.Element): Interfaces.LiteralReal
-	{
-		const element = new Classes.LiteralReal(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapTypedElement(data, element, element);
-		this.mapLiteralReal(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private createLiteralNull(data: Data.LiteralNullData, owner: Interfaces.Element): Interfaces.LiteralNull
-	{
-		const element = new Classes.LiteralNull(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapTypedElement(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapLiteralInteger(data: Data.LiteralIntegerData, target: Interfaces.LiteralInteger, owner: Interfaces.Element): void
-	{
-		if (data.value) { target.value = data.value; }
-	}
-
-	private createLiteralInteger(data: Data.LiteralIntegerData, owner: Interfaces.Element): Interfaces.LiteralInteger
-	{
-		const element = new Classes.LiteralInteger(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapTypedElement(data, element, element);
-		this.mapLiteralInteger(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapLiteralBoolean(data: Data.LiteralBooleanData, target: Interfaces.LiteralBoolean, owner: Interfaces.Element): void
-	{
-		if (data.value) { target.value = data.value; }
-	}
-
-	private createLiteralBoolean(data: Data.LiteralBooleanData, owner: Interfaces.Element): Interfaces.LiteralBoolean
-	{
-		const element = new Classes.LiteralBoolean(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapTypedElement(data, element, element);
-		this.mapLiteralBoolean(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapInterfaceRealization(data: Data.InterfaceRealizationData, target: Interfaces.InterfaceRealization, owner: Interfaces.Element): void
-	{
-		this.referencesToResolve.push({target:target, data:data, resolvefn: this.resolveInterfaceRealizationReferences});
-	}
-
-	private resolveInterfaceRealizationReferences(target: Interfaces.InterfaceRealization, data: Data.InterfaceRealizationData): void
-	{
-		if (!data.contract) console.error(`Unable to set property 'contract'. The following data is missing a 'contract' field: ${JSON.stringify(data)}.`);
-		const contract = this.elementMap.getElementById<Interfaces.Interface>(data.contract);
-		if (contract) { target.contract = contract } else console.error(`Unable to set property 'contract'. Interface with id '${data.contract}' does not exist.`);
-	}
-
-	private createInterfaceRealization(data: Data.InterfaceRealizationData, owner: Interfaces.Element): Interfaces.InterfaceRealization
-	{
-		const element = new Classes.InterfaceRealization(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapInterfaceRealization(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private createInterface(data: Data.InterfaceData, owner: Interfaces.Element): Interfaces.Interface
-	{
-		const element = new Classes.Interface(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapPackageableElement(data, element, element);
-		this.mapType(data, element, element);
-		this.mapRedefinableElement(data, element, element);
-		this.mapClassifier(data, element, element);
-		this.mapMemberedClassifier(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapGeneralization(data: Data.GeneralizationData, target: Interfaces.Generalization, owner: Interfaces.Element): void
-	{
-		if (data.isSubstitutable) { target.isSubstitutable = data.isSubstitutable; }
-		this.referencesToResolve.push({target:target, data:data, resolvefn: this.resolveGeneralizationReferences});
-	}
-
-	private resolveGeneralizationReferences(target: Interfaces.Generalization, data: Data.GeneralizationData): void
-	{
-		if (!data.general) console.error(`Unable to set property 'general'. The following data is missing a 'general' field: ${JSON.stringify(data)}.`);
-		const general = this.elementMap.getElementById<Interfaces.Classifier>(data.general);
-		if (general) { target.general = general } else console.error(`Unable to set property 'general'. Classifier with id '${data.general}' does not exist.`);
-	}
-
-	private createGeneralization(data: Data.GeneralizationData, owner: Interfaces.Element): Interfaces.Generalization
-	{
-		const element = new Classes.Generalization(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapGeneralization(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapEnumerationLiteral(data: Data.EnumerationLiteralData, target: Interfaces.EnumerationLiteral, owner: Interfaces.Element): void
-	{
-		if (data.specification) { target.specification = this.createValueSpecification(data.specification, target);}
-	}
-
-	private createEnumerationLiteral(data: Data.EnumerationLiteralData, owner: Interfaces.Element): Interfaces.EnumerationLiteral
-	{
-		const element = new Classes.EnumerationLiteral(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapOrderedElement(data, element, element);
-		this.mapEnumerationLiteral(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapEnumeration(data: Data.EnumerationData, target: Interfaces.Enumeration, owner: Interfaces.Element): void
-	{
-		if (data.ownedLiterals) { target.ownedLiterals.push(...data.ownedLiterals.map((e) => { return this.createEnumerationLiteral(e, target); }).sort(ElementComparer.compareOrderedElements));}
-		this.referencesToResolve.push({target:target, data:data, resolvefn: this.resolveEnumerationReferences});
-	}
-
-	private resolveEnumerationReferences(target: Interfaces.Enumeration, data: Data.EnumerationData): void
-	{
-		target.baseType = data.baseType ? this.elementMap.getElementById<Interfaces.Type>(data.baseType) : null;
-	}
-
-	private createEnumeration(data: Data.EnumerationData, owner: Interfaces.Element): Interfaces.Enumeration
-	{
-		const element = new Classes.Enumeration(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapPackageableElement(data, element, element);
-		this.mapType(data, element, element);
-		this.mapRedefinableElement(data, element, element);
-		this.mapClassifier(data, element, element);
-		this.mapMemberedClassifier(data, element, element);
-		this.mapEnumeration(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapComment(data: Data.CommentData, target: Interfaces.Comment, owner: Interfaces.Element): void
-	{
-		if (data.body) { target.body = data.body; }
-	}
-
-	private createComment(data: Data.CommentData, owner: Interfaces.Element): Interfaces.Comment
-	{
-		const element = new Classes.Comment(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapComment(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private mapAssociation(data: Data.AssociationData, target: Interfaces.Association, owner: Interfaces.Element): void
-	{
-		if (data.ownedEnds) { target.ownedEnds.push(...data.ownedEnds.map((e) => { return this.createProperty(e, target); }).sort(ElementComparer.compareOrderedElements));}
-		this.referencesToResolve.push({target:target, data:data, resolvefn: this.resolveAssociationReferences});
-	}
-
-	private resolveAssociationReferences(target: Interfaces.Association, data: Data.AssociationData): void
-	{
-		if (data.memberEnds) { target.memberEnds.push(...this.elementMap.getElementsByIdList<Interfaces.Property>(data.memberEnds));}
-	}
-
-	private createAssociation(data: Data.AssociationData, owner: Interfaces.Element): Interfaces.Association
-	{
-		const element = new Classes.Association(this.modelDelegate, owner);
-		this.mapElement(data, element, element);
-		this.mapNamedElement(data, element, element);
-		this.mapPackageableElement(data, element, element);
-		this.mapType(data, element, element);
-		this.mapRedefinableElement(data, element, element);
-		this.mapClassifier(data, element, element);
-		this.mapAssociation(data, element, element);
-		this.mapTaggedValues(data, element); // added by code generation
-		this.addElementById(data, element);
-		return element;
-	}
-
-	private createAggregationKind(data: Data.AggregationKind): Interfaces.AggregationKind
-	{
-		switch (data) // serialized as string
+		switch (elementType)
 		{
-			case 'none': return Interfaces.AggregationKind.none;
-			case 'shared': return Interfaces.AggregationKind.shared;
-			case 'composite': return Interfaces.AggregationKind.composite;
-			default: throw `Error reading model. Could not map AggregationKind value '${data}'.`;
+			case "interface":
+			case "primitiveType":
+			case "enumeration":
+			case "dataType":
+			case "stereotype":
+			case "class":
+			case "association":
+			case "profile":
+			case "package":
+				return true;
+			default: return false;
+		}
+	}
+
+	private mapType(elementData: data.TypeData, target: elements.Type, owner: elements.Element): void
+	{
+		if (elementData.isInferred) { target.isInferred = elementData.isInferred; }
+	}
+
+	private mapTaggedValueSpecification(elementData: data.TaggedValueSpecificationData, target: elements.TaggedValueSpecification, owner: elements.Element): void
+	{
+		if (elementData.specification) { target.specification = this.createValueSpecification(elementData.specification, owner);}
+		this.referencesToResolve.push({target:target, data:elementData, resolvefn: this.resolveTaggedValueSpecificationReferences});
+	}
+
+	private resolveTaggedValueSpecificationReferences(target: elements.TaggedValueSpecification, elementData: data.TaggedValueSpecificationData): void
+	{
+		if (!elementData.definition) console.error(`Unable to set property 'definition'. The following data is missing a 'definition' field: ${JSON.stringify(elementData)}.`);
+		const definition = this.elementMap.getElementById<elements.Property>(elementData.definition);
+		if (definition) { target.definition = definition } else console.error(`Unable to set property 'definition'. Property with id '${elementData.definition}' does not exist.`);
+	}
+
+	private createTaggedValueSpecification(elementData: data.TaggedValueSpecificationData, owner: elements.Element): elements.TaggedValueSpecification
+	{
+		const element = new classes.TaggedValueSpecification();
+		this.mapTaggedValueSpecification(elementData, element, owner);
+		return element;
+	}
+
+	private mapRedefinableElement(elementData: data.RedefinableElementData, target: elements.RedefinableElement, owner: elements.Element): void
+	{
+		if (elementData.isLeaf) { target.isLeaf = elementData.isLeaf; }
+	}
+
+	private mapClassifier(elementData: data.ClassifierData, target: elements.Classifier, owner: elements.Element): void
+	{
+		if (elementData.generalizations) { target.generalizations.push(...elementData.generalizations.map((e) => { return this.createGeneralization(e, target); }));}
+		if (elementData.isAbstract) { target.isAbstract = elementData.isAbstract; }
+		if (elementData.isFinalSpecialization) { target.isFinalSpecialization = elementData.isFinalSpecialization; }
+	}
+
+	private mapMultiplicityElement(elementData: data.MultiplicityElementData, target: elements.MultiplicityElement, owner: elements.Element): void
+	{
+		if (elementData.isOrdered) { target.isOrdered = elementData.isOrdered; }
+		if (elementData.isUnique) { target.isUnique = elementData.isUnique; }
+		if (elementData.lowerValue) { target.lowerValue = this.createValueSpecification(elementData.lowerValue, target);}
+		if (elementData.upperValue) { target.upperValue = this.createValueSpecification(elementData.upperValue, target);}
+	}
+
+	private mapOrderedElement(elementData: data.OrderedElementData, target: elements.OrderedElement, owner: elements.Element): void
+	{
+		if (elementData.order) { target.order = elementData.order; }
+	}
+
+	private mapFeature(elementData: data.FeatureData, target: elements.Feature, owner: elements.Element): void
+	{
+		if (elementData.isStatic) { target.isStatic = elementData.isStatic; }
+	}
+
+	private mapStructuralFeature(elementData: data.StructuralFeatureData, target: elements.StructuralFeature, owner: elements.Element): void
+	{
+		if (elementData.isReadOnly) { target.isReadOnly = elementData.isReadOnly; }
+	}
+
+	private mapStereotypeExtension(elementData: data.StereotypeExtensionData, target: elements.StereotypeExtension, owner: elements.Element): void
+	{
+		if (elementData.isRequired) { target.isRequired = elementData.isRequired; }
+		if (elementData.metaClass) { target.metaClass = this.createElementType(elementData.metaClass);}
+	}
+
+	private createStereotypeExtension(elementData: data.StereotypeExtensionData, owner: elements.Element): elements.StereotypeExtension
+	{
+		const element = new classes.StereotypeExtension();
+		this.mapStereotypeExtension(elementData, element, owner);
+		return element;
+	}
+
+	private mapMemberedClassifier(elementData: data.MemberedClassifierData, target: elements.MemberedClassifier, owner: elements.Element): void
+	{
+		if (elementData.ownedAttributes) { target.ownedAttributes.push(...elementData.ownedAttributes.map((e) => { return this.createProperty(e, target); }).sort(this.elementComparer.compareOrderedElements));}
+		if (elementData.ownedOperations) { target.ownedOperations.push(...elementData.ownedOperations.map((e) => { return this.createOperation(e, target); }).sort(this.elementComparer.compareOrderedElements));}
+	}
+
+	private mapBehavioredClassifier(elementData: data.BehavioredClassifierData, target: elements.BehavioredClassifier, owner: elements.Element): void
+	{
+		if (elementData.interfaceRealizations) { target.interfaceRealizations.push(...elementData.interfaceRealizations.map((e) => { return this.createInterfaceRealization(e, target); }));}
+	}
+
+	private mapClass(elementData: data.ClassData, target: elements.Class, owner: elements.Element): void
+	{
+		if (elementData.isActive) { target.isActive = elementData.isActive; }
+	}
+
+	private createClass(elementData: data.ClassData, owner: elements.Element): elements.Class
+	{
+		const element = new classes.Class(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapPackageableElement(elementData, element, element);
+		this.mapRedefinableElement(elementData, element, element);
+		this.mapType(elementData, element, element);
+		this.mapClassifier(elementData, element, element);
+		this.mapMemberedClassifier(elementData, element, element);
+		this.mapBehavioredClassifier(elementData, element, element);
+		this.mapClass(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapStereotype(elementData: data.StereotypeData, target: elements.Stereotype, owner: elements.Element): void
+	{
+		if (elementData.extends) { target.extends.push(...elementData.extends.map((e) => { return this.createStereotypeExtension(e, target); }));}
+		if (elementData.safeName) { target.safeName = elementData.safeName; }
+	}
+
+	private createStereotype(elementData: data.StereotypeData, owner: elements.Element): elements.Stereotype
+	{
+		const element = new classes.Stereotype(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapPackageableElement(elementData, element, element);
+		this.mapRedefinableElement(elementData, element, element);
+		this.mapType(elementData, element, element);
+		this.mapClassifier(elementData, element, element);
+		this.mapMemberedClassifier(elementData, element, element);
+		this.mapBehavioredClassifier(elementData, element, element);
+		this.mapClass(elementData, element, element);
+		this.mapStereotype(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapProperty(elementData: data.PropertyData, target: elements.Property, owner: elements.Element): void
+	{
+		if (elementData.aggregation) { target.aggregation = this.createAggregationKind(elementData.aggregation);}
+		if (elementData.defaultValue) { target.defaultValue = this.createValueSpecification(elementData.defaultValue, target);}
+		if (elementData.isDerived) { target.isDerived = elementData.isDerived; }
+		if (elementData.isDerivedUnion) { target.isDerivedUnion = elementData.isDerivedUnion; }
+		if (elementData.isID) { target.isID = elementData.isID; }
+		if (elementData.isNavigable) { target.isNavigable = elementData.isNavigable; }
+	}
+
+	private createProperty(elementData: data.PropertyData, owner: elements.Element): elements.Property
+	{
+		const element = new classes.Property(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapOrderedElement(elementData, element, element);
+		this.mapRedefinableElement(elementData, element, element);
+		this.mapTypedElement(elementData, element, element);
+		this.mapMultiplicityElement(elementData, element, element);
+		this.mapFeature(elementData, element, element);
+		this.mapStructuralFeature(elementData, element, element);
+		this.mapProperty(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapPackage(elementData: data.PackageData, target: elements.Package, owner: elements.Element): void
+	{
+		if (elementData.isNamespaceRoot) { target.isNamespaceRoot = elementData.isNamespaceRoot; }
+		if (elementData.packagedElements) { target.packagedElements.push(...elementData.packagedElements.map((e) => { return this.createPackageableElement(e, target); }).sort(this.elementComparer.comparePackageableElements));}
+		this.referencesToResolve.push({target:target, data:elementData, resolvefn: this.resolvePackageReferences});
+	}
+
+	private resolvePackageReferences(target: elements.Package, elementData: data.PackageData): void
+	{
+		if (elementData.appliedProfiles) { target.appliedProfiles.push(...this.elementMap.getElementsByIdList<elements.Profile>(elementData.appliedProfiles));}
+	}
+
+	private createPackage(elementData: data.PackageData, owner: elements.Element): elements.Package
+	{
+		const element = new classes.Package(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapPackageableElement(elementData, element, element);
+		this.mapPackage(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapProfile(elementData: data.ProfileData, target: elements.Profile, owner: elements.Element): void
+	{
+		if (elementData.safeName) { target.safeName = elementData.safeName; }
+	}
+
+	private createProfile(elementData: data.ProfileData, owner: elements.Element): elements.Profile
+	{
+		const element = new classes.Profile(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapPackageableElement(elementData, element, element);
+		this.mapPackage(elementData, element, element);
+		this.mapProfile(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private createDataType(elementData: data.DataTypeData, owner: elements.Element): elements.DataType
+	{
+		const element = new classes.DataType(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapPackageableElement(elementData, element, element);
+		this.mapRedefinableElement(elementData, element, element);
+		this.mapType(elementData, element, element);
+		this.mapClassifier(elementData, element, element);
+		this.mapMemberedClassifier(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private createPrimitiveType(elementData: data.PrimitiveTypeData, owner: elements.Element): elements.PrimitiveType
+	{
+		const element = new classes.PrimitiveType(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapPackageableElement(elementData, element, element);
+		this.mapRedefinableElement(elementData, element, element);
+		this.mapType(elementData, element, element);
+		this.mapClassifier(elementData, element, element);
+		this.mapMemberedClassifier(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private createParameterDirectionKind(elementData: data.ParameterDirectionKind): elements.ParameterDirectionKind
+	{
+		switch (elementData) // serialized as string
+		{
+			case 'in': return elements.ParameterDirectionKind.in;
+			case 'inout': return elements.ParameterDirectionKind.inout;
+			case 'out': return elements.ParameterDirectionKind.out;
+			case 'return': return elements.ParameterDirectionKind.return;
+			default: throw `Error reading model. Could not map ParameterDirectionKind value '${elementData}'.`;
+		}
+	}
+
+	private mapParameter(elementData: data.ParameterData, target: elements.Parameter, owner: elements.Element): void
+	{
+		if (elementData.defaultValue) { target.defaultValue = this.createValueSpecification(elementData.defaultValue, target);}
+		if (elementData.direction) { target.direction = this.createParameterDirectionKind(elementData.direction);}
+		if (elementData.isException) { target.isException = elementData.isException; }
+		if (elementData.isStream) { target.isStream = elementData.isStream; }
+	}
+
+	private createParameter(elementData: data.ParameterData, owner: elements.Element): elements.Parameter
+	{
+		const element = new classes.Parameter(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapOrderedElement(elementData, element, element);
+		this.mapMultiplicityElement(elementData, element, element);
+		this.mapTypedElement(elementData, element, element);
+		this.mapParameter(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapBehavioralFeature(elementData: data.BehavioralFeatureData, target: elements.BehavioralFeature, owner: elements.Element): void
+	{
+		if (elementData.isAbstract) { target.isAbstract = elementData.isAbstract; }
+		if (elementData.ownedParameters) { target.ownedParameters.push(...elementData.ownedParameters.map((e) => { return this.createParameter(e, target); }).sort(this.elementComparer.compareOrderedElements));}
+	}
+
+	private mapOperation(elementData: data.OperationData, target: elements.Operation, owner: elements.Element): void
+	{
+		if (elementData.isConstructor) { target.isConstructor = elementData.isConstructor; }
+		if (elementData.isQuery) { target.isQuery = elementData.isQuery; }
+	}
+
+	private createOperation(elementData: data.OperationData, owner: elements.Element): elements.Operation
+	{
+		const element = new classes.Operation(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapOrderedElement(elementData, element, element);
+		this.mapRedefinableElement(elementData, element, element);
+		this.mapFeature(elementData, element, element);
+		this.mapBehavioralFeature(elementData, element, element);
+		this.mapOperation(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private createModel(elementData: data.ModelData): elements.Model
+	{
+		const element = new classes.Model(this.modelDelegate, null);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapPackageableElement(elementData, element, element);
+		this.mapPackage(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapLiteralUnlimitedNatural(elementData: data.LiteralUnlimitedNaturalData, target: elements.LiteralUnlimitedNatural, owner: elements.Element): void
+	{
+		if (elementData.value) { target.value = new elements.UnlimitedNatural(elementData.value); }
+	}
+
+	private createLiteralUnlimitedNatural(elementData: data.LiteralUnlimitedNaturalData, owner: elements.Element): elements.LiteralUnlimitedNatural
+	{
+		const element = new classes.LiteralUnlimitedNatural(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapTypedElement(elementData, element, element);
+		this.mapLiteralUnlimitedNatural(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapLiteralString(elementData: data.LiteralStringData, target: elements.LiteralString, owner: elements.Element): void
+	{
+		if (elementData.value) { target.value = elementData.value; }
+	}
+
+	private createLiteralString(elementData: data.LiteralStringData, owner: elements.Element): elements.LiteralString
+	{
+		const element = new classes.LiteralString(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapTypedElement(elementData, element, element);
+		this.mapLiteralString(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapLiteralReal(elementData: data.LiteralRealData, target: elements.LiteralReal, owner: elements.Element): void
+	{
+		if (elementData.value) { target.value = elementData.value; }
+	}
+
+	private createLiteralReal(elementData: data.LiteralRealData, owner: elements.Element): elements.LiteralReal
+	{
+		const element = new classes.LiteralReal(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapTypedElement(elementData, element, element);
+		this.mapLiteralReal(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private createLiteralNull(elementData: data.LiteralNullData, owner: elements.Element): elements.LiteralNull
+	{
+		const element = new classes.LiteralNull(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapTypedElement(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapLiteralInteger(elementData: data.LiteralIntegerData, target: elements.LiteralInteger, owner: elements.Element): void
+	{
+		if (elementData.value) { target.value = elementData.value; }
+	}
+
+	private createLiteralInteger(elementData: data.LiteralIntegerData, owner: elements.Element): elements.LiteralInteger
+	{
+		const element = new classes.LiteralInteger(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapTypedElement(elementData, element, element);
+		this.mapLiteralInteger(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapLiteralBoolean(elementData: data.LiteralBooleanData, target: elements.LiteralBoolean, owner: elements.Element): void
+	{
+		if (elementData.value) { target.value = elementData.value; }
+	}
+
+	private createLiteralBoolean(elementData: data.LiteralBooleanData, owner: elements.Element): elements.LiteralBoolean
+	{
+		const element = new classes.LiteralBoolean(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapTypedElement(elementData, element, element);
+		this.mapLiteralBoolean(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapInterfaceRealization(elementData: data.InterfaceRealizationData, target: elements.InterfaceRealization, owner: elements.Element): void
+	{
+		this.referencesToResolve.push({target:target, data:elementData, resolvefn: this.resolveInterfaceRealizationReferences});
+	}
+
+	private resolveInterfaceRealizationReferences(target: elements.InterfaceRealization, elementData: data.InterfaceRealizationData): void
+	{
+		if (!elementData.contract) console.error(`Unable to set property 'contract'. The following data is missing a 'contract' field: ${JSON.stringify(elementData)}.`);
+		const contract = this.elementMap.getElementById<elements.Interface>(elementData.contract);
+		if (contract) { target.contract = contract } else console.error(`Unable to set property 'contract'. Interface with id '${elementData.contract}' does not exist.`);
+	}
+
+	private createInterfaceRealization(elementData: data.InterfaceRealizationData, owner: elements.Element): elements.InterfaceRealization
+	{
+		const element = new classes.InterfaceRealization(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapInterfaceRealization(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private createInterface(elementData: data.InterfaceData, owner: elements.Element): elements.Interface
+	{
+		const element = new classes.Interface(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapPackageableElement(elementData, element, element);
+		this.mapRedefinableElement(elementData, element, element);
+		this.mapType(elementData, element, element);
+		this.mapClassifier(elementData, element, element);
+		this.mapMemberedClassifier(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapGeneralization(elementData: data.GeneralizationData, target: elements.Generalization, owner: elements.Element): void
+	{
+		if (elementData.isSubstitutable) { target.isSubstitutable = elementData.isSubstitutable; }
+		this.referencesToResolve.push({target:target, data:elementData, resolvefn: this.resolveGeneralizationReferences});
+	}
+
+	private resolveGeneralizationReferences(target: elements.Generalization, elementData: data.GeneralizationData): void
+	{
+		if (!elementData.general) console.error(`Unable to set property 'general'. The following data is missing a 'general' field: ${JSON.stringify(elementData)}.`);
+		const general = this.elementMap.getElementById<elements.Classifier>(elementData.general);
+		if (general) { target.general = general } else console.error(`Unable to set property 'general'. Classifier with id '${elementData.general}' does not exist.`);
+	}
+
+	private createGeneralization(elementData: data.GeneralizationData, owner: elements.Element): elements.Generalization
+	{
+		const element = new classes.Generalization(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapGeneralization(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapEnumerationLiteral(elementData: data.EnumerationLiteralData, target: elements.EnumerationLiteral, owner: elements.Element): void
+	{
+		if (elementData.specification) { target.specification = this.createValueSpecification(elementData.specification, target);}
+	}
+
+	private createEnumerationLiteral(elementData: data.EnumerationLiteralData, owner: elements.Element): elements.EnumerationLiteral
+	{
+		const element = new classes.EnumerationLiteral(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapOrderedElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapEnumerationLiteral(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapEnumeration(elementData: data.EnumerationData, target: elements.Enumeration, owner: elements.Element): void
+	{
+		if (elementData.ownedLiterals) { target.ownedLiterals.push(...elementData.ownedLiterals.map((e) => { return this.createEnumerationLiteral(e, target); }).sort(this.elementComparer.compareOrderedElements));}
+		this.referencesToResolve.push({target:target, data:elementData, resolvefn: this.resolveEnumerationReferences});
+	}
+
+	private resolveEnumerationReferences(target: elements.Enumeration, elementData: data.EnumerationData): void
+	{
+		target.baseType = elementData.baseType ? this.elementMap.getElementById<elements.Type>(elementData.baseType) : null;
+	}
+
+	private createEnumeration(elementData: data.EnumerationData, owner: elements.Element): elements.Enumeration
+	{
+		const element = new classes.Enumeration(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapPackageableElement(elementData, element, element);
+		this.mapRedefinableElement(elementData, element, element);
+		this.mapType(elementData, element, element);
+		this.mapClassifier(elementData, element, element);
+		this.mapMemberedClassifier(elementData, element, element);
+		this.mapEnumeration(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapDocumentReference(elementData: data.DocumentReferenceData, target: elements.DocumentReference, owner: elements.Element): void
+	{
+		if (elementData.location) { target.location = this.createDocumentLocationKind(elementData.location);}
+		if (elementData.name) { target.name = elementData.name; }
+		if (elementData.path) { target.path = elementData.path; }
+	}
+
+	private createDocumentReference(elementData: data.DocumentReferenceData, owner: elements.Element): elements.DocumentReference
+	{
+		const element = new classes.DocumentReference();
+		this.mapDocumentReference(elementData, element, owner);
+		return element;
+	}
+
+	private createDocumentLocationKind(elementData: data.DocumentLocationKind): elements.DocumentLocationKind
+	{
+		switch (elementData) // serialized as string
+		{
+			case 'local': return elements.DocumentLocationKind.local;
+			case 'npm': return elements.DocumentLocationKind.npm;
+			default: throw `Error reading model. Could not map DocumentLocationKind value '${elementData}'.`;
+		}
+	}
+
+	private mapComment(elementData: data.CommentData, target: elements.Comment, owner: elements.Element): void
+	{
+		if (elementData.body) { target.body = elementData.body; }
+	}
+
+	private createComment(elementData: data.CommentData, owner: elements.Element): elements.Comment
+	{
+		const element = new classes.Comment(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapComment(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private mapAssociation(elementData: data.AssociationData, target: elements.Association, owner: elements.Element): void
+	{
+		if (elementData.ownedEnds) { target.ownedEnds.push(...elementData.ownedEnds.map((e) => { return this.createProperty(e, target); }).sort(this.elementComparer.compareOrderedElements));}
+		this.referencesToResolve.push({target:target, data:elementData, resolvefn: this.resolveAssociationReferences});
+	}
+
+	private resolveAssociationReferences(target: elements.Association, elementData: data.AssociationData): void
+	{
+		if (elementData.memberEnds) { target.memberEnds.push(...this.elementMap.getElementsByIdList<elements.Property>(elementData.memberEnds));}
+	}
+
+	private createAssociation(elementData: data.AssociationData, owner: elements.Element): elements.Association
+	{
+		const element = new classes.Association(this.modelDelegate, owner);
+		this.mapElement(elementData, element, element);
+		this.mapNamedElement(elementData, element, element);
+		this.mapPackageableElement(elementData, element, element);
+		this.mapRedefinableElement(elementData, element, element);
+		this.mapType(elementData, element, element);
+		this.mapClassifier(elementData, element, element);
+		this.mapAssociation(elementData, element, element);
+		this.mapTaggedValues(elementData, element); // added by code generation
+		this.addElementById(elementData, element);
+		return element;
+	}
+
+	private createAggregationKind(elementData: data.AggregationKind): elements.AggregationKind
+	{
+		switch (elementData) // serialized as string
+		{
+			case 'none': return elements.AggregationKind.none;
+			case 'shared': return elements.AggregationKind.shared;
+			case 'composite': return elements.AggregationKind.composite;
+			default: throw `Error reading model. Could not map AggregationKind value '${elementData}'.`;
 		}
 	}
 

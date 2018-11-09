@@ -11,204 +11,36 @@
 * 
 * Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
 */
-import * as model from './interfaces';
+import * as elements from './interfaces';
 
 export class ElementTypeUtility
 {
 	/**
 	* Returns true if the elementType is a NamedElement or one of its descendants.
 	*/
-	public static isNamedElement(elementType:model.ElementType): boolean
+	public static isNamedElement(elementType:elements.ElementType): boolean
 	{
 		switch(elementType){
-			case model.ElementType.association: return true;
-			case model.ElementType.class: return true;
-			case model.ElementType.dataType: return true;
-			case model.ElementType.enumeration: return true;
-			case model.ElementType.enumerationLiteral: return true;
-			case model.ElementType.interface: return true;
-			case model.ElementType.literalBoolean: return true;
-			case model.ElementType.literalInteger: return true;
-			case model.ElementType.literalNull: return true;
-			case model.ElementType.literalReal: return true;
-			case model.ElementType.literalString: return true;
-			case model.ElementType.literalUnlimitedNatural: return true;
-			case model.ElementType.model: return true;
-			case model.ElementType.operation: return true;
-			case model.ElementType.package: return true;
-			case model.ElementType.parameter: return true;
-			case model.ElementType.primitiveType: return true;
-			case model.ElementType.profile: return true;
-			case model.ElementType.property: return true;
-			case model.ElementType.stereotype: return true;
-			default: return false;
-		}
-	}
-
-	/**
-	* Returns true if the elementType is a RedefinableElement or one of its descendants.
-	*/
-	public static isRedefinableElement(elementType:model.ElementType): boolean
-	{
-		switch(elementType){
-			case model.ElementType.association: return true;
-			case model.ElementType.class: return true;
-			case model.ElementType.dataType: return true;
-			case model.ElementType.enumeration: return true;
-			case model.ElementType.interface: return true;
-			case model.ElementType.operation: return true;
-			case model.ElementType.primitiveType: return true;
-			case model.ElementType.property: return true;
-			case model.ElementType.stereotype: return true;
-			default: return false;
-		}
-	}
-
-	/**
-	* Returns true if the elementType is a PackageableElement or one of its descendants.
-	*/
-	public static isPackageableElement(elementType:model.ElementType): boolean
-	{
-		switch(elementType){
-			case model.ElementType.association: return true;
-			case model.ElementType.class: return true;
-			case model.ElementType.dataType: return true;
-			case model.ElementType.enumeration: return true;
-			case model.ElementType.interface: return true;
-			case model.ElementType.model: return true;
-			case model.ElementType.package: return true;
-			case model.ElementType.primitiveType: return true;
-			case model.ElementType.profile: return true;
-			case model.ElementType.stereotype: return true;
-			default: return false;
-		}
-	}
-
-	/**
-	* Returns true if the elementType is a Type or one of its descendants.
-	*/
-	public static isType(elementType:model.ElementType): boolean
-	{
-		switch(elementType){
-			case model.ElementType.association: return true;
-			case model.ElementType.class: return true;
-			case model.ElementType.dataType: return true;
-			case model.ElementType.enumeration: return true;
-			case model.ElementType.interface: return true;
-			case model.ElementType.primitiveType: return true;
-			case model.ElementType.stereotype: return true;
-			default: return false;
-		}
-	}
-
-	/**
-	* Returns true if the elementType is a Classifier or one of its descendants.
-	*/
-	public static isClassifier(elementType:model.ElementType): boolean
-	{
-		switch(elementType){
-			case model.ElementType.association: return true;
-			case model.ElementType.class: return true;
-			case model.ElementType.dataType: return true;
-			case model.ElementType.enumeration: return true;
-			case model.ElementType.interface: return true;
-			case model.ElementType.primitiveType: return true;
-			case model.ElementType.stereotype: return true;
-			default: return false;
-		}
-	}
-
-	/**
-	* Returns true if the elementType is a MemberedClassifier or one of its descendants.
-	*/
-	public static isMemberedClassifier(elementType:model.ElementType): boolean
-	{
-		switch(elementType){
-			case model.ElementType.class: return true;
-			case model.ElementType.dataType: return true;
-			case model.ElementType.enumeration: return true;
-			case model.ElementType.interface: return true;
-			case model.ElementType.primitiveType: return true;
-			case model.ElementType.stereotype: return true;
-			default: return false;
-		}
-	}
-
-	/**
-	* Returns true if the elementType is a StructuredClassifier or one of its descendants.
-	*/
-	public static isStructuredClassifier(elementType:model.ElementType): boolean
-	{
-		switch(elementType){
-			case model.ElementType.class: return true;
-			case model.ElementType.stereotype: return true;
-			default: return false;
-		}
-	}
-
-	/**
-	* Returns true if the elementType is a BehavioredClassifier or one of its descendants.
-	*/
-	public static isBehavioredClassifier(elementType:model.ElementType): boolean
-	{
-		switch(elementType){
-			case model.ElementType.class: return true;
-			case model.ElementType.stereotype: return true;
-			default: return false;
-		}
-	}
-
-	/**
-	* Returns true if the elementType is a Class or one of its descendants.
-	*/
-	public static isClass(elementType:model.ElementType): boolean
-	{
-		switch(elementType){
-			case model.ElementType.class: return true;
-			case model.ElementType.stereotype: return true;
-			default: return false;
-		}
-	}
-
-	/**
-	* Returns true if the elementType is a Stereotype or one of its descendants.
-	*/
-	public static isStereotype(elementType:model.ElementType): boolean
-	{
-		return elementType === model.ElementType.stereotype;
-	}
-
-	/**
-	* Returns true if the elementType is a Package or one of its descendants.
-	*/
-	public static isPackage(elementType:model.ElementType): boolean
-	{
-		switch(elementType){
-			case model.ElementType.package: return true;
-			case model.ElementType.model: return true;
-			case model.ElementType.profile: return true;
-			default: return false;
-		}
-	}
-
-	/**
-	* Returns true if the elementType is a Profile or one of its descendants.
-	*/
-	public static isProfile(elementType:model.ElementType): boolean
-	{
-		return elementType === model.ElementType.profile;
-	}
-
-	/**
-	* Returns true if the elementType is a OrderedElement or one of its descendants.
-	*/
-	public static isOrderedElement(elementType:model.ElementType): boolean
-	{
-		switch(elementType){
-			case model.ElementType.enumerationLiteral: return true;
-			case model.ElementType.operation: return true;
-			case model.ElementType.parameter: return true;
-			case model.ElementType.property: return true;
+			case elements.ElementType.association: return true;
+			case elements.ElementType.class: return true;
+			case elements.ElementType.dataType: return true;
+			case elements.ElementType.enumeration: return true;
+			case elements.ElementType.enumerationLiteral: return true;
+			case elements.ElementType.interface: return true;
+			case elements.ElementType.literalBoolean: return true;
+			case elements.ElementType.literalInteger: return true;
+			case elements.ElementType.literalNull: return true;
+			case elements.ElementType.literalReal: return true;
+			case elements.ElementType.literalString: return true;
+			case elements.ElementType.literalUnlimitedNatural: return true;
+			case elements.ElementType.model: return true;
+			case elements.ElementType.operation: return true;
+			case elements.ElementType.package: return true;
+			case elements.ElementType.parameter: return true;
+			case elements.ElementType.primitiveType: return true;
+			case elements.ElementType.profile: return true;
+			case elements.ElementType.property: return true;
+			case elements.ElementType.stereotype: return true;
 			default: return false;
 		}
 	}
@@ -216,17 +48,17 @@ export class ElementTypeUtility
 	/**
 	* Returns true if the elementType is a TypedElement or one of its descendants.
 	*/
-	public static isTypedElement(elementType:model.ElementType): boolean
+	public static isTypedElement(elementType:elements.ElementType): boolean
 	{
 		switch(elementType){
-			case model.ElementType.literalBoolean: return true;
-			case model.ElementType.literalInteger: return true;
-			case model.ElementType.literalNull: return true;
-			case model.ElementType.literalReal: return true;
-			case model.ElementType.literalString: return true;
-			case model.ElementType.literalUnlimitedNatural: return true;
-			case model.ElementType.parameter: return true;
-			case model.ElementType.property: return true;
+			case elements.ElementType.literalBoolean: return true;
+			case elements.ElementType.literalInteger: return true;
+			case elements.ElementType.literalNull: return true;
+			case elements.ElementType.literalReal: return true;
+			case elements.ElementType.literalString: return true;
+			case elements.ElementType.literalUnlimitedNatural: return true;
+			case elements.ElementType.parameter: return true;
+			case elements.ElementType.property: return true;
 			default: return false;
 		}
 	}
@@ -234,15 +66,100 @@ export class ElementTypeUtility
 	/**
 	* Returns true if the elementType is a ValueSpecification or one of its descendants.
 	*/
-	public static isValueSpecification(elementType:model.ElementType): boolean
+	public static isValueSpecification(elementType:elements.ElementType): boolean
 	{
 		switch(elementType){
-			case model.ElementType.literalBoolean: return true;
-			case model.ElementType.literalInteger: return true;
-			case model.ElementType.literalNull: return true;
-			case model.ElementType.literalReal: return true;
-			case model.ElementType.literalString: return true;
-			case model.ElementType.literalUnlimitedNatural: return true;
+			case elements.ElementType.literalBoolean: return true;
+			case elements.ElementType.literalInteger: return true;
+			case elements.ElementType.literalNull: return true;
+			case elements.ElementType.literalReal: return true;
+			case elements.ElementType.literalString: return true;
+			case elements.ElementType.literalUnlimitedNatural: return true;
+			default: return false;
+		}
+	}
+
+	/**
+	* Returns true if the elementType is a PackageableElement or one of its descendants.
+	*/
+	public static isPackageableElement(elementType:elements.ElementType): boolean
+	{
+		switch(elementType){
+			case elements.ElementType.association: return true;
+			case elements.ElementType.class: return true;
+			case elements.ElementType.dataType: return true;
+			case elements.ElementType.enumeration: return true;
+			case elements.ElementType.interface: return true;
+			case elements.ElementType.model: return true;
+			case elements.ElementType.package: return true;
+			case elements.ElementType.primitiveType: return true;
+			case elements.ElementType.profile: return true;
+			case elements.ElementType.stereotype: return true;
+			default: return false;
+		}
+	}
+
+	/**
+	* Returns true if the elementType is a Type or one of its descendants.
+	*/
+	public static isType(elementType:elements.ElementType): boolean
+	{
+		switch(elementType){
+			case elements.ElementType.association: return true;
+			case elements.ElementType.class: return true;
+			case elements.ElementType.dataType: return true;
+			case elements.ElementType.enumeration: return true;
+			case elements.ElementType.interface: return true;
+			case elements.ElementType.primitiveType: return true;
+			case elements.ElementType.stereotype: return true;
+			default: return false;
+		}
+	}
+
+	/**
+	* Returns true if the elementType is a RedefinableElement or one of its descendants.
+	*/
+	public static isRedefinableElement(elementType:elements.ElementType): boolean
+	{
+		switch(elementType){
+			case elements.ElementType.association: return true;
+			case elements.ElementType.class: return true;
+			case elements.ElementType.dataType: return true;
+			case elements.ElementType.enumeration: return true;
+			case elements.ElementType.interface: return true;
+			case elements.ElementType.operation: return true;
+			case elements.ElementType.primitiveType: return true;
+			case elements.ElementType.property: return true;
+			case elements.ElementType.stereotype: return true;
+			default: return false;
+		}
+	}
+
+	/**
+	* Returns true if the elementType is a Classifier or one of its descendants.
+	*/
+	public static isClassifier(elementType:elements.ElementType): boolean
+	{
+		switch(elementType){
+			case elements.ElementType.association: return true;
+			case elements.ElementType.class: return true;
+			case elements.ElementType.dataType: return true;
+			case elements.ElementType.enumeration: return true;
+			case elements.ElementType.interface: return true;
+			case elements.ElementType.primitiveType: return true;
+			case elements.ElementType.stereotype: return true;
+			default: return false;
+		}
+	}
+
+	/**
+	* Returns true if the elementType is a StructuredClassifier or one of its descendants.
+	*/
+	public static isStructuredClassifier(elementType:elements.ElementType): boolean
+	{
+		switch(elementType){
+			case elements.ElementType.class: return true;
+			case elements.ElementType.stereotype: return true;
 			default: return false;
 		}
 	}
@@ -250,11 +167,25 @@ export class ElementTypeUtility
 	/**
 	* Returns true if the elementType is a MultiplicityElement or one of its descendants.
 	*/
-	public static isMultiplicityElement(elementType:model.ElementType): boolean
+	public static isMultiplicityElement(elementType:elements.ElementType): boolean
 	{
 		switch(elementType){
-			case model.ElementType.parameter: return true;
-			case model.ElementType.property: return true;
+			case elements.ElementType.parameter: return true;
+			case elements.ElementType.property: return true;
+			default: return false;
+		}
+	}
+
+	/**
+	* Returns true if the elementType is a OrderedElement or one of its descendants.
+	*/
+	public static isOrderedElement(elementType:elements.ElementType): boolean
+	{
+		switch(elementType){
+			case elements.ElementType.enumerationLiteral: return true;
+			case elements.ElementType.operation: return true;
+			case elements.ElementType.parameter: return true;
+			case elements.ElementType.property: return true;
 			default: return false;
 		}
 	}
@@ -262,11 +193,11 @@ export class ElementTypeUtility
 	/**
 	* Returns true if the elementType is a Feature or one of its descendants.
 	*/
-	public static isFeature(elementType:model.ElementType): boolean
+	public static isFeature(elementType:elements.ElementType): boolean
 	{
 		switch(elementType){
-			case model.ElementType.operation: return true;
-			case model.ElementType.property: return true;
+			case elements.ElementType.operation: return true;
+			case elements.ElementType.property: return true;
 			default: return false;
 		}
 	}
@@ -274,20 +205,68 @@ export class ElementTypeUtility
 	/**
 	* Returns true if the elementType is a StructuralFeature or one of its descendants.
 	*/
-	public static isStructuralFeature(elementType:model.ElementType): boolean
+	public static isStructuralFeature(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.property;
+		return elementType === elements.ElementType.property;
+	}
+
+	/**
+	* Returns true if the elementType is a MemberedClassifier or one of its descendants.
+	*/
+	public static isMemberedClassifier(elementType:elements.ElementType): boolean
+	{
+		switch(elementType){
+			case elements.ElementType.class: return true;
+			case elements.ElementType.dataType: return true;
+			case elements.ElementType.enumeration: return true;
+			case elements.ElementType.interface: return true;
+			case elements.ElementType.primitiveType: return true;
+			case elements.ElementType.stereotype: return true;
+			default: return false;
+		}
+	}
+
+	/**
+	* Returns true if the elementType is a BehavioredClassifier or one of its descendants.
+	*/
+	public static isBehavioredClassifier(elementType:elements.ElementType): boolean
+	{
+		switch(elementType){
+			case elements.ElementType.class: return true;
+			case elements.ElementType.stereotype: return true;
+			default: return false;
+		}
+	}
+
+	/**
+	* Returns true if the elementType is a Class or one of its descendants.
+	*/
+	public static isClass(elementType:elements.ElementType): boolean
+	{
+		switch(elementType){
+			case elements.ElementType.class: return true;
+			case elements.ElementType.stereotype: return true;
+			default: return false;
+		}
+	}
+
+	/**
+	* Returns true if the elementType is a Stereotype or one of its descendants.
+	*/
+	public static isStereotype(elementType:elements.ElementType): boolean
+	{
+		return elementType === elements.ElementType.stereotype;
 	}
 
 	/**
 	* Returns true if the elementType is a Relationship or one of its descendants.
 	*/
-	public static isRelationship(elementType:model.ElementType): boolean
+	public static isRelationship(elementType:elements.ElementType): boolean
 	{
 		switch(elementType){
-			case model.ElementType.association: return true;
-			case model.ElementType.generalization: return true;
-			case model.ElementType.interfaceRealization: return true;
+			case elements.ElementType.association: return true;
+			case elements.ElementType.generalization: return true;
+			case elements.ElementType.interfaceRealization: return true;
 			default: return false;
 		}
 	}
@@ -295,20 +274,41 @@ export class ElementTypeUtility
 	/**
 	* Returns true if the elementType is a Property or one of its descendants.
 	*/
-	public static isProperty(elementType:model.ElementType): boolean
+	public static isProperty(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.property;
+		return elementType === elements.ElementType.property;
+	}
+
+	/**
+	* Returns true if the elementType is a Package or one of its descendants.
+	*/
+	public static isPackage(elementType:elements.ElementType): boolean
+	{
+		switch(elementType){
+			case elements.ElementType.package: return true;
+			case elements.ElementType.model: return true;
+			case elements.ElementType.profile: return true;
+			default: return false;
+		}
+	}
+
+	/**
+	* Returns true if the elementType is a Profile or one of its descendants.
+	*/
+	public static isProfile(elementType:elements.ElementType): boolean
+	{
+		return elementType === elements.ElementType.profile;
 	}
 
 	/**
 	* Returns true if the elementType is a DataType or one of its descendants.
 	*/
-	public static isDataType(elementType:model.ElementType): boolean
+	public static isDataType(elementType:elements.ElementType): boolean
 	{
 		switch(elementType){
-			case model.ElementType.dataType: return true;
-			case model.ElementType.enumeration: return true;
-			case model.ElementType.primitiveType: return true;
+			case elements.ElementType.dataType: return true;
+			case elements.ElementType.enumeration: return true;
+			case elements.ElementType.primitiveType: return true;
 			default: return false;
 		}
 	}
@@ -316,55 +316,55 @@ export class ElementTypeUtility
 	/**
 	* Returns true if the elementType is a PrimitiveType or one of its descendants.
 	*/
-	public static isPrimitiveType(elementType:model.ElementType): boolean
+	public static isPrimitiveType(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.primitiveType;
+		return elementType === elements.ElementType.primitiveType;
 	}
 
 	/**
 	* Returns true if the elementType is a Parameter or one of its descendants.
 	*/
-	public static isParameter(elementType:model.ElementType): boolean
+	public static isParameter(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.parameter;
+		return elementType === elements.ElementType.parameter;
 	}
 
 	/**
 	* Returns true if the elementType is a BehavioralFeature or one of its descendants.
 	*/
-	public static isBehavioralFeature(elementType:model.ElementType): boolean
+	public static isBehavioralFeature(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.operation;
+		return elementType === elements.ElementType.operation;
 	}
 
 	/**
 	* Returns true if the elementType is a Operation or one of its descendants.
 	*/
-	public static isOperation(elementType:model.ElementType): boolean
+	public static isOperation(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.operation;
+		return elementType === elements.ElementType.operation;
 	}
 
 	/**
 	* Returns true if the elementType is a Model or one of its descendants.
 	*/
-	public static isModel(elementType:model.ElementType): boolean
+	public static isModel(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.model;
+		return elementType === elements.ElementType.model;
 	}
 
 	/**
 	* Returns true if the elementType is a LiteralSpecification or one of its descendants.
 	*/
-	public static isLiteralSpecification(elementType:model.ElementType): boolean
+	public static isLiteralSpecification(elementType:elements.ElementType): boolean
 	{
 		switch(elementType){
-			case model.ElementType.literalBoolean: return true;
-			case model.ElementType.literalInteger: return true;
-			case model.ElementType.literalNull: return true;
-			case model.ElementType.literalReal: return true;
-			case model.ElementType.literalString: return true;
-			case model.ElementType.literalUnlimitedNatural: return true;
+			case elements.ElementType.literalBoolean: return true;
+			case elements.ElementType.literalInteger: return true;
+			case elements.ElementType.literalNull: return true;
+			case elements.ElementType.literalReal: return true;
+			case elements.ElementType.literalString: return true;
+			case elements.ElementType.literalUnlimitedNatural: return true;
 			default: return false;
 		}
 	}
@@ -372,59 +372,59 @@ export class ElementTypeUtility
 	/**
 	* Returns true if the elementType is a LiteralUnlimitedNatural or one of its descendants.
 	*/
-	public static isLiteralUnlimitedNatural(elementType:model.ElementType): boolean
+	public static isLiteralUnlimitedNatural(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.literalUnlimitedNatural;
+		return elementType === elements.ElementType.literalUnlimitedNatural;
 	}
 
 	/**
 	* Returns true if the elementType is a LiteralString or one of its descendants.
 	*/
-	public static isLiteralString(elementType:model.ElementType): boolean
+	public static isLiteralString(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.literalString;
+		return elementType === elements.ElementType.literalString;
 	}
 
 	/**
 	* Returns true if the elementType is a LiteralReal or one of its descendants.
 	*/
-	public static isLiteralReal(elementType:model.ElementType): boolean
+	public static isLiteralReal(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.literalReal;
+		return elementType === elements.ElementType.literalReal;
 	}
 
 	/**
 	* Returns true if the elementType is a LiteralNull or one of its descendants.
 	*/
-	public static isLiteralNull(elementType:model.ElementType): boolean
+	public static isLiteralNull(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.literalNull;
+		return elementType === elements.ElementType.literalNull;
 	}
 
 	/**
 	* Returns true if the elementType is a LiteralInteger or one of its descendants.
 	*/
-	public static isLiteralInteger(elementType:model.ElementType): boolean
+	public static isLiteralInteger(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.literalInteger;
+		return elementType === elements.ElementType.literalInteger;
 	}
 
 	/**
 	* Returns true if the elementType is a LiteralBoolean or one of its descendants.
 	*/
-	public static isLiteralBoolean(elementType:model.ElementType): boolean
+	public static isLiteralBoolean(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.literalBoolean;
+		return elementType === elements.ElementType.literalBoolean;
 	}
 
 	/**
 	* Returns true if the elementType is a DirectedRelationship or one of its descendants.
 	*/
-	public static isDirectedRelationship(elementType:model.ElementType): boolean
+	public static isDirectedRelationship(elementType:elements.ElementType): boolean
 	{
 		switch(elementType){
-			case model.ElementType.generalization: return true;
-			case model.ElementType.interfaceRealization: return true;
+			case elements.ElementType.generalization: return true;
+			case elements.ElementType.interfaceRealization: return true;
 			default: return false;
 		}
 	}
@@ -432,57 +432,57 @@ export class ElementTypeUtility
 	/**
 	* Returns true if the elementType is a InterfaceRealization or one of its descendants.
 	*/
-	public static isInterfaceRealization(elementType:model.ElementType): boolean
+	public static isInterfaceRealization(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.interfaceRealization;
+		return elementType === elements.ElementType.interfaceRealization;
 	}
 
 	/**
 	* Returns true if the elementType is a Interface or one of its descendants.
 	*/
-	public static isInterface(elementType:model.ElementType): boolean
+	public static isInterface(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.interface;
+		return elementType === elements.ElementType.interface;
 	}
 
 	/**
 	* Returns true if the elementType is a Generalization or one of its descendants.
 	*/
-	public static isGeneralization(elementType:model.ElementType): boolean
+	public static isGeneralization(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.generalization;
+		return elementType === elements.ElementType.generalization;
 	}
 
 	/**
 	* Returns true if the elementType is a EnumerationLiteral or one of its descendants.
 	*/
-	public static isEnumerationLiteral(elementType:model.ElementType): boolean
+	public static isEnumerationLiteral(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.enumerationLiteral;
+		return elementType === elements.ElementType.enumerationLiteral;
 	}
 
 	/**
 	* Returns true if the elementType is a Enumeration or one of its descendants.
 	*/
-	public static isEnumeration(elementType:model.ElementType): boolean
+	public static isEnumeration(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.enumeration;
+		return elementType === elements.ElementType.enumeration;
 	}
 
 	/**
 	* Returns true if the elementType is a Comment or one of its descendants.
 	*/
-	public static isComment(elementType:model.ElementType): boolean
+	public static isComment(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.comment;
+		return elementType === elements.ElementType.comment;
 	}
 
 	/**
 	* Returns true if the elementType is a Association or one of its descendants.
 	*/
-	public static isAssociation(elementType:model.ElementType): boolean
+	public static isAssociation(elementType:elements.ElementType): boolean
 	{
-		return elementType === model.ElementType.association;
+		return elementType === elements.ElementType.association;
 	}
 
 }
@@ -490,111 +490,15 @@ export class ElementTypeUtility
 /**
 * Asserts that the element is a NamedElement or one of its descendants.
 */
-export function isNamedElement(element: model.Element | null): element is model.NamedElement {
+export function isNamedElement(element: elements.Element | null): element is elements.NamedElement {
 	if (!element) return false;
 	return ElementTypeUtility.isNamedElement(element.elementType);
 }
 
 /**
-* Asserts that the element is a RedefinableElement or one of its descendants.
-*/
-export function isRedefinableElement(element: model.Element | null): element is model.RedefinableElement {
-	if (!element) return false;
-	return ElementTypeUtility.isRedefinableElement(element.elementType);
-}
-
-/**
-* Asserts that the element is a PackageableElement or one of its descendants.
-*/
-export function isPackageableElement(element: model.Element | null): element is model.PackageableElement {
-	if (!element) return false;
-	return ElementTypeUtility.isPackageableElement(element.elementType);
-}
-
-/**
-* Asserts that the element is a Type or one of its descendants.
-*/
-export function isType(element: model.Element | null): element is model.Type {
-	if (!element) return false;
-	return ElementTypeUtility.isType(element.elementType);
-}
-
-/**
-* Asserts that the element is a Classifier or one of its descendants.
-*/
-export function isClassifier(element: model.Element | null): element is model.Classifier {
-	if (!element) return false;
-	return ElementTypeUtility.isClassifier(element.elementType);
-}
-
-/**
-* Asserts that the element is a MemberedClassifier or one of its descendants.
-*/
-export function isMemberedClassifier(element: model.Element | null): element is model.MemberedClassifier {
-	if (!element) return false;
-	return ElementTypeUtility.isMemberedClassifier(element.elementType);
-}
-
-/**
-* Asserts that the element is a StructuredClassifier or one of its descendants.
-*/
-export function isStructuredClassifier(element: model.Element | null): element is model.StructuredClassifier {
-	if (!element) return false;
-	return ElementTypeUtility.isStructuredClassifier(element.elementType);
-}
-
-/**
-* Asserts that the element is a BehavioredClassifier or one of its descendants.
-*/
-export function isBehavioredClassifier(element: model.Element | null): element is model.BehavioredClassifier {
-	if (!element) return false;
-	return ElementTypeUtility.isBehavioredClassifier(element.elementType);
-}
-
-/**
-* Asserts that the element is a Class or one of its descendants.
-*/
-export function isClass(element: model.Element | null): element is model.Class {
-	if (!element) return false;
-	return ElementTypeUtility.isClass(element.elementType);
-}
-
-/**
-* Asserts that the element is a Stereotype or one of its descendants.
-*/
-export function isStereotype(element: model.Element | null): element is model.Stereotype {
-	if (!element) return false;
-	return ElementTypeUtility.isStereotype(element.elementType);
-}
-
-/**
-* Asserts that the element is a Package or one of its descendants.
-*/
-export function isPackage(element: model.Element | null): element is model.Package {
-	if (!element) return false;
-	return ElementTypeUtility.isPackage(element.elementType);
-}
-
-/**
-* Asserts that the element is a Profile or one of its descendants.
-*/
-export function isProfile(element: model.Element | null): element is model.Profile {
-	if (!element) return false;
-	return ElementTypeUtility.isProfile(element.elementType);
-}
-
-/**
-* Asserts that the element is a OrderedElement or one of its descendants.
-*/
-export function isOrderedElement(element: model.Element | null): element is model.OrderedElement {
-	if (!element) return false;
-	return ElementTypeUtility.isOrderedElement(element.elementType);
-}
-
-/**
 * Asserts that the element is a TypedElement or one of its descendants.
 */
-export function isTypedElement(element: model.Element | null): element is model.TypedElement {
+export function isTypedElement(element: elements.Element | null): element is elements.TypedElement {
 	if (!element) return false;
 	return ElementTypeUtility.isTypedElement(element.elementType);
 }
@@ -602,23 +506,71 @@ export function isTypedElement(element: model.Element | null): element is model.
 /**
 * Asserts that the element is a ValueSpecification or one of its descendants.
 */
-export function isValueSpecification(element: model.Element | null): element is model.ValueSpecification {
+export function isValueSpecification(element: elements.Element | null): element is elements.ValueSpecification {
 	if (!element) return false;
 	return ElementTypeUtility.isValueSpecification(element.elementType);
 }
 
 /**
+* Asserts that the element is a PackageableElement or one of its descendants.
+*/
+export function isPackageableElement(element: elements.Element | null): element is elements.PackageableElement {
+	if (!element) return false;
+	return ElementTypeUtility.isPackageableElement(element.elementType);
+}
+
+/**
+* Asserts that the element is a Type or one of its descendants.
+*/
+export function isType(element: elements.Element | null): element is elements.Type {
+	if (!element) return false;
+	return ElementTypeUtility.isType(element.elementType);
+}
+
+/**
+* Asserts that the element is a RedefinableElement or one of its descendants.
+*/
+export function isRedefinableElement(element: elements.Element | null): element is elements.RedefinableElement {
+	if (!element) return false;
+	return ElementTypeUtility.isRedefinableElement(element.elementType);
+}
+
+/**
+* Asserts that the element is a Classifier or one of its descendants.
+*/
+export function isClassifier(element: elements.Element | null): element is elements.Classifier {
+	if (!element) return false;
+	return ElementTypeUtility.isClassifier(element.elementType);
+}
+
+/**
+* Asserts that the element is a StructuredClassifier or one of its descendants.
+*/
+export function isStructuredClassifier(element: elements.Element | null): element is elements.StructuredClassifier {
+	if (!element) return false;
+	return ElementTypeUtility.isStructuredClassifier(element.elementType);
+}
+
+/**
 * Asserts that the element is a MultiplicityElement or one of its descendants.
 */
-export function isMultiplicityElement(element: model.Element | null): element is model.MultiplicityElement {
+export function isMultiplicityElement(element: elements.Element | null): element is elements.MultiplicityElement {
 	if (!element) return false;
 	return ElementTypeUtility.isMultiplicityElement(element.elementType);
 }
 
 /**
+* Asserts that the element is a OrderedElement or one of its descendants.
+*/
+export function isOrderedElement(element: elements.Element | null): element is elements.OrderedElement {
+	if (!element) return false;
+	return ElementTypeUtility.isOrderedElement(element.elementType);
+}
+
+/**
 * Asserts that the element is a Feature or one of its descendants.
 */
-export function isFeature(element: model.Element | null): element is model.Feature {
+export function isFeature(element: elements.Element | null): element is elements.Feature {
 	if (!element) return false;
 	return ElementTypeUtility.isFeature(element.elementType);
 }
@@ -626,15 +578,47 @@ export function isFeature(element: model.Element | null): element is model.Featu
 /**
 * Asserts that the element is a StructuralFeature or one of its descendants.
 */
-export function isStructuralFeature(element: model.Element | null): element is model.StructuralFeature {
+export function isStructuralFeature(element: elements.Element | null): element is elements.StructuralFeature {
 	if (!element) return false;
 	return ElementTypeUtility.isStructuralFeature(element.elementType);
 }
 
 /**
+* Asserts that the element is a MemberedClassifier or one of its descendants.
+*/
+export function isMemberedClassifier(element: elements.Element | null): element is elements.MemberedClassifier {
+	if (!element) return false;
+	return ElementTypeUtility.isMemberedClassifier(element.elementType);
+}
+
+/**
+* Asserts that the element is a BehavioredClassifier or one of its descendants.
+*/
+export function isBehavioredClassifier(element: elements.Element | null): element is elements.BehavioredClassifier {
+	if (!element) return false;
+	return ElementTypeUtility.isBehavioredClassifier(element.elementType);
+}
+
+/**
+* Asserts that the element is a Class or one of its descendants.
+*/
+export function isClass(element: elements.Element | null): element is elements.Class {
+	if (!element) return false;
+	return ElementTypeUtility.isClass(element.elementType);
+}
+
+/**
+* Asserts that the element is a Stereotype or one of its descendants.
+*/
+export function isStereotype(element: elements.Element | null): element is elements.Stereotype {
+	if (!element) return false;
+	return ElementTypeUtility.isStereotype(element.elementType);
+}
+
+/**
 * Asserts that the element is a Relationship or one of its descendants.
 */
-export function isRelationship(element: model.Element | null): element is model.Relationship {
+export function isRelationship(element: elements.Element | null): element is elements.Relationship {
 	if (!element) return false;
 	return ElementTypeUtility.isRelationship(element.elementType);
 }
@@ -642,15 +626,31 @@ export function isRelationship(element: model.Element | null): element is model.
 /**
 * Asserts that the element is a Property or one of its descendants.
 */
-export function isProperty(element: model.Element | null): element is model.Property {
+export function isProperty(element: elements.Element | null): element is elements.Property {
 	if (!element) return false;
 	return ElementTypeUtility.isProperty(element.elementType);
 }
 
 /**
+* Asserts that the element is a Package or one of its descendants.
+*/
+export function isPackage(element: elements.Element | null): element is elements.Package {
+	if (!element) return false;
+	return ElementTypeUtility.isPackage(element.elementType);
+}
+
+/**
+* Asserts that the element is a Profile or one of its descendants.
+*/
+export function isProfile(element: elements.Element | null): element is elements.Profile {
+	if (!element) return false;
+	return ElementTypeUtility.isProfile(element.elementType);
+}
+
+/**
 * Asserts that the element is a DataType or one of its descendants.
 */
-export function isDataType(element: model.Element | null): element is model.DataType {
+export function isDataType(element: elements.Element | null): element is elements.DataType {
 	if (!element) return false;
 	return ElementTypeUtility.isDataType(element.elementType);
 }
@@ -658,7 +658,7 @@ export function isDataType(element: model.Element | null): element is model.Data
 /**
 * Asserts that the element is a PrimitiveType or one of its descendants.
 */
-export function isPrimitiveType(element: model.Element | null): element is model.PrimitiveType {
+export function isPrimitiveType(element: elements.Element | null): element is elements.PrimitiveType {
 	if (!element) return false;
 	return ElementTypeUtility.isPrimitiveType(element.elementType);
 }
@@ -666,7 +666,7 @@ export function isPrimitiveType(element: model.Element | null): element is model
 /**
 * Asserts that the element is a Parameter or one of its descendants.
 */
-export function isParameter(element: model.Element | null): element is model.Parameter {
+export function isParameter(element: elements.Element | null): element is elements.Parameter {
 	if (!element) return false;
 	return ElementTypeUtility.isParameter(element.elementType);
 }
@@ -674,7 +674,7 @@ export function isParameter(element: model.Element | null): element is model.Par
 /**
 * Asserts that the element is a BehavioralFeature or one of its descendants.
 */
-export function isBehavioralFeature(element: model.Element | null): element is model.BehavioralFeature {
+export function isBehavioralFeature(element: elements.Element | null): element is elements.BehavioralFeature {
 	if (!element) return false;
 	return ElementTypeUtility.isBehavioralFeature(element.elementType);
 }
@@ -682,7 +682,7 @@ export function isBehavioralFeature(element: model.Element | null): element is m
 /**
 * Asserts that the element is a Operation or one of its descendants.
 */
-export function isOperation(element: model.Element | null): element is model.Operation {
+export function isOperation(element: elements.Element | null): element is elements.Operation {
 	if (!element) return false;
 	return ElementTypeUtility.isOperation(element.elementType);
 }
@@ -690,7 +690,7 @@ export function isOperation(element: model.Element | null): element is model.Ope
 /**
 * Asserts that the element is a Model or one of its descendants.
 */
-export function isModel(element: model.Element | null): element is model.Model {
+export function isModel(element: elements.Element | null): element is elements.Model {
 	if (!element) return false;
 	return ElementTypeUtility.isModel(element.elementType);
 }
@@ -698,7 +698,7 @@ export function isModel(element: model.Element | null): element is model.Model {
 /**
 * Asserts that the element is a LiteralSpecification or one of its descendants.
 */
-export function isLiteralSpecification(element: model.Element | null): element is model.LiteralSpecification {
+export function isLiteralSpecification(element: elements.Element | null): element is elements.LiteralSpecification {
 	if (!element) return false;
 	return ElementTypeUtility.isLiteralSpecification(element.elementType);
 }
@@ -706,7 +706,7 @@ export function isLiteralSpecification(element: model.Element | null): element i
 /**
 * Asserts that the element is a LiteralUnlimitedNatural or one of its descendants.
 */
-export function isLiteralUnlimitedNatural(element: model.Element | null): element is model.LiteralUnlimitedNatural {
+export function isLiteralUnlimitedNatural(element: elements.Element | null): element is elements.LiteralUnlimitedNatural {
 	if (!element) return false;
 	return ElementTypeUtility.isLiteralUnlimitedNatural(element.elementType);
 }
@@ -714,7 +714,7 @@ export function isLiteralUnlimitedNatural(element: model.Element | null): elemen
 /**
 * Asserts that the element is a LiteralString or one of its descendants.
 */
-export function isLiteralString(element: model.Element | null): element is model.LiteralString {
+export function isLiteralString(element: elements.Element | null): element is elements.LiteralString {
 	if (!element) return false;
 	return ElementTypeUtility.isLiteralString(element.elementType);
 }
@@ -722,7 +722,7 @@ export function isLiteralString(element: model.Element | null): element is model
 /**
 * Asserts that the element is a LiteralReal or one of its descendants.
 */
-export function isLiteralReal(element: model.Element | null): element is model.LiteralReal {
+export function isLiteralReal(element: elements.Element | null): element is elements.LiteralReal {
 	if (!element) return false;
 	return ElementTypeUtility.isLiteralReal(element.elementType);
 }
@@ -730,7 +730,7 @@ export function isLiteralReal(element: model.Element | null): element is model.L
 /**
 * Asserts that the element is a LiteralNull or one of its descendants.
 */
-export function isLiteralNull(element: model.Element | null): element is model.LiteralNull {
+export function isLiteralNull(element: elements.Element | null): element is elements.LiteralNull {
 	if (!element) return false;
 	return ElementTypeUtility.isLiteralNull(element.elementType);
 }
@@ -738,7 +738,7 @@ export function isLiteralNull(element: model.Element | null): element is model.L
 /**
 * Asserts that the element is a LiteralInteger or one of its descendants.
 */
-export function isLiteralInteger(element: model.Element | null): element is model.LiteralInteger {
+export function isLiteralInteger(element: elements.Element | null): element is elements.LiteralInteger {
 	if (!element) return false;
 	return ElementTypeUtility.isLiteralInteger(element.elementType);
 }
@@ -746,7 +746,7 @@ export function isLiteralInteger(element: model.Element | null): element is mode
 /**
 * Asserts that the element is a LiteralBoolean or one of its descendants.
 */
-export function isLiteralBoolean(element: model.Element | null): element is model.LiteralBoolean {
+export function isLiteralBoolean(element: elements.Element | null): element is elements.LiteralBoolean {
 	if (!element) return false;
 	return ElementTypeUtility.isLiteralBoolean(element.elementType);
 }
@@ -754,7 +754,7 @@ export function isLiteralBoolean(element: model.Element | null): element is mode
 /**
 * Asserts that the element is a DirectedRelationship or one of its descendants.
 */
-export function isDirectedRelationship(element: model.Element | null): element is model.DirectedRelationship {
+export function isDirectedRelationship(element: elements.Element | null): element is elements.DirectedRelationship {
 	if (!element) return false;
 	return ElementTypeUtility.isDirectedRelationship(element.elementType);
 }
@@ -762,7 +762,7 @@ export function isDirectedRelationship(element: model.Element | null): element i
 /**
 * Asserts that the element is a InterfaceRealization or one of its descendants.
 */
-export function isInterfaceRealization(element: model.Element | null): element is model.InterfaceRealization {
+export function isInterfaceRealization(element: elements.Element | null): element is elements.InterfaceRealization {
 	if (!element) return false;
 	return ElementTypeUtility.isInterfaceRealization(element.elementType);
 }
@@ -770,7 +770,7 @@ export function isInterfaceRealization(element: model.Element | null): element i
 /**
 * Asserts that the element is a Interface or one of its descendants.
 */
-export function isInterface(element: model.Element | null): element is model.Interface {
+export function isInterface(element: elements.Element | null): element is elements.Interface {
 	if (!element) return false;
 	return ElementTypeUtility.isInterface(element.elementType);
 }
@@ -778,7 +778,7 @@ export function isInterface(element: model.Element | null): element is model.Int
 /**
 * Asserts that the element is a Generalization or one of its descendants.
 */
-export function isGeneralization(element: model.Element | null): element is model.Generalization {
+export function isGeneralization(element: elements.Element | null): element is elements.Generalization {
 	if (!element) return false;
 	return ElementTypeUtility.isGeneralization(element.elementType);
 }
@@ -786,7 +786,7 @@ export function isGeneralization(element: model.Element | null): element is mode
 /**
 * Asserts that the element is a EnumerationLiteral or one of its descendants.
 */
-export function isEnumerationLiteral(element: model.Element | null): element is model.EnumerationLiteral {
+export function isEnumerationLiteral(element: elements.Element | null): element is elements.EnumerationLiteral {
 	if (!element) return false;
 	return ElementTypeUtility.isEnumerationLiteral(element.elementType);
 }
@@ -794,7 +794,7 @@ export function isEnumerationLiteral(element: model.Element | null): element is 
 /**
 * Asserts that the element is a Enumeration or one of its descendants.
 */
-export function isEnumeration(element: model.Element | null): element is model.Enumeration {
+export function isEnumeration(element: elements.Element | null): element is elements.Enumeration {
 	if (!element) return false;
 	return ElementTypeUtility.isEnumeration(element.elementType);
 }
@@ -802,7 +802,7 @@ export function isEnumeration(element: model.Element | null): element is model.E
 /**
 * Asserts that the element is a Comment or one of its descendants.
 */
-export function isComment(element: model.Element | null): element is model.Comment {
+export function isComment(element: elements.Element | null): element is elements.Comment {
 	if (!element) return false;
 	return ElementTypeUtility.isComment(element.elementType);
 }
@@ -810,7 +810,7 @@ export function isComment(element: model.Element | null): element is model.Comme
 /**
 * Asserts that the element is a Association or one of its descendants.
 */
-export function isAssociation(element: model.Element | null): element is model.Association {
+export function isAssociation(element: elements.Element | null): element is elements.Association {
 	if (!element) return false;
 	return ElementTypeUtility.isAssociation(element.elementType);
 }

@@ -9,7 +9,7 @@ import * as Interfaces from "./interfaces";
 import * as Data from "./data-interfaces";
 import { ElementTypeUtility } from './utils';
 
-export class ElementMap {
+export class ElementMapImpl {
     private elementsById: { [key: string]: Interfaces.Element } = {};
     private specializationsById: { [generalId: string]: Interfaces.Classifier[] } = {};
     private associationsByEndId: { [endId: string]: Interfaces.Association } = {};

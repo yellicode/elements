@@ -6,12 +6,22 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import * as Interfaces from "./interfaces";
+import { ElementComparer } from './element-comparer-interface';
 
 const NO_ORDER = 0;
 
-export class ElementComparer {
+export class ElementComparerImpl implements ElementComparer {
 
-    public static compareOrderedElements<TElement extends Interfaces.OrderedElement & Interfaces.NamedElement>(x: TElement, y: TElement): number {
+    private static instance: ElementComparerImpl;
+
+    static getInstance() {
+        if (!ElementComparerImpl.instance) {
+            ElementComparerImpl.instance = new ElementComparerImpl();           
+        }
+        return ElementComparerImpl.instance;
+    }
+
+    public compareOrderedElements<TElement extends Interfaces.OrderedElement & Interfaces.NamedElement>(x: TElement, y: TElement): number {
         // We use a value of 0 (NO_ORDER) for elements having no order at all.
         // An order of NO_ORDER comes after a set order		
         var xOrder = x.order || NO_ORDER;
@@ -29,7 +39,7 @@ export class ElementComparer {
         return x.elementType === Interfaces.ElementType.parameter ? result : x.name.localeCompare(y.name);
     }
 
-    public static comparePackageableElements<TElement extends Interfaces.PackageableElement>(x: TElement, y: TElement): number {
+    public comparePackageableElements<TElement extends Interfaces.PackageableElement>(x: TElement, y: TElement): number {
         // Packages first
         if (x.elementType === Interfaces.ElementType.package) {
             if (y.elementType !== Interfaces.ElementType.package) {
