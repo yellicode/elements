@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2018 Yellicode
+* Copyright (c) 2019 Yellicode
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -624,7 +624,7 @@ export interface AssociationData extends RelationshipData, ClassifierData {
 export type AggregationKind = 'none' | 'shared' | 'composite';
 
 /**
-* Contents from partial file ./yml-data-interfaces.partial.ts.
+* Contents from partial file ./data-interfaces.partial.ts.
 */
 
 /**
