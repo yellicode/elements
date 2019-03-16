@@ -7,6 +7,7 @@
  */
 import * as Interfaces from "./interfaces";
 import { ElementComparer } from './element-comparer-interface';
+import { isFeature } from './utils';
 
 const NO_ORDER = 0;
 
@@ -35,8 +36,9 @@ export class ElementComparerImpl implements ElementComparer {
         // Both have an order
         const result = xOrder - yOrder;
         if (result !== 0) return result;
-        // Both have the same order. Fallback by name. Unless we are dealing with parameters.        
-        return x.elementType === Interfaces.ElementType.parameter ? result : x.name.localeCompare(y.name);
+        // Both have the same order. Fallback by name for features (operations and properties), this is what we also do  
+        // in the modeler. For enum members and parameters: keep the order as is.
+        return isFeature(x) ? x.name.localeCompare(y.name) : 0;        
     }
 
     public comparePackageableElements<TElement extends Interfaces.PackageableElement>(x: TElement, y: TElement): number {
