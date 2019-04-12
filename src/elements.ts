@@ -15,3 +15,4 @@ export * from './element-factory';
 export * from "./transforms/packaged-element-transform";
 export * from "./transforms/package-filter-transform";
 export * from "./transforms/renaming-transforms";
+export * from "./transforms/dependency-sort-transform";

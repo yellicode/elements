@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "@yellicode/core": "^1.1.0",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "toposort": "^2.0.2"
   },
   "devDependencies": {
     "@types/node": "^10.11.7",
