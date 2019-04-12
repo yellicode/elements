@@ -17,28 +17,138 @@
 * with an ElementType value.
 */
 export enum ElementType {
+	/**
+	* The element is a Association. Associations represent relationships between classes.
+	*/
 	association = 1,
+	/**
+	* Alias for ElementType.class in case the reserved 'class' is not allowed.
+	*/
+	cls = 2,
+	/**
+	* The element is a Class. A Class classifies a set of objects and specifies the features that
+	* characterize the structure and behavior of those objects. A Class may have an internal structure and
+	* Ports.
+	*/
 	class = 2,
+	/**
+	* The element is a Comment. A Comment is a textual annotation that can be attached to a set of
+	* Elements.
+	*/
 	comment = 3,
+	/**
+	* The element is a DataType. A DataType is similar to a Class; however, instances of data type are
+	* identified only by their value. If two data types have the same value, the instances are considered
+	* identical.
+	*/
 	dataType = 4,
+	/**
+	* The element is a Enumeration. An Enumeration is a DataType whose values are enumerated in the model
+	* as EnumerationLiterals.
+	*/
 	enumeration = 5,
+	/**
+	* The element is a EnumerationLiteral. An EnumerationLiteral is a user-defined data value for an
+	* Enumeration.
+	*/
 	enumerationLiteral = 6,
+	/**
+	* The element is a Generalization. A Generalization is a taxonomic relationship between a more general
+	* Classifier and a more specific Classifier. Each instance of the specific Classifier is also an
+	* instance of the general Classifier.The specific Classifier inherits the features of the more general
+	* Classifier. A Generalization is owned by the specific Classifier.
+	*/
 	generalization = 7,
+	/**
+	* Alias for ElementType.interface in case the reserved 'interface' is not allowed.
+	*/
+	iface = 8,
+	/**
+	* The element is a Interface. Interfaces declare coherent services that are implemented by
+	* BehavioredClassifiers that implement the Interfaces via InterfaceRealizations.
+	*/
 	interface = 8,
+	/**
+	* The element is a InterfaceRealization. An InterfaceRealization is a specialized realization
+	* relationship between a BehavioredClassifier and an Interface. This relationship signifies that the
+	* realizing BehavioredClassifier conforms to the contract specified by the Interface.
+	*/
 	interfaceRealization = 9,
+	/**
+	* The element is a LiteralBoolean. A LiteralBoolean is a specification of a Boolean value.
+	*/
 	literalBoolean = 10,
+	/**
+	* The element is a LiteralInteger. A LiteralInteger is a specification of an Integer value.
+	*/
 	literalInteger = 11,
+	/**
+	* The element is a LiteralNull. A LiteralNull specifies the lack of a value.
+	*/
 	literalNull = 12,
+	/**
+	* The element is a LiteralReal. A LiteralReal is a specification of a Real value.
+	*/
 	literalReal = 13,
+	/**
+	* The element is a LiteralString. A LiteralString is a specification of a String value.
+	*/
 	literalString = 14,
+	/**
+	* The element is a LiteralUnlimitedNatural. A LiteralUnlimitedNatural is a specification of an
+	* UnlimitedNatural number.
+	*/
 	literalUnlimitedNatural = 15,
+	/**
+	* The element is a Model. Represents the top-level package.
+	*/
 	model = 16,
+	/**
+	* The element is a Operation. An Operation is a BehavioralFeature of a Classifier that specifies the
+	* name, type, parameters, and constraints for invoking an associated Behavior. An Operation may invoke
+	* both the execution of method behaviors as well as other behavioral responses.
+	*/
 	operation = 17,
+	/**
+	* The element is a Package. A package is used to group elements, and provides a namespace for the
+	* grouped elements.
+	* A package can have one or more profile applications to indicate which profiles have been applied.
+	* Because a profile is a package, it is possible to apply a profile not only to packages, but also to
+	* profiles.
+	*/
 	package = 18,
+	/**
+	* The element is a Parameter. A Parameter is a specification of an argument used to pass information
+	* into or out of an invocation of a BehavioralFeature. Parameters can be treated as
+	* ConnectableElements within Collaborations.
+	*/
 	parameter = 19,
+	/**
+	* The element is a PrimitiveType. A PrimitiveType defines a predefined DataType, without any
+	* substructure. A PrimitiveType may have an algebra and operations defined outside of UML, for
+	* example, mathematically.
+	*/
 	primitiveType = 20,
+	/**
+	* The element is a Profile. Metamodel customizations are defined in a profile, which is then applied
+	* to a package. A profile can define classes, stereotypes, data types, primitive types, enumerations.
+	* Stereotypes are specific metaclasses, tagged values are standard metaattributes, and profiles are
+	* specific kinds of packages.
+	*/
 	profile = 21,
+	/**
+	* The element is a Property. A Property is a StructuralFeature. A Property related by ownedAttribute
+	* to a Classifier (other than an association) represents an attribute and might also represent an
+	* association end. It relates an instance of the Classifier to a value or set of values of the type of
+	* the attribute. A Property related by memberEnd to an Association represents an end of the
+	* Association. The type of the Property is the type of the end of the Association.
+	*/
 	property = 22,
+	/**
+	* The element is a Stereotype. Stereotype is a profile class which defines how an existing metaclass
+	* may be extended as part of a profile. It enables the use of a platform or domain specific
+	* terminology or notation in place of, or in addition to, the ones used for the extended metaclass.
+	*/
 	stereotype = 23
 }
 
