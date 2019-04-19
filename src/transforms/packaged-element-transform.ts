@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
- import { ModelTransform } from '@yellicode/core';
+import { ModelTransform } from '@yellicode/core';
 import * as elements from "../interfaces";
 import { ElementTypeUtility } from '../utils';
 

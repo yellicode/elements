@@ -16,3 +16,4 @@ export * from "./transforms/packaged-element-transform";
 export * from "./transforms/package-filter-transform";
 export * from "./transforms/renaming-transforms";
 export * from "./transforms/dependency-sort-transform";
+export * from "./transforms/element-type-transform";
