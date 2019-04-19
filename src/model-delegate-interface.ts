@@ -183,9 +183,8 @@ export interface ModelDelegate {
 	getAllInterfaces(element: elements.Package): elements.Interface[];
 
 	/**
-	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
-	* Enumeration.
+	* Gets all types that are owned by this Package, including the ones owned by nested packages. This
+	* includes the following types of elements: Class, Interface, DataType, PrimitiveType and Enumeration.
 	*/
 	getAllTypes(element: elements.Package): elements.Classifier[];
 

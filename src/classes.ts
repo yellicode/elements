@@ -565,9 +565,8 @@ export class Package extends Element implements elements.Package {
 	}
 
 	/**
-	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
-	* Enumeration.
+	* Gets all types that are owned by this Package, including the ones owned by nested packages. This
+	* includes the following types of elements: Class, Interface, DataType, PrimitiveType and Enumeration.
 	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
 	public getAllTypes(): elements.Classifier[]
@@ -729,9 +728,8 @@ export class Profile extends Element implements elements.Profile {
 	}
 
 	/**
-	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
-	* Enumeration.
+	* Gets all types that are owned by this Package, including the ones owned by nested packages. This
+	* includes the following types of elements: Class, Interface, DataType, PrimitiveType and Enumeration.
 	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
 	public getAllTypes(): elements.Classifier[]
@@ -1416,9 +1414,8 @@ export class Model extends Element implements elements.Model {
 	}
 
 	/**
-	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
-	* Enumeration.
+	* Gets all types that are owned by this Package, including the ones owned by nested packages. This
+	* includes the following types of elements: Class, Interface, DataType, PrimitiveType and Enumeration.
 	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
 	public getAllTypes(): elements.Classifier[]

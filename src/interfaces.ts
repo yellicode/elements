@@ -24,7 +24,7 @@ export enum ElementType {
 	/**
 	* Alias for ElementType.class in case the reserved 'class' is not allowed.
 	*/
-	cls = 2,
+	_class = 2,
 	/**
 	* The element is a Class. A Class classifies a set of objects and specifies the features that
 	* characterize the structure and behavior of those objects. A Class may have an internal structure and
@@ -62,7 +62,7 @@ export enum ElementType {
 	/**
 	* Alias for ElementType.interface in case the reserved 'interface' is not allowed.
 	*/
-	iface = 8,
+	_interface = 8,
 	/**
 	* The element is a Interface. Interfaces declare coherent services that are implemented by
 	* BehavioredClassifiers that implement the Interfaces via InterfaceRealizations.
@@ -714,9 +714,8 @@ export interface Package extends PackageableElement {
 	*/
 	getAllInterfaces(): Interface[];
 	/**
-	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
-	* This includes the following types of elements: Class, Interface, DataType, PrimitiveType and
-	* Enumeration.
+	* Gets all types that are owned by this Package, including the ones owned by nested packages. This
+	* includes the following types of elements: Class, Interface, DataType, PrimitiveType and Enumeration.
 	* @returns {Classifier[]} A subset of PackagedElements.
 	*/
 	getAllTypes(): Classifier[];
