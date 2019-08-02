@@ -11,6 +11,10 @@ import { ModelTransform } from '@yellicode/core';
 import { Package, PackageableElement, BehavioredClassifier, MemberedClassifier, Type, Classifier } from '../interfaces';
 import { isPackage, isClassifier, isBehavioredClassifier, isMemberedClassifier, isType } from '../utils';
 
+/**
+ * A bitwise enumeration used to specify what types of dependency to include
+ * during a DependencySortTransform.
+ */
 export enum DependencyKind {
     none = 0,
     generalizations = 1 << 0,
