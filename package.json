@@ -19,12 +19,12 @@
   },
   "dependencies": {
     "@yellicode/core": "^1.1.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "toposort": "^2.0.2"
   },
   "devDependencies": {
     "@types/node": "^10.11.7",
-    "@types/lodash": "^4.14.117",
+    "@types/lodash": "^4.14.136",
     "rollup": "^0.66.6"
   },
   "scripts": {
