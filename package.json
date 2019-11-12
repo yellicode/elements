@@ -13,12 +13,13 @@
   "module": "dist/es5/elements.js",
   "es2015": "dist/es6/elements.js",
   "types": "dist/types/elements.d.ts",
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "github:yellicode/elements.git"
   },
   "dependencies": {
-    "@yellicode/core": "^1.1.0",
+    "@yellicode/core": "^1.2.0",
     "lodash": "^4.17.15",
     "toposort": "^2.0.2"
   },
