@@ -19,7 +19,7 @@
     "url": "github:yellicode/elements.git"
   },
   "dependencies": {
-    "@yellicode/core": "^1.2.0",
+    "@yellicode/core": "^1.2.1",
     "lodash": "^4.17.15",
     "toposort": "^2.0.2"
   },
