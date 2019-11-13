@@ -1,6 +1,6 @@
 {
   "name": "@yellicode/elements",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "The meta model API for Yellicode - an extensible code generator.",
   "keywords": [
     "code generator",
@@ -19,7 +19,7 @@
     "url": "github:yellicode/elements.git"
   },
   "dependencies": {
-    "@yellicode/core": "^1.2.1",
+    "@yellicode/core": "^1.2.2",
     "lodash": "^4.17.15",
     "toposort": "^2.0.2"
   },
