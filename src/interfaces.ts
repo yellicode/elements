@@ -197,8 +197,7 @@ export class UnlimitedNatural {
 * VisibilityKind is an enumeration type that defines literals to determine the visibility of Elements
 * in a model.
 */
-export enum VisibilityKind
-{
+export enum VisibilityKind {
 	/**
 	* A Named Element with public visibility is visible to all elements that can access the contents of
 	* the Namespace that owns it.
@@ -782,8 +781,7 @@ export interface PrimitiveType extends DataType {
 * ParameterDirectionKind is an Enumeration that defines literals used to specify direction of
 * parameters.
 */
-export enum ParameterDirectionKind
-{
+export enum ParameterDirectionKind {
 	/**
 	* Indicates that Parameter values are passed in by the caller.
 	*/
@@ -1088,8 +1086,7 @@ export interface DocumentReference {
 	path: string;
 }
 
-export enum DocumentLocationKind
-{
+export enum DocumentLocationKind {
 	local = 1,
 	npm = 2
 }
@@ -1145,8 +1142,7 @@ export interface Association extends Relationship, Classifier {
 /**
 * AggregationKind is an Enumeration for specifying the kind of aggregation of a Property.
 */
-export enum AggregationKind
-{
+export enum AggregationKind {
 	/**
 	* Indicates that the Property has no aggregation.
 	*/

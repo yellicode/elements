@@ -12,6 +12,7 @@
 * Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
 */
 import * as elements from './interfaces';
+import { SimpleDataType } from './simple-data-type';
 
 const PRIMITIVE_BOOLEAN_ID = "boolean_id";
 const PRIMITIVE_INTEGER_ID = "integer_id";
@@ -20,41 +21,66 @@ const PRIMITIVE_STRING_ID = "string_id";
 const PRIMITIVE_OBJECT_ID = "object_id";
 
 /**
-* Returns a boolean value indicating if the element is a built in primitive boolean.
+* Represents the built-in primitive boolean type.
 */
-export function isPrimitiveBoolean(element: elements.Element | null): boolean {
+export const primitiveBooleanType = new SimpleDataType(PRIMITIVE_BOOLEAN_ID, 'boolean', elements.ElementType.primitiveType) as elements.PrimitiveType;
+
+/**
+* Represents the built-in primitive integer type.
+*/
+export const primitiveIntegerType = new SimpleDataType(PRIMITIVE_INTEGER_ID, 'integer', elements.ElementType.primitiveType) as elements.PrimitiveType;
+
+/**
+* Represents the built-in primitive real type.
+*/
+export const primitiveRealType = new SimpleDataType(PRIMITIVE_REAL_ID, 'real', elements.ElementType.primitiveType) as elements.PrimitiveType;
+
+/**
+* Represents the built-in primitive string type.
+*/
+export const primitiveStringType = new SimpleDataType(PRIMITIVE_STRING_ID, 'string', elements.ElementType.primitiveType) as elements.PrimitiveType;
+
+/**
+* Represents the built-in primitive object type.
+*/
+export const primitiveObjectType = new SimpleDataType(PRIMITIVE_OBJECT_ID, 'object', elements.ElementType.primitiveType) as elements.PrimitiveType;
+
+/**
+* Asserts that the element is a built in primitive boolean.
+*/
+export function isPrimitiveBoolean(element: elements.Element | null): element is elements.PrimitiveType {
 	if (!element) return false;
 	return element.id === PRIMITIVE_BOOLEAN_ID;
 }
 
 /**
-* Returns a boolean value indicating if the element is a built in primitive integer.
+* Asserts that the element is a built in primitive integer.
 */
-export function isPrimitiveInteger(element: elements.Element | null): boolean {
+export function isPrimitiveInteger(element: elements.Element | null): element is elements.PrimitiveType {
 	if (!element) return false;
 	return element.id === PRIMITIVE_INTEGER_ID;
 }
 
 /**
-* Returns a boolean value indicating if the element is a built in primitive real.
+* Asserts that the element is a built in primitive real.
 */
-export function isPrimitiveReal(element: elements.Element | null): boolean {
+export function isPrimitiveReal(element: elements.Element | null): element is elements.PrimitiveType {
 	if (!element) return false;
 	return element.id === PRIMITIVE_REAL_ID;
 }
 
 /**
-* Returns a boolean value indicating if the element is a built in primitive string.
+* Asserts that the element is a built in primitive string.
 */
-export function isPrimitiveString(element: elements.Element | null): boolean {
+export function isPrimitiveString(element: elements.Element | null): element is elements.PrimitiveType {
 	if (!element) return false;
 	return element.id === PRIMITIVE_STRING_ID;
 }
 
 /**
-* Returns a boolean value indicating if the element is a built in primitive object.
+* Asserts that the element is a built in primitive object.
 */
-export function isPrimitiveObject(element: elements.Element | null): boolean {
+export function isPrimitiveObject(element: elements.Element | null): element is elements.PrimitiveType {
 	if (!element) return false;
 	return element.id === PRIMITIVE_OBJECT_ID;
 }
