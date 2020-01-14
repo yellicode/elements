@@ -27,7 +27,7 @@ export class ModelDelegateImpl implements ModelDelegate {
     }
 
     // ************************  Document **************************** //     
-    
+
     public findElementById(id: string): Interfaces.Element | null {
         if (!this.elementMap) return null;
 
@@ -196,7 +196,7 @@ export class ModelDelegateImpl implements ModelDelegate {
     */
     public getAllParents(classifier: Interfaces.Classifier): Interfaces.Classifier[] {
         const allParents: Interfaces.Classifier[] = [];
-        this.getAllParentsRecursive(classifier, allParents);      
+        this.getAllParentsRecursive(classifier, allParents);
         return allParents;
     }
 
@@ -204,13 +204,13 @@ export class ModelDelegateImpl implements ModelDelegate {
         const ownParents = this.getParents(classifier);
         if (ownParents != null) {
             // More specific parents first.
-            ownParents.forEach(p => {                                
+            ownParents.forEach(p => {
                 const ix = allParents.indexOf(p);
                 // If the parent is already there, remove it and add it again at the end of the list.
-                if (ix > -1) {                   
+                if (ix > -1) {
                     allParents.splice(ix, 1);
                 }
-                allParents.push(p);                
+                allParents.push(p);
             });
             // add the parents of each parent
             ownParents.forEach(p => {
@@ -419,16 +419,16 @@ export class ModelDelegateImpl implements ModelDelegate {
     }
 
     // ********************  Property **************************** //     
-    public getAssociation(property: Interfaces.Property): Interfaces.Association | null {        
+    public getAssociation(property: Interfaces.Property): Interfaces.Association | null {
         // The property can be owned by an association (association.ownedEnds) or by a classifier
         // If owned by an association, the path is short.
-        if (utils.isAssociation(property.owner)){
+        if (utils.isAssociation(property.owner)) {
             return property.owner;
         }
         // The property is not owned by an association, but can still be part of one
         // (association.memberEnds)
         if (!this.elementMap) return null;
-        return this.elementMap.getAssociationHavingMemberEnd(property);        
+        return this.elementMap.getAssociationHavingMemberEnd(property);
     }
 
     // ********************  Operation **************************** //     
@@ -455,16 +455,11 @@ export class ModelDelegateImpl implements ModelDelegate {
     public getReturnType(operation: Interfaces.Operation): Interfaces.Type | null {
         const returnParameter = this.getReturnParameter(operation);
         return returnParameter ? returnParameter.type : null;
-    }
-
-    public test<T extends keyof FactoryClassMap>(elementType: T, owner: Interfaces.Element, properties: any | null, initFn: ((element: createdElement<T> ) => void) | null): createdElement<T> {
-        let e = this.elementFactory.create(elementType, owner) as createdElement<T>;
-        return e;
-    }
+    }  
 
     // ********************  Factory functions  **************************** //     
-    private createValueSpecificationFromValue(value: boolean | number | string, owner: Interfaces.Element): Interfaces.ValueSpecification {        
-        switch (typeof(value)) {
+    private createValueSpecificationFromValue(value: boolean | number | string, owner: Interfaces.Element): Interfaces.ValueSpecification {
+        switch (typeof (value)) {
             case 'number':
                 const int = this.elementFactory.create('literalInteger', owner);
                 int.value = value;
@@ -478,29 +473,40 @@ export class ModelDelegateImpl implements ModelDelegate {
                 b.value = value;
                 return b;
             default:
-                throw `Cannot create ValueSpecification from value of type '${typeof(value)}'.`;
+                throw `Cannot create ValueSpecification from value of type '${typeof (value)}'.`;
         }
     }
-    
-    public createElement<T extends keyof FactoryClassMap>(elementType: T, owner: Interfaces.Element, properties: any | null, initFn: ((element: createdElement<T>) => void) | null): createdElement<T> {
+
+    public createElement<T extends keyof FactoryClassMap>(elementType: T, owner: Interfaces.Element | null, properties: any | null, initFn: ((element: createdElement<T>) => void) | null): createdElement<T> {
         let e = this.elementFactory.create(elementType, owner);
-        
-        if (properties) Object.assign(e, properties);
-		if (!e.id && ElementFactory.requiresId(elementType)) e.id = UniqueId.create();
+
+        if (properties) Object.assign(e, properties);        
+
+        // Ensure a ID
+        if (!e.id && ElementFactory.requiresId(elementType)) e.id = UniqueId.create();
+
+        // Initialize
         if (initFn) initFn(e);
-        if (utils.isGeneralization(e)){
+
+        // Index
+        if (e.id) {
+            this.elementMap!.addElement(e, null);
+        }
+
+        // Special case for generalizations: generalizations need to be tracked
+        if (utils.isGeneralization(e)) {
             this.onGeneralizationAdded(e);
         }
         return e;
     }
 
     public onGeneralizationAdded(generalization: Interfaces.Generalization): void {
-        if (!generalization.general) 
+        if (!generalization.general)
             return;
 
-        if (!utils.isClassifier(generalization.owner)) 
+        if (!utils.isClassifier(generalization.owner))
             return;
-         
+
         // generalization is a Generalization of classifier, so classifier is a Specialization of generalization.general.
         this.elementMap!.addSpecializationById(generalization.general.id, generalization.owner);
     }
@@ -509,7 +515,7 @@ export class ModelDelegateImpl implements ModelDelegate {
         this.elementMap!.addAssociationByEndId(end.id, association);
     }
 
-   
+
     /**
 	* Sets the default value of the element to the specified value.
 	*/
@@ -529,7 +535,7 @@ export class ModelDelegateImpl implements ModelDelegate {
 	/**
 	* Sets the lower value of the element to unlimited.
 	*/
-	public setLowerValueUnlimited(element: Interfaces.MultiplicityElement): void {
+    public setLowerValueUnlimited(element: Interfaces.MultiplicityElement): void {
         const literalUnlimited = this.elementFactory.create('literalUnlimitedNatural', element);
         literalUnlimited.value = new Interfaces.UnlimitedNatural('*');
         element.lowerValue = literalUnlimited;
@@ -538,14 +544,14 @@ export class ModelDelegateImpl implements ModelDelegate {
 	/**
 	* Sets the lower value of the element to the specified integer.
 	*/
-	public setLowerValue(element: Interfaces.MultiplicityElement, value: number) : void {
+    public setLowerValue(element: Interfaces.MultiplicityElement, value: number): void {
         element.lowerValue = this.createValueSpecificationFromValue(value, element);
     }
 
 	/**
 	* Sets the upper value of the element to unlimited.
 	*/
-	public setUpperValueUnlimited(element: Interfaces.MultiplicityElement) : void {
+    public setUpperValueUnlimited(element: Interfaces.MultiplicityElement): void {
         const literalUnlimited = this.elementFactory.create('literalUnlimitedNatural', element);
         literalUnlimited.value = new Interfaces.UnlimitedNatural('*');
         element.upperValue = literalUnlimited;
@@ -554,14 +560,14 @@ export class ModelDelegateImpl implements ModelDelegate {
 	/**
 	* Sets the upper value of the element to the specified integer.
 	*/
-	public setUpperValue(element: Interfaces.MultiplicityElement, value: number) : void {
+    public setUpperValue(element: Interfaces.MultiplicityElement, value: number): void {
         element.upperValue = this.createValueSpecificationFromValue(value, element);
     }
 
 	/**
 	* Sets the enumeration literal to the specified value.
 	*/
-	public setSpecification(element: Interfaces.EnumerationLiteral, value: number | string) : void {
+    public setSpecification(element: Interfaces.EnumerationLiteral, value: number | string): void {
         element.specification = this.createValueSpecificationFromValue(value, element);
     }
 }

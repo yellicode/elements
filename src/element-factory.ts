@@ -48,7 +48,7 @@ export class ElementFactory {
 	{
 	}
 
-	public create<T extends keyof FactoryClassMap>(elementType: T, owner: elements.Element): createdElement<T>
+	public create<T extends keyof FactoryClassMap>(elementType: T, owner: elements.Element | null): createdElement<T>
 	{
 		switch (elementType)
 		{
@@ -113,6 +113,7 @@ export class ElementFactory {
 			case 'literalNull':
 			case 'literalInteger':
 			case 'literalBoolean':
+			case 'enumerationLiteral':
 			case 'comment':
 				return false;
 			default:

@@ -310,7 +310,7 @@ export interface ModelDelegate {
 	/**
 	* Creates a new instance of the specified element and initializes it.
 	*/
-	createElement<T extends keyof FactoryClassMap>(elementType: T, owner: elements.Element, properties: any | null, initFn: ((element: createdElement<T>) => void) | null): createdElement<T>;
+	createElement<T extends keyof FactoryClassMap>(elementType: T, owner: elements.Element | null, properties: any | null, initFn: ((element: createdElement<T>) => void) | null): createdElement<T>;
 
 	/**
 	* Notifies the delegate that a property was added as member end to an association.
