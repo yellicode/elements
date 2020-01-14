@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019 Yellicode
+* Copyright (c) 2020 Yellicode
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,6 +16,8 @@ import * as Data from './data-interfaces';
 
 export interface ElementMap {
 	addElement(element: elements.Element, elementData: Data.ElementData | null) : void;
+	addSpecializationById(generalId: string, specialization: elements.Classifier): void;
+	addAssociationByEndId(endId: string, association: elements.Association): void;
 	getElementById<TElement extends elements.Element>(id: string | null): TElement | null;
 	getElementsByIdList<TElement extends elements.Element>(idList: string[]): TElement[];
 	getSpecializationsOf(generalId: string): elements.Classifier[];

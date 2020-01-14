@@ -10,7 +10,7 @@ export * from './interfaces';
 export * from './utils';
 export * from './profile-utility'; // needed by generated TS code when a model is saved
 export * from './model-reader';
-export * from './element-factory';
+export * from './editable-interfaces';
 
 export * from "./transforms/packaged-element-transform";
 export * from "./transforms/package-filter-transform";

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019 Yellicode
+* Copyright (c) 2020 Yellicode
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 * 
 * Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
 */
+import { FactoryClassMap, createdElement } from './element-factory';
 import * as elements from './interfaces';
 
 export interface ModelDelegate {
@@ -305,4 +306,48 @@ export interface ModelDelegate {
 	* Returns an Element representing the element whose id property matches the specified string.
 	*/
 	findElementById(id: string): elements.Element | null;
+
+	/**
+	* Creates a new instance of the specified element and initializes it.
+	*/
+	createElement<T extends keyof FactoryClassMap>(elementType: T, owner: elements.Element, properties: any | null, initFn: ((element: createdElement<T>) => void) | null): createdElement<T>;
+
+	/**
+	* Notifies the delegate that a property was added as member end to an association.
+	*/
+	onMemberEndAdded(association: elements.Association, end: elements.Property): void;
+
+	/**
+	* Sets the default value of the element to the specified value.
+	*/
+	setDefaultValue(hasDefaultValue: elements.Element & { defaultValue: elements.ValueSpecification | null }, value : boolean | number | string) : void;
+
+	/**
+	* Sets the default value of the element to null.
+	*/
+	setDefaultValueNull(hasDefaultValue: { defaultValue: elements.Element & elements.ValueSpecification | null }) : void;
+
+	/**
+	* Sets the lower value of the element to unlimited.
+	*/
+	setLowerValueUnlimited(element: elements.MultiplicityElement): void;
+
+	/**
+	* Sets the lower value of the element to the specified integer.
+	*/
+	setLowerValue(element: elements.MultiplicityElement, value: number) : void;
+
+	/**
+	* Sets the upper value of the element to unlimited.
+	*/
+	setUpperValueUnlimited(element: elements.MultiplicityElement) : void;
+
+	/**
+	* Sets the upper value of the element to the specified integer.
+	*/
+	setUpperValue(element: elements.MultiplicityElement, value: number) : void;
+	/**
+	* Sets the enumeration literal to the specified value.
+	*/
+	setSpecification(element: elements.EnumerationLiteral, value: number | string) : void;
 }

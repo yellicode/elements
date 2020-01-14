@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2019 Yellicode
+* Copyright (c) 2020 Yellicode
 *
 * This Source Code Form is subject to the terms of the Mozilla Public
 * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,7 @@
 * Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
 */
 import * as elements from './interfaces';
+import * as editable from './editable-interfaces';
 import { ModelDelegate } from './model-delegate-interface';
 
 export abstract class Element implements elements.Element {
@@ -58,7 +59,7 @@ export class StereotypeExtension implements elements.StereotypeExtension {
 	public metaClass!: elements.ElementType;
 }
 
-export class Class extends Element implements elements.Class {
+export class Class extends Element implements elements.Class, editable.ClassEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.class;
@@ -210,6 +211,36 @@ export class Class extends Element implements elements.Class {
 	public getSuperClasses(): elements.Class[]
 	{
 		return this.modelDelegate.getSuperClasses(this);
+	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
+	{
+		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		return this;
+	}
+
+	public addInterfaceRealization(properties: editable.InterfaceRealizationProperties, initFn?: (interfaceRealization: editable.InterfaceRealizationEditable) => void): this
+	{
+		this.interfaceRealizations.push(this.modelDelegate.createElement('interfaceRealization', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
+	{
+		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
+	{
+		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		return this;
 	}
 }
 
@@ -372,7 +403,7 @@ export class Stereotype extends Element implements elements.Stereotype {
 	}
 }
 
-export class Property extends Element implements elements.Property {
+export class Property extends Element implements elements.Property, editable.PropertyEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.property;
@@ -503,9 +534,54 @@ export class Property extends Element implements elements.Property {
 	{
 		return this.modelDelegate.isRequiredAndSinglevalued(this);
 	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public setLowerValueUnlimited(): this
+	{
+		this.modelDelegate.setLowerValueUnlimited(this);
+		return this;
+	}
+
+	public setLowerValue(value: number): this
+	{
+		this.modelDelegate.setLowerValue(this, value);
+		return this;
+	}
+
+	public setUpperValueUnlimited(): this
+	{
+		this.modelDelegate.setUpperValueUnlimited(this);
+		return this;
+	}
+
+	public setUpperValue(value: number): this
+	{
+		this.modelDelegate.setUpperValue(this, value);
+		return this;
+	}
+
+	public setDefaultValueNull(): this
+	{
+		this.modelDelegate.setDefaultValueNull(this);
+		return this;
+	}
+
+	public setDefaultValue(value: boolean): this;
+	public setDefaultValue(value: number): this;
+	public setDefaultValue(value: string): this;
+	public setDefaultValue(value: any): this
+	{
+		this.modelDelegate.setDefaultValue(this, value);
+		return this;
+	}
 }
 
-export class Package extends Element implements elements.Package {
+export class Package extends Element implements elements.Package, editable.PackageEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.package;
@@ -663,6 +739,48 @@ export class Package extends Element implements elements.Package {
 	public getTypes(): elements.Classifier[]
 	{
 		return this.modelDelegate.getTypes(this);
+	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('package', this, properties, initFn || null));
+		return this;
+	}
+	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('association', this, properties, initFn || null));
+		return this;
+	}
+	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('class', this, properties, initFn || null));
+		return this;
+	}
+	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('dataType', this, properties, initFn || null));
+		return this;
+	}
+	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('enumeration', this, properties, initFn || null));
+		return this;
+	}
+	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('primitiveType', this, properties, initFn || null));
+		return this;
+	}
+	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('interface', this, properties, initFn || null));
+		return this;
 	}
 }
 
@@ -829,7 +947,7 @@ export class Profile extends Element implements elements.Profile {
 	}
 }
 
-export class DataType extends Element implements elements.DataType {
+export class DataType extends Element implements elements.DataType, editable.DataTypeEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.dataType;
@@ -969,9 +1087,33 @@ export class DataType extends Element implements elements.DataType {
 	{
 		return this.modelDelegate.getSpecializations(this);
 	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
+	{
+		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
+	{
+		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
+	{
+		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		return this;
+	}
 }
 
-export class PrimitiveType extends Element implements elements.PrimitiveType {
+export class PrimitiveType extends Element implements elements.PrimitiveType, editable.PrimitiveTypeEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.primitiveType;
@@ -1111,9 +1253,33 @@ export class PrimitiveType extends Element implements elements.PrimitiveType {
 	{
 		return this.modelDelegate.getSpecializations(this);
 	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
+	{
+		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
+	{
+		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
+	{
+		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		return this;
+	}
 }
 
-export class Parameter extends Element implements elements.Parameter {
+export class Parameter extends Element implements elements.Parameter, editable.ParameterEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.parameter;
@@ -1230,9 +1396,54 @@ export class Parameter extends Element implements elements.Parameter {
 	{
 		return this.modelDelegate.isRequiredAndSinglevalued(this);
 	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public setLowerValueUnlimited(): this
+	{
+		this.modelDelegate.setLowerValueUnlimited(this);
+		return this;
+	}
+
+	public setLowerValue(value: number): this
+	{
+		this.modelDelegate.setLowerValue(this, value);
+		return this;
+	}
+
+	public setUpperValueUnlimited(): this
+	{
+		this.modelDelegate.setUpperValueUnlimited(this);
+		return this;
+	}
+
+	public setUpperValue(value: number): this
+	{
+		this.modelDelegate.setUpperValue(this, value);
+		return this;
+	}
+
+	public setDefaultValueNull(): this
+	{
+		this.modelDelegate.setDefaultValueNull(this);
+		return this;
+	}
+
+	public setDefaultValue(value: boolean): this;
+	public setDefaultValue(value: number): this;
+	public setDefaultValue(value: string): this;
+	public setDefaultValue(value: any): this
+	{
+		this.modelDelegate.setDefaultValue(this, value);
+		return this;
+	}
 }
 
-export class Operation extends Element implements elements.Operation {
+export class Operation extends Element implements elements.Operation, editable.OperationEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.operation;
@@ -1352,9 +1563,21 @@ export class Operation extends Element implements elements.Operation {
 	{
 		return this.modelDelegate.isOptionalAndSinglevalued(this);
 	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public addOwnedParameter(properties: editable.ParameterProperties, initFn?: (parameter: editable.ParameterEditable) => void): this
+	{
+		this.ownedParameters.push(this.modelDelegate.createElement('parameter', this, properties, initFn || null));
+		return this;
+	}
 }
 
-export class Model extends Element implements elements.Model {
+export class Model extends Element implements elements.Model, editable.ModelEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.model;
@@ -1512,6 +1735,48 @@ export class Model extends Element implements elements.Model {
 	public getTypes(): elements.Classifier[]
 	{
 		return this.modelDelegate.getTypes(this);
+	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('package', this, properties, initFn || null));
+		return this;
+	}
+	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('association', this, properties, initFn || null));
+		return this;
+	}
+	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('class', this, properties, initFn || null));
+		return this;
+	}
+	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('dataType', this, properties, initFn || null));
+		return this;
+	}
+	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('enumeration', this, properties, initFn || null));
+		return this;
+	}
+	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('primitiveType', this, properties, initFn || null));
+		return this;
+	}
+	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('interface', this, properties, initFn || null));
+		return this;
 	}
 }
 
@@ -1789,7 +2054,7 @@ export class LiteralBoolean extends Element implements elements.LiteralBoolean {
 	}
 }
 
-export class InterfaceRealization extends Element implements elements.InterfaceRealization {
+export class InterfaceRealization extends Element implements elements.InterfaceRealization, editable.InterfaceRealizationEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.interfaceRealization;
@@ -1799,9 +2064,15 @@ export class InterfaceRealization extends Element implements elements.InterfaceR
 	public contract!: elements.Interface;
 
 	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
 }
 
-export class Interface extends Element implements elements.Interface {
+export class Interface extends Element implements elements.Interface, editable.InterfaceEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.interface;
@@ -1941,9 +2212,33 @@ export class Interface extends Element implements elements.Interface {
 	{
 		return this.modelDelegate.getSpecializations(this);
 	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
+	{
+		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
+	{
+		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
+	{
+		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		return this;
+	}
 }
 
-export class Generalization extends Element implements elements.Generalization {
+export class Generalization extends Element implements elements.Generalization, editable.GeneralizationEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.generalization;
@@ -1959,9 +2254,15 @@ export class Generalization extends Element implements elements.Generalization {
 	}
 
 	public taggedValues: elements.TaggedValueSpecification[] = [];
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
 }
 
-export class EnumerationLiteral extends Element implements elements.EnumerationLiteral {
+export class EnumerationLiteral extends Element implements elements.EnumerationLiteral, editable.EnumerationLiteralEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.enumerationLiteral;
@@ -1991,9 +2292,23 @@ export class EnumerationLiteral extends Element implements elements.EnumerationL
 	{
 		return this.modelDelegate.getSpecificationValue(this);
 	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public setSpecification(value: number): this;
+	public setSpecification(value: string): this;
+	public setSpecification(value: any): this
+	{
+		this.modelDelegate.setSpecification(this, value);
+		return this;
+	}
 }
 
-export class Enumeration extends Element implements elements.Enumeration {
+export class Enumeration extends Element implements elements.Enumeration, editable.EnumerationEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.enumeration;
@@ -2137,6 +2452,36 @@ export class Enumeration extends Element implements elements.Enumeration {
 	{
 		return this.modelDelegate.getSpecializations(this);
 	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
+	{
+		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
+	{
+		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
+	{
+		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedLiteral(properties: editable.EnumerationLiteralProperties, initFn?: (enumerationLiteral: editable.EnumerationLiteralEditable) => void): this
+	{
+		this.ownedLiterals.push(this.modelDelegate.createElement('enumerationLiteral', this, properties, initFn || null));
+		return this;
+	}
 }
 
 export class DocumentReference implements elements.DocumentReference {
@@ -2160,7 +2505,7 @@ export class Comment extends Element implements elements.Comment {
 	public taggedValues: elements.TaggedValueSpecification[] = [];
 }
 
-export class Association extends Element implements elements.Association {
+export class Association extends Element implements elements.Association, editable.AssociationEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.association;
@@ -2280,5 +2625,30 @@ export class Association extends Element implements elements.Association {
 	public getSpecializations(): elements.Classifier[]
 	{
 		return this.modelDelegate.getSpecializations(this);
+	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
+	{
+		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		return this;
+	}
+
+	public addMemberEnd(property: elements.Property): this
+	{
+		this.memberEnds.push(property);
+		this.modelDelegate.onMemberEndAdded(this, property);
+		return this;
+	}
+
+	public addOwnedEnd(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
+	{
+		this.ownedEnds.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		return this;
 	}
 }

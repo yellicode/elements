@@ -33,17 +33,22 @@ export class ElementMapImpl {
 
     private addAssociationEnds(association: Interfaces.Association, associationData: Data.AssociationData) {
         // Get memberEnds of assocationData instead of association itself: the ends  will not be set here as they are not resolved yet
-        // by DataToModelConverter.resolveAssociationReferences().        
+        // by DataToModelConverter.resolveAssociationReferences().
         if (!associationData.memberEnds)
             return;
 
         associationData.memberEnds.forEach(endId => {
             // An association end can only be part of one association.
-            if (this.associationsByEndId.hasOwnProperty(endId)) {
-                console.warn(`Association end with id '${endId}' is already part of another association than ${associationData.id}.`);
-            }
-            this.associationsByEndId[endId] = association;
+            this.addAssociationByEndId(endId, association);            
         })
+    }
+
+    public addAssociationByEndId(endId: string, association: Interfaces.Association): void {
+        // An association end can only be part of one association.
+        if (this.associationsByEndId.hasOwnProperty(endId)) {
+            console.warn(`Association end with id '${endId}' is already part of another association than ${association.id}.`);
+        }
+        this.associationsByEndId[endId] = association;
     }
 
     private addSpecializations(classifier: Interfaces.Classifier, classifierData: Data.ClassifierData) {
@@ -52,16 +57,25 @@ export class ElementMapImpl {
 
         // Enumerate the classifierData instead of the classifier itself: the generalizations will not be set here as they are not resolved yet
         classifierData.generalizations.forEach(g => {
-            let dictionaryEntry;
-
             // g is a Generalization of element, so element is a Specialization of g
-            if (this.specializationsById.hasOwnProperty(g.general)) {
-                dictionaryEntry = this.specializationsById[g.general];
-                dictionaryEntry.push(classifier);
-            } else {
-                this.specializationsById[g.general] = [classifier];
-            }
+            this.addSpecializationById(g.general, classifier);
+            // if (this.specializationsById.hasOwnProperty(g.general)) {
+            //     dictionaryEntry = this.specializationsById[g.general];
+            //     dictionaryEntry.push(classifier);
+            // } else {
+            //     this.specializationsById[g.general] = [classifier];
+            // }
         });
+    }
+
+    public addSpecializationById(generalId: string, specialization: Interfaces.Classifier): void {
+        let dictionaryEntry;
+        if (this.specializationsById.hasOwnProperty(generalId)) {
+            dictionaryEntry = this.specializationsById[generalId];
+            dictionaryEntry.push(specialization);
+        } else {
+            this.specializationsById[generalId] = [specialization];
+        }
     }
 
     public getAssociationHavingMemberEnd(end: Interfaces.Property): Interfaces.Association | null {

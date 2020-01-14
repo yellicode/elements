@@ -5,20 +5,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+import * as _ from 'lodash';
+import * as utils from './utils';
 import * as Interfaces from "./interfaces";
 import { ElementTypeUtility } from './utils';
-import * as _ from 'lodash';
 import { ElementComparerImpl } from "./element-comparer";
-import * as utils from './utils';
 import { ModelDelegate } from './model-delegate-interface';
 import { ElementMap } from './element-map-interface';
+import { UniqueId } from '@yellicode/core';
+import { ElementFactory, FactoryClassMap, createdElement } from './element-factory';
 
 /**
  * Internal class to which all behaviour of the model classes is delegated.
  */
 export class ModelDelegateImpl implements ModelDelegate {
-    constructor(private elementMap: ElementMap | null) {
+    private elementFactory: ElementFactory;
+
+    constructor(public elementMap: ElementMap | null) {
         // Note that elementMap is null when not initialized through the DataToModelConverter
+        this.elementFactory = new ElementFactory(this);
     }
 
     // ************************  Document **************************** //     
@@ -450,5 +455,113 @@ export class ModelDelegateImpl implements ModelDelegate {
     public getReturnType(operation: Interfaces.Operation): Interfaces.Type | null {
         const returnParameter = this.getReturnParameter(operation);
         return returnParameter ? returnParameter.type : null;
+    }
+
+    public test<T extends keyof FactoryClassMap>(elementType: T, owner: Interfaces.Element, properties: any | null, initFn: ((element: createdElement<T> ) => void) | null): createdElement<T> {
+        let e = this.elementFactory.create(elementType, owner) as createdElement<T>;
+        return e;
+    }
+
+    // ********************  Factory functions  **************************** //     
+    private createValueSpecificationFromValue(value: boolean | number | string, owner: Interfaces.Element): Interfaces.ValueSpecification {        
+        switch (typeof(value)) {
+            case 'number':
+                const int = this.elementFactory.create('literalInteger', owner);
+                int.value = value;
+                return int;
+            case 'string':
+                const str = this.elementFactory.create('literalString', owner);
+                str.value = value;
+                return str;
+            case 'boolean':
+                const b = this.elementFactory.create('literalBoolean', owner);
+                b.value = value;
+                return b;
+            default:
+                throw `Cannot create ValueSpecification from value of type '${typeof(value)}'.`;
+        }
+    }
+    
+    public createElement<T extends keyof FactoryClassMap>(elementType: T, owner: Interfaces.Element, properties: any | null, initFn: ((element: createdElement<T>) => void) | null): createdElement<T> {
+        let e = this.elementFactory.create(elementType, owner);
+        
+        if (properties) Object.assign(e, properties);
+		if (!e.id && ElementFactory.requiresId(elementType)) e.id = UniqueId.create();
+        if (initFn) initFn(e);
+        if (utils.isGeneralization(e)){
+            this.onGeneralizationAdded(e);
+        }
+        return e;
+    }
+
+    public onGeneralizationAdded(generalization: Interfaces.Generalization): void {
+        if (!generalization.general) 
+            return;
+
+        if (!utils.isClassifier(generalization.owner)) 
+            return;
+         
+        // generalization is a Generalization of classifier, so classifier is a Specialization of generalization.general.
+        this.elementMap!.addSpecializationById(generalization.general.id, generalization.owner);
+    }
+
+    public onMemberEndAdded(association: Interfaces.Association, end: Interfaces.Property): void {
+        this.elementMap!.addAssociationByEndId(end.id, association);
+    }
+
+   
+    /**
+	* Sets the default value of the element to the specified value.
+	*/
+    public setDefaultValue(hasDefaultValue: Interfaces.Element & { defaultValue: Interfaces.ValueSpecification | null }, value: boolean | number | string): void {
+        if (!value) return;
+
+        hasDefaultValue.defaultValue = this.createValueSpecificationFromValue(value, hasDefaultValue);
+    }
+
+	/**
+	* Sets the default value of the element to null.
+	*/
+    public setDefaultValueNull(hasDefaultValue: Interfaces.Element & { defaultValue: Interfaces.ValueSpecification | null }): void {
+        hasDefaultValue.defaultValue = this.elementFactory.create('literalNull', hasDefaultValue);
+    }
+
+	/**
+	* Sets the lower value of the element to unlimited.
+	*/
+	public setLowerValueUnlimited(element: Interfaces.MultiplicityElement): void {
+        const literalUnlimited = this.elementFactory.create('literalUnlimitedNatural', element);
+        literalUnlimited.value = new Interfaces.UnlimitedNatural('*');
+        element.lowerValue = literalUnlimited;
+    }
+
+	/**
+	* Sets the lower value of the element to the specified integer.
+	*/
+	public setLowerValue(element: Interfaces.MultiplicityElement, value: number) : void {
+        element.lowerValue = this.createValueSpecificationFromValue(value, element);
+    }
+
+	/**
+	* Sets the upper value of the element to unlimited.
+	*/
+	public setUpperValueUnlimited(element: Interfaces.MultiplicityElement) : void {
+        const literalUnlimited = this.elementFactory.create('literalUnlimitedNatural', element);
+        literalUnlimited.value = new Interfaces.UnlimitedNatural('*');
+        element.upperValue = literalUnlimited;
+    }
+
+	/**
+	* Sets the upper value of the element to the specified integer.
+	*/
+	public setUpperValue(element: Interfaces.MultiplicityElement, value: number) : void {
+        element.upperValue = this.createValueSpecificationFromValue(value, element);
+    }
+
+	/**
+	* Sets the enumeration literal to the specified value.
+	*/
+	public setSpecification(element: Interfaces.EnumerationLiteral, value: number | string) : void {
+        element.specification = this.createValueSpecificationFromValue(value, element);
     }
 }
