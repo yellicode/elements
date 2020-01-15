@@ -447,7 +447,7 @@ export interface AssociationProperties {
 	isFinalSpecialization?: boolean;
 }
 
-export interface ClassEditable {
+export interface ClassEditable extends elements.Class {
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addInterfaceRealization(properties: InterfaceRealizationProperties, initFn?: (interfaceRealization: InterfaceRealizationEditable) => void): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
@@ -455,7 +455,7 @@ export interface ClassEditable {
 	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
 }
 
-export interface PropertyEditable {
+export interface PropertyEditable extends elements.Property {
 	setDefaultValue(value: boolean): this;
 	setDefaultValue(value: number): this;
 	setDefaultValueNull(): this;
@@ -467,7 +467,7 @@ export interface PropertyEditable {
 	setUpperValueUnlimited(): this;
 }
 
-export interface PackageEditable {
+export interface PackageEditable extends elements.Package {
 	addOwnedComment(properties: CommentProperties): this;
 	addPackage(properties: PackageProperties, initFn?: (pack: PackageEditable) => void): this;
 	addAssociation(properties: AssociationProperties, initFn?: (association: AssociationEditable) => void): this;
@@ -478,21 +478,21 @@ export interface PackageEditable {
 	addInterface(properties: InterfaceProperties, initFn?: (iface: InterfaceEditable) => void): this;
 }
 
-export interface DataTypeEditable {
+export interface DataTypeEditable extends elements.DataType {
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
 	addOwnedComment(properties: CommentProperties): this;
 	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
 }
 
-export interface PrimitiveTypeEditable {
+export interface PrimitiveTypeEditable extends elements.PrimitiveType {
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
 	addOwnedComment(properties: CommentProperties): this;
 	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
 }
 
-export interface ParameterEditable {
+export interface ParameterEditable extends elements.Parameter {
 	setDefaultValue(value: boolean): this;
 	setDefaultValue(value: number): this;
 	setDefaultValueNull(): this;
@@ -504,12 +504,12 @@ export interface ParameterEditable {
 	setUpperValueUnlimited(): this;
 }
 
-export interface OperationEditable {
+export interface OperationEditable extends elements.Operation {
 	addOwnedComment(properties: CommentProperties): this;
 	addOwnedParameter(properties: ParameterProperties, initFn?: (parameter: ParameterEditable) => void): this;
 }
 
-export interface ModelEditable {
+export interface ModelEditable extends elements.Model {
 	addOwnedComment(properties: CommentProperties): this;
 	addPackage(properties: PackageProperties, initFn?: (pack: PackageEditable) => void): this;
 	addAssociation(properties: AssociationProperties, initFn?: (association: AssociationEditable) => void): this;
@@ -520,28 +520,28 @@ export interface ModelEditable {
 	addInterface(properties: InterfaceProperties, initFn?: (iface: InterfaceEditable) => void): this;
 }
 
-export interface InterfaceRealizationEditable {
+export interface InterfaceRealizationEditable extends elements.InterfaceRealization {
 	addOwnedComment(properties: CommentProperties): this;
 }
 
-export interface InterfaceEditable {
+export interface InterfaceEditable extends elements.Interface {
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
 	addOwnedComment(properties: CommentProperties): this;
 	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
 }
 
-export interface GeneralizationEditable {
+export interface GeneralizationEditable extends elements.Generalization {
 	addOwnedComment(properties: CommentProperties): this;
 }
 
-export interface EnumerationLiteralEditable {
+export interface EnumerationLiteralEditable extends elements.EnumerationLiteral {
 	addOwnedComment(properties: CommentProperties): this;
 	setSpecification(value: number): this;
 	setSpecification(value: string): this;
 }
 
-export interface EnumerationEditable {
+export interface EnumerationEditable extends elements.Enumeration {
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
 	addOwnedComment(properties: CommentProperties): this;
@@ -549,7 +549,7 @@ export interface EnumerationEditable {
 	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
 }
 
-export interface AssociationEditable {
+export interface AssociationEditable extends elements.Association {
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addMemberEnd(property: elements.Property): this;
 	addOwnedComment(properties: CommentProperties): this;
