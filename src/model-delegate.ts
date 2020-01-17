@@ -455,7 +455,7 @@ export class ModelDelegateImpl implements ModelDelegate {
     public getReturnType(operation: Interfaces.Operation): Interfaces.Type | null {
         const returnParameter = this.getReturnParameter(operation);
         return returnParameter ? returnParameter.type : null;
-    }  
+    }
 
     // ********************  Factory functions  **************************** //     
     private createValueSpecificationFromValue(value: boolean | number | string, owner: Interfaces.Element): Interfaces.ValueSpecification {
@@ -477,10 +477,10 @@ export class ModelDelegateImpl implements ModelDelegate {
         }
     }
 
-    public createElement<T extends keyof FactoryClassMap>(elementType: T, owner: Interfaces.Element | null, properties: any | null, initFn: ((element: createdElement<T>) => void) | null): createdElement<T> {
+    public createElement<K extends keyof FactoryClassMap>(elementType: K, owner: Interfaces.Element | null, properties: any | null, initFn: ((element: createdElement<K>) => void) | null): createdElement<K> {
         let e = this.elementFactory.create(elementType, owner);
 
-        if (properties) Object.assign(e, properties);        
+        if (properties) Object.assign(e, properties);
 
         // Ensure a ID
         if (!e.id && ElementFactory.requiresId(elementType)) e.id = UniqueId.create();
@@ -494,25 +494,29 @@ export class ModelDelegateImpl implements ModelDelegate {
         }
 
         // Special case for generalizations: generalizations need to be tracked
-        if (utils.isGeneralization(e)) {
+        if (utils.isGeneralization(e) && e.general) {
             this.onGeneralizationAdded(e);
         }
         return e;
     }
 
-    public onGeneralizationAdded(generalization: Interfaces.Generalization): void {
-        if (!generalization.general)
-            return;
+    /**
+    * Notifies the delegate that a property was added as member end to an association.
+    */
+    public onMemberEndAdded(association: Interfaces.Association, end: Interfaces.Property): void {
+        this.elementMap!.addAssociationByEndId(end.id, association);
+    }
 
+
+    /**
+	* Notifies the delegate that a generalization was added.
+	*/
+    public onGeneralizationAdded(generalization: Interfaces.Generalization): void {
         if (!utils.isClassifier(generalization.owner))
             return;
 
         // generalization is a Generalization of classifier, so classifier is a Specialization of generalization.general.
         this.elementMap!.addSpecializationById(generalization.general.id, generalization.owner);
-    }
-
-    public onMemberEndAdded(association: Interfaces.Association, end: Interfaces.Property): void {
-        this.elementMap!.addAssociationByEndId(end.id, association);
     }
 
 

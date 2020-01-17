@@ -8,11 +8,22 @@
 import * as Interfaces from "./interfaces";
 import * as Data from "./data-interfaces";
 import { ElementTypeUtility } from './utils';
+import { primitiveBooleanType, primitiveIntegerType, primitiveStringType, primitiveRealType, primitiveObjectType } from './primitives';
 
 export class ElementMapImpl {
     private elementsById: { [key: string]: Interfaces.Element } = {};
     private specializationsById: { [generalId: string]: Interfaces.Classifier[] } = {};
     private associationsByEndId: { [endId: string]: Interfaces.Association } = {};
+
+    constructor(initializeWithPrimitives: boolean) {
+        if (!initializeWithPrimitives) return;
+        this.addElement(primitiveBooleanType, null);
+        this.addElement(primitiveIntegerType, null);
+        this.addElement(primitiveStringType, null);
+        this.addElement(primitiveRealType, null);
+        this.addElement(primitiveObjectType, null);
+        // TODO: do we need UnlimitedNatural? If so, it should be exported by './primitives'.
+    }
 
     public addElement(element: Interfaces.Element, elementData: Data.ElementData | null) {
         if (this.elementsById.hasOwnProperty(element.id)) {
@@ -20,6 +31,9 @@ export class ElementMapImpl {
             return;
         }
         this.elementsById[element.id] = element;
+
+        // TODO: the elementData argument and the lines below should be removed
+        // once the DataToModelConverter is replaced by the ModelSerializer.
 
         // Add generalizations to the specialization map
         if (ElementTypeUtility.isClassifier(element.elementType) && elementData) {
@@ -95,7 +109,7 @@ export class ElementMapImpl {
         if (this.elementsById.hasOwnProperty(id))
             return this.elementsById[id] as TElement;
         else {
-            console.warn(`Unkown element id '${id}'.`);
+            // console.warn(`Unkown element id '${id}'.`);
             return null;
         }
     }

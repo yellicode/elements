@@ -35,7 +35,7 @@ export class ModelReader {
     private allProfiles: Interfaces.Profile[] = [];
 
     constructor() {
-        this.elementMap = new ElementMapImpl();
+        this.elementMap = new ElementMapImpl(false /* initializeWithPrimitives: false because DataToModelConverter also adds primitives */);
         this.modelDelegate = new ModelDelegateImpl(this.elementMap);
         this.converter = new DataToModelConverter(this.elementMap, this.modelDelegate, ElementComparerImpl.getInstance());
     }

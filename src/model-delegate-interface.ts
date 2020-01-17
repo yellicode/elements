@@ -310,12 +310,17 @@ export interface ModelDelegate {
 	/**
 	* Creates a new instance of the specified element and initializes it.
 	*/
-	createElement<T extends keyof FactoryClassMap>(elementType: T, owner: elements.Element | null, properties: any | null, initFn: ((element: createdElement<T>) => void) | null): createdElement<T>;
+	createElement<K extends keyof FactoryClassMap>(elementType: K, owner: elements.Element | null, properties: any | null, initFn: ((element: createdElement<K>) => void) | null): createdElement<K>;
 
 	/**
 	* Notifies the delegate that a property was added as member end to an association.
 	*/
 	onMemberEndAdded(association: elements.Association, end: elements.Property): void;
+
+	/**
+	* Notifies the delegate that a generalization was added.
+	*/
+	onGeneralizationAdded(generalization: elements.Generalization): void;
 
 	/**
 	* Sets the default value of the element to the specified value.
@@ -346,6 +351,7 @@ export interface ModelDelegate {
 	* Sets the upper value of the element to the specified integer.
 	*/
 	setUpperValue(element: elements.MultiplicityElement, value: number) : void;
+
 	/**
 	* Sets the enumeration literal to the specified value.
 	*/

@@ -20,3 +20,5 @@ export * from "./transforms/dependency-sort-transform";
 export * from "./transforms/element-type-transform";
 
 export * from './type-name-provider';
+export * from './serialization/model-serializer';
+

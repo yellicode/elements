@@ -9,7 +9,7 @@ export class ModelFactory {
      * other elements to the model.     
      */
     public static create(name: string, initFn: (model: ModelEditable) => void): elements.Model {
-        const elementMap = new ElementMapImpl();
+        const elementMap = new ElementMapImpl(true);
         const modelDelegate = new ModelDelegateImpl(elementMap);
         const properties: ModelProperties = { name: name };
         const model = modelDelegate.createElement('model', null, properties, initFn);
