@@ -8,8 +8,22 @@
 
 import * as elements from "./interfaces";
 import { ModelDelegate } from './model-delegate-interface';
+import { ModelEditable, ModelProperties } from './editable-interfaces';
+import { ModelData } from './data-interfaces';
+import { UniqueId } from '@yellicode/core';
 
-export class Document implements elements.Document {
+export interface DocumentProperties {
+    id?: string;
+    creator?: string;
+    modelTypeName?: string;
+    modelTypeVersion?: string;
+}
+
+export interface DocumentEditable extends elements.Document {
+    setModel(name: string, initFn: (model: ModelEditable) => void): this;
+}
+
+export class Document implements elements.Document, DocumentEditable {
     constructor(private modelDelegate: ModelDelegate) {
 
     }
@@ -30,5 +44,19 @@ export class Document implements elements.Document {
 	*/
     public findElementById(id: string): elements.Element | null {
         return this.modelDelegate.findElementById(id);
+    }
+
+    public setModel(name: string, initFn: (model: ModelEditable) => void): this {
+        const properties: ModelProperties = { name: name };
+        this.model = this.modelDelegate.createElement('model', null, properties, initFn);
+        return this;
+    }
+
+    public static create(modelDelegate: ModelDelegate, properties?: DocumentProperties): Document {
+        const doc: Document = new Document(modelDelegate);
+        if (properties) Object.assign(doc, properties);
+        // Ensure a ID
+        if (!doc.id) doc.id = UniqueId.create();
+        return doc;
     }
 }

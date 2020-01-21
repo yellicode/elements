@@ -9,9 +9,10 @@ export * from './primitives';
 export * from './interfaces';
 export * from './utils';
 export * from './profile-utility'; // needed by generated TS code when a model is saved
-export * from './model-factory';
 export * from './model-reader';
 export * from './editable-interfaces';
+export { DocumentEditable } from './document';
+export * from './model-factory';
 
 export * from "./transforms/packaged-element-transform";
 export * from "./transforms/package-filter-transform";
@@ -21,4 +22,3 @@ export * from "./transforms/element-type-transform";
 
 export * from './type-name-provider';
 export * from './serialization/model-serializer';
-
