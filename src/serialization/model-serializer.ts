@@ -11,7 +11,6 @@ import { ElementMapImpl } from '../element-map';
 import { ModelDelegateImpl } from '../model-delegate';
 import { DocumentData } from '../data-interfaces';
 import { Document as DocumentImpl, DocumentProperties } from '../document';
-
 import { ElementVisitor } from './element-visitor';
 import { ElementJSONTransformer } from './element-json-transformer';
 import { DocumentJSONTransformer } from './document-json-transformer';
@@ -81,8 +80,7 @@ export class ModelSerializer {
         // const documentData = JSON.parse(text, ModelSerializer.documentReviver) as SplitDocumentData;
         const documentData = JSON.parse(text) as DocumentData;
         const props: DocumentProperties = { id: documentData.id, creator: documentData.creator, modelTypeName: documentData.modelTypeName, modelTypeVersion: documentData.modelTypeVersion };
-        const document = DocumentImpl.create(modelDelegate, props); 
-        
+        const document = DocumentImpl.create(modelDelegate, props);         
         // 1: resolve references        
         if (documentData.references && documentData.references.length) {
             // Todo...
