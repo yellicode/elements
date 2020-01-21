@@ -16,13 +16,13 @@ import { isLiteralUnlimitedNatural } from '../utils';
 import { ElementComparer } from '../element-comparer-interface';
 import { ElementReferenceResolver } from './element-reference-resolver';
 
-const enumKeys = ['elementType','visibility','aggregation','direction'];
-const regularKeys = ['id','ownedComments','taggedValues','name','isInferred','isLeaf','generalizations','isAbstract','isFinalSpecialization','isOrdered','isUnique','lowerValue','upperValue','order','isStatic','isReadOnly','ownedAttributes','ownedOperations','interfaceRealizations','isActive','extends','safeName','defaultValue','isDerived','isDerivedUnion','isID','isNavigable','isNamespaceRoot','packagedElements','isException','isStream','ownedParameters','isConstructor','isQuery','value','isSubstitutable','specification','ownedLiterals','body','ownedEnds'];
-const referenceKeys = ['appliedStereotypes','type','appliedProfiles','contract','general','baseType','memberEnds'];
+const enumKeys = ['elementType','visibility','aggregation','direction','metaClass','location'];
+const regularKeys = ['id','ownedComments','taggedValues','name','isInferred','isLeaf','generalizations','isAbstract','isFinalSpecialization','isOrdered','isUnique','lowerValue','upperValue','order','isStatic','isReadOnly','ownedAttributes','ownedOperations','interfaceRealizations','isActive','extends','safeName','defaultValue','isDerived','isDerivedUnion','isID','isNavigable','isNamespaceRoot','packagedElements','isException','isStream','ownedParameters','isConstructor','isQuery','value','isSubstitutable','specification','ownedLiterals','body','ownedEnds','isRequired','path','creator','model','modelTypeName','modelTypeVersion','profiles','references'];
+const referenceKeys = ['appliedStereotypes','type','appliedProfiles','contract','general','baseType','memberEnds','definition'];
 
-export class ElementJsonTransformer {
+export class ElementJSONTransformer {
 	/**
-	* Creates a new ElementJsonTransformer instance. You only need an instance when parsing JSON. For
+	* Creates a new ElementJSONTransformer instance. You only need an instance when parsing JSON. For
 	* serialization, use the static replace function.
 	* @param {ElementReferenceResolver} referenceResolver
 	* @param {ElementComparer} elementComparer An optional element comparer. Only provide a comparer when
@@ -135,6 +135,40 @@ export class ElementJsonTransformer {
 	}
 
 	/**
+	* Parses a string representation of the specified ElementType literal value.
+	* @param {string} value The value being parsed.
+	*/
+	private static parseElementType(value: string): elements.ElementType | undefined
+	{
+		switch (value)
+		{
+			case 'class': return elements.ElementType.class;
+			case 'stereotype': return elements.ElementType.stereotype;
+			case 'property': return elements.ElementType.property;
+			case 'package': return elements.ElementType.package;
+			case 'profile': return elements.ElementType.profile;
+			case 'dataType': return elements.ElementType.dataType;
+			case 'primitiveType': return elements.ElementType.primitiveType;
+			case 'parameter': return elements.ElementType.parameter;
+			case 'operation': return elements.ElementType.operation;
+			case 'model': return elements.ElementType.model;
+			case 'literalUnlimitedNatural': return elements.ElementType.literalUnlimitedNatural;
+			case 'literalString': return elements.ElementType.literalString;
+			case 'literalReal': return elements.ElementType.literalReal;
+			case 'literalNull': return elements.ElementType.literalNull;
+			case 'literalInteger': return elements.ElementType.literalInteger;
+			case 'literalBoolean': return elements.ElementType.literalBoolean;
+			case 'interfaceRealization': return elements.ElementType.interfaceRealization;
+			case 'interface': return elements.ElementType.interface;
+			case 'generalization': return elements.ElementType.generalization;
+			case 'enumerationLiteral': return elements.ElementType.enumerationLiteral;
+			case 'enumeration': return elements.ElementType.enumeration;
+			case 'comment': return elements.ElementType.comment;
+			case 'association': return elements.ElementType.association;
+		}
+	}
+
+	/**
 	* Creates a persistable string representation of the specified DocumentLocationKind value.
 	* @param {elements.DocumentLocationKind} value The value being stringified.
 	*/
@@ -190,12 +224,13 @@ export class ElementJsonTransformer {
 
 	/**
 	* A custom replacer function that is used as a replacer callback using JSON.stringify.
-	* @param {elements.Element} element The model element in which the key was found.
+	* @param {elements.Element | any} element The model element or nested object in which the key was
+	* found.
 	* @param {any} key The key being stringified.
 	* @param {any} value The value being stringified.
 	* @param {boolean} valueIsArray True if the value being stringified is an array.
 	*/
-	public static replace(element: elements.Element, key: any, value: any, valueIsArray: boolean): any
+	public static toJSON(element: elements.Element | any, key: any, value: any, valueIsArray: boolean): any
 	{
 		if (value == null) return undefined;
 
@@ -211,21 +246,24 @@ export class ElementJsonTransformer {
 		if (enumKeys.indexOf(key) > -1) {
 			switch (key)
 			{
-				case 'elementType': return ElementJsonTransformer.stringifyElementType(value);
-				case 'visibility': return ElementJsonTransformer.stringifyVisibilityKind(value);
-				case 'aggregation': return ElementJsonTransformer.stringifyAggregationKind(value);
-				case 'direction': return ElementJsonTransformer.stringifyParameterDirectionKind(value);
+				case 'elementType': return ElementJSONTransformer.stringifyElementType(value);
+				case 'visibility': return ElementJSONTransformer.stringifyVisibilityKind(value);
+				case 'aggregation': return ElementJSONTransformer.stringifyAggregationKind(value);
+				case 'direction': return ElementJSONTransformer.stringifyParameterDirectionKind(value);
+				case 'metaClass': return ElementJSONTransformer.stringifyElementType(value);
+				case 'location': return ElementJSONTransformer.stringifyDocumentLocationKind(value);
 			}
 		}
 	}
 
 	/**
-	* A custom reviver function that is used as a reviver callback using JSON.stringify.
-	* @param {elements.Element} element The model element in which the key was found.
+	* A custom mapper function that maps a JSON property value to a valid element value.
+	* @param {elements.Element | any} element The model element or nested object in which the key was
+	* found.
 	* @param {any} key The key being parsed.
 	* @param {any} value The value being parsed.
 	*/
-	public revive(element: elements.Element, key: any, value: any): any
+	public fromJSON(element: elements.Element | any, key: any, value: any): any
 	{
 		if (regularKeys.indexOf(key) > -1) {
 			switch (key)
@@ -250,9 +288,11 @@ export class ElementJsonTransformer {
 		if (enumKeys.indexOf(key) > -1) {
 			switch (key)
 			{
-				case 'visibility': return ElementJsonTransformer.parseVisibilityKind(value);
-				case 'aggregation': return ElementJsonTransformer.parseAggregationKind(value);
-				case 'direction': return ElementJsonTransformer.parseParameterDirectionKind(value);
+				case 'visibility': return ElementJSONTransformer.parseVisibilityKind(value);
+				case 'aggregation': return ElementJSONTransformer.parseAggregationKind(value);
+				case 'direction': return ElementJSONTransformer.parseParameterDirectionKind(value);
+				case 'metaClass': return ElementJSONTransformer.parseElementType(value);
+				case 'location': return ElementJSONTransformer.parseDocumentLocationKind(value);
 			}
 		}
 	}

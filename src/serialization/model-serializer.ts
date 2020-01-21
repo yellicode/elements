@@ -1,6 +1,20 @@
+/*
+* Copyright (c) 2020 Yellicode
+*
+* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
 import { Model } from '../interfaces';
-import { ElementJsonTransformer } from './element-json-transformer';
-import { ElementReviver } from './element-reviver';
+import { ElementMapImpl } from '../element-map';
+import { ModelDelegateImpl } from '../model-delegate';
+import { DocumentData } from '../data-interfaces';
+import { Document, DocumentProperties } from '../document';
+
+import { ElementVisitor } from './element-visitor';
+import { ElementJSONTransformer } from './element-json-transformer';
+import { DocumentJSONTransformer } from './document-json-transformer';
 
 export class ModelSerializer {
     /**
@@ -26,29 +40,65 @@ export class ModelSerializer {
         const valueIsArray = Array.isArray(value);
         if (valueIsArray && !value.length)
             return undefined; // remove empty arrays
-
-        // If the object is a model element, apply a custom replacer. 
-        if (this.hasOwnProperty('elementType')) {
-            return ElementJsonTransformer.replace(this, key, value, valueIsArray);
+            
+        // Should we apply a custom transformer?        
+        if (this.hasOwnProperty('modelTypeName')) {            
+            // This is a document (interfaces.Document). This only applies if serializeDocument was called.
+            return DocumentJSONTransformer.toJSON(this, key, value);
         }
 
-        // console.log(`Not serializing non-element property '${this.constructor.name}.${key}';`);
-        return undefined; // by default, don't include the property
+        // This is a element (interfaces.Element) or any other nested object, such as a TaggedValue
+        return ElementJSONTransformer.toJSON(this, key, value, valueIsArray);
     }
 
     public static serializeModel(model: Model): string {
         return JSON.stringify(model, ModelSerializer.replacer, 0);
     }
 
-    /**
-     * Deserializes a model from a JSON string.
-     * @param text The JSON data.
-     * @param applySorting True to apply sorting to packaged- and ordered (having an Order property) elements.
-     * This value should be false if the model is going to be persisted later, beause that would also change
-     * the order of elements in the JSON data, causing a larger diff than necessary.
-     */
-    public static deserializeModel(text: string, applySorting: boolean): Model {
-        const elementReviver = new ElementReviver(applySorting);        
-        return JSON.parse(text, function (this, key, value) { return elementReviver.revive(this, key, value) }) as Model;        
+    public static serializeDocument(document: Document): string {
+        return JSON.stringify(document, ModelSerializer.replacer, 0);
+    } 
+
+    public static deserializeModel(text: string, applySorting: boolean): Model { 
+        const elementMap = new ElementMapImpl(true /* initializeWithPrimitives: true */);
+        const modelDelegate = new ModelDelegateImpl(elementMap);        
+        const visitor = new ElementVisitor(modelDelegate, applySorting);
+        return ModelSerializer.deserializeModelInternal(text, visitor);
+    }
+    
+    private static deserializeModelInternal(text: string, visitor: ElementVisitor): Model {
+        const modelData = JSON.parse(text);
+        return visitor.visit(modelData) as Model;        
+    }
+
+    public static deserializeDocument(text: string, applySorting: boolean): Document {        
+        const elementMap = new ElementMapImpl(true /* initializeWithPrimitives: true */);
+        const modelDelegate = new ModelDelegateImpl(elementMap);                
+        const visitor = new ElementVisitor(modelDelegate, applySorting);
+
+        // Because the order in which we deserialize the document parts is important, we need to 
+        // first split the data into references, profiles and the main model.
+        // const documentData = JSON.parse(text, ModelSerializer.documentReviver) as SplitDocumentData;
+        const documentData = JSON.parse(text) as DocumentData;
+        const props: DocumentProperties = { id: documentData.id, creator: documentData.creator, modelTypeName: documentData.modelTypeName, modelTypeVersion: documentData.modelTypeVersion };
+        const document = Document.create(modelDelegate, props); 
+        
+        // 1: resolve references        
+        if (documentData.references && documentData.references.length) {
+            // Todo...
+            console.warn('The document contains one or more references. Importing references is not supported yet.');
+        }
+
+        // 2: Deserialize profiles. This is important to do before deserializing the model, because
+        // the profiles (actually, their contained stereotypes) must be in the ElementMap. 
+        if (documentData.profiles) {
+           document.profiles = visitor.visit(documentData.profiles) as Model;
+        }        
+
+        // 3: deserialize the model (todo: apply profiles)
+        if (documentData.model) {
+            document.model = visitor.visit(documentData.model) as Model;
+        }        
+        return document;
     }
 }
