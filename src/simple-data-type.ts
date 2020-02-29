@@ -23,7 +23,8 @@ export class SimpleDataType implements e.DataType {
     public taggedValues: e.TaggedValueSpecification[] = [];
     public isLeaf: boolean = false;
     public isInferred: boolean = false;
-
+    public isDeprecated: boolean = false;
+    
     public getFirstCommentBody(): string {
         return '';
     }

@@ -6,10 +6,9 @@
 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-import * as elements from "./interfaces";
+import * as elements from './interfaces';
 import { ModelDelegate } from './model-delegate-interface';
 import { ModelEditable, ModelProperties } from './editable-interfaces';
-import { ModelData } from './data-interfaces';
 import { UniqueId } from '@yellicode/core';
 
 export interface DocumentProperties {
@@ -56,7 +55,7 @@ export class Document implements elements.Document, DocumentEditable {
         const doc: Document = new Document(modelDelegate);
         if (properties) Object.assign(doc, properties);
         // Ensure a ID
-        if (!doc.id) doc.id = UniqueId.create();
+        if (!doc.id) doc.id = UniqueId.create();        
         return doc;
     }
 }

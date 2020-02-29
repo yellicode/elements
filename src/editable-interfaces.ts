@@ -17,6 +17,10 @@ import * as elements from './interfaces';
 
 export interface ClassProperties {
 	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
+	/**
 	* The name of the NamedElement.
 	*/
 	name: string;
@@ -53,6 +57,10 @@ export interface ClassProperties {
 }
 
 export interface PropertyProperties {
+	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
 	/**
 	* The name of the NamedElement.
 	*/
@@ -126,6 +134,10 @@ export interface PropertyProperties {
 
 export interface PackageProperties {
 	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
+	/**
 	* The name of the NamedElement.
 	*/
 	name: string;
@@ -141,6 +153,10 @@ export interface PackageProperties {
 }
 
 export interface DataTypeProperties {
+	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
 	/**
 	* The name of the NamedElement.
 	*/
@@ -173,6 +189,10 @@ export interface DataTypeProperties {
 
 export interface PrimitiveTypeProperties {
 	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
+	/**
 	* The name of the NamedElement.
 	*/
 	name: string;
@@ -203,6 +223,10 @@ export interface PrimitiveTypeProperties {
 }
 
 export interface ParameterProperties {
+	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
 	/**
 	* The name of the NamedElement.
 	*/
@@ -248,6 +272,10 @@ export interface ParameterProperties {
 
 export interface OperationProperties {
 	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
+	/**
 	* The name of the NamedElement.
 	*/
 	name: string;
@@ -290,6 +318,10 @@ export interface OperationProperties {
 
 export interface ModelProperties {
 	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
+	/**
 	* The name of the NamedElement.
 	*/
 	name: string;
@@ -312,6 +344,10 @@ export interface InterfaceRealizationProperties {
 }
 
 export interface InterfaceProperties {
+	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
 	/**
 	* The name of the NamedElement.
 	*/
@@ -358,6 +394,10 @@ export interface GeneralizationProperties {
 
 export interface EnumerationLiteralProperties {
 	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
+	/**
 	* The name of the NamedElement.
 	*/
 	name: string;
@@ -374,6 +414,10 @@ export interface EnumerationLiteralProperties {
 }
 
 export interface EnumerationProperties {
+	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
 	/**
 	* The name of the NamedElement.
 	*/
@@ -417,6 +461,10 @@ export interface CommentProperties {
 }
 
 export interface AssociationProperties {
+	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
 	/**
 	* The name of the NamedElement.
 	*/

@@ -238,6 +238,7 @@ export class DataToModelConverter
 
 	private mapNamedElement(elementData: data.NamedElementData, target: elements.NamedElement, owner: elements.Element): void
 	{
+		if (elementData.isDeprecated) { target.isDeprecated = elementData.isDeprecated; }
 		if (elementData.name) { target.name = elementData.name; }
 		if (elementData.visibility) { target.visibility = this.createVisibilityKind(elementData.visibility);}
 	}

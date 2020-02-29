@@ -17,7 +17,7 @@ import { ElementComparer } from '../element-comparer-interface';
 import { ElementReferenceResolver } from './element-reference-resolver';
 
 const enumKeys = ['elementType','visibility','aggregation','direction','metaClass','location'];
-const regularKeys = ['id','ownedComments','taggedValues','name','isInferred','isLeaf','generalizations','isAbstract','isFinalSpecialization','isOrdered','isUnique','lowerValue','upperValue','order','isStatic','isReadOnly','ownedAttributes','ownedOperations','interfaceRealizations','isActive','extends','safeName','defaultValue','isDerived','isDerivedUnion','isID','isNavigable','isNamespaceRoot','packagedElements','isException','isStream','ownedParameters','isConstructor','isQuery','value','isSubstitutable','specification','ownedLiterals','body','ownedEnds','isRequired','path','creator','model','modelTypeName','modelTypeVersion','profiles','references'];
+const regularKeys = ['id','ownedComments','taggedValues','isDeprecated','name','isInferred','isLeaf','generalizations','isAbstract','isFinalSpecialization','isOrdered','isUnique','lowerValue','upperValue','order','isStatic','isReadOnly','ownedAttributes','ownedOperations','interfaceRealizations','isActive','extends','safeName','defaultValue','isDerived','isDerivedUnion','isID','isNavigable','isNamespaceRoot','packagedElements','isException','isStream','ownedParameters','isConstructor','isQuery','value','isSubstitutable','specification','ownedLiterals','body','ownedEnds','isRequired','path','creator','model','modelTypeName','modelTypeVersion','profiles','references'];
 const referenceKeys = ['appliedStereotypes','type','appliedProfiles','contract','general','baseType','memberEnds','definition'];
 
 export class ElementJSONTransformer {

@@ -74,6 +74,8 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 
 	public isActive: boolean = false;
 
+	public isDeprecated: boolean = false;
+
 	public isFinalSpecialization: boolean = false;
 
 	public isInferred: boolean = false;
@@ -261,6 +263,8 @@ export class Stereotype extends Element implements elements.Stereotype {
 
 	public isActive: boolean = false;
 
+	public isDeprecated: boolean = false;
+
 	public isFinalSpecialization: boolean = false;
 
 	public isInferred: boolean = false;
@@ -417,6 +421,8 @@ export class Property extends Element implements elements.Property, editable.Pro
 	}
 
 	public defaultValue: elements.ValueSpecification | null = null;
+
+	public isDeprecated: boolean = false;
 
 	public isDerived: boolean = false;
 
@@ -589,6 +595,8 @@ export class Package extends Element implements elements.Package, editable.Packa
 	public appliedProfiles: elements.Profile[] = [];
 
 	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public isDeprecated: boolean = false;
 
 	public isNamespaceRoot: boolean = false;
 
@@ -793,6 +801,8 @@ export class Profile extends Element implements elements.Profile {
 
 	public appliedStereotypes: elements.Stereotype[] = [];
 
+	public isDeprecated: boolean = false;
+
 	public isNamespaceRoot: boolean = false;
 
 	public name: string = '';
@@ -957,6 +967,8 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	public generalizations: elements.Generalization[] = [];
 
 	public isAbstract: boolean = false;
+
+	public isDeprecated: boolean = false;
 
 	public isFinalSpecialization: boolean = false;
 
@@ -1124,6 +1136,8 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 
 	public isAbstract: boolean = false;
 
+	public isDeprecated: boolean = false;
+
 	public isFinalSpecialization: boolean = false;
 
 	public isInferred: boolean = false;
@@ -1290,6 +1304,8 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 
 	public direction: elements.ParameterDirectionKind = elements.ParameterDirectionKind.in;
 
+	public isDeprecated: boolean = false;
+
 	public isException: boolean = false;
 
 	public isOrdered: boolean = false;
@@ -1454,6 +1470,8 @@ export class Operation extends Element implements elements.Operation, editable.O
 
 	public isConstructor: boolean = false;
 
+	public isDeprecated: boolean = false;
+
 	public isLeaf: boolean = false;
 
 	public isQuery: boolean = false;
@@ -1585,6 +1603,8 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	public appliedProfiles: elements.Profile[] = [];
 
 	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public isDeprecated: boolean = false;
 
 	public isNamespaceRoot: boolean = false;
 
@@ -1787,6 +1807,8 @@ export class LiteralUnlimitedNatural extends Element implements elements.Literal
 
 	public appliedStereotypes: elements.Stereotype[] = [];
 
+	public isDeprecated: boolean = false;
+
 	public name: string = '';
 
 	public taggedValues: elements.TaggedValueSpecification[] = [];
@@ -1832,6 +1854,8 @@ export class LiteralString extends Element implements elements.LiteralString {
 	public readonly elementType:elements.ElementType = elements.ElementType.literalString;
 
 	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public isDeprecated: boolean = false;
 
 	public name: string = '';
 
@@ -1879,6 +1903,8 @@ export class LiteralReal extends Element implements elements.LiteralReal {
 
 	public appliedStereotypes: elements.Stereotype[] = [];
 
+	public isDeprecated: boolean = false;
+
 	public name: string = '';
 
 	public taggedValues: elements.TaggedValueSpecification[] = [];
@@ -1925,6 +1951,8 @@ export class LiteralNull extends Element implements elements.LiteralNull {
 
 	public appliedStereotypes: elements.Stereotype[] = [];
 
+	public isDeprecated: boolean = false;
+
 	public name: string = '';
 
 	public taggedValues: elements.TaggedValueSpecification[] = [];
@@ -1968,6 +1996,8 @@ export class LiteralInteger extends Element implements elements.LiteralInteger {
 	public readonly elementType:elements.ElementType = elements.ElementType.literalInteger;
 
 	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public isDeprecated: boolean = false;
 
 	public name: string = '';
 
@@ -2014,6 +2044,8 @@ export class LiteralBoolean extends Element implements elements.LiteralBoolean {
 	public readonly elementType:elements.ElementType = elements.ElementType.literalBoolean;
 
 	public appliedStereotypes: elements.Stereotype[] = [];
+
+	public isDeprecated: boolean = false;
 
 	public name: string = '';
 
@@ -2082,6 +2114,8 @@ export class Interface extends Element implements elements.Interface, editable.I
 	public generalizations: elements.Generalization[] = [];
 
 	public isAbstract: boolean = false;
+
+	public isDeprecated: boolean = false;
 
 	public isFinalSpecialization: boolean = false;
 
@@ -2273,6 +2307,8 @@ export class EnumerationLiteral extends Element implements elements.EnumerationL
 		return this.modelDelegate.getEnumeration(this);
 	}
 
+	public isDeprecated: boolean = false;
+
 	public name: string = '';
 
 	public order: number = 0;
@@ -2320,6 +2356,8 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	public generalizations: elements.Generalization[] = [];
 
 	public isAbstract: boolean = false;
+
+	public isDeprecated: boolean = false;
 
 	public isFinalSpecialization: boolean = false;
 
@@ -2515,6 +2553,8 @@ export class Association extends Element implements elements.Association, editab
 	public generalizations: elements.Generalization[] = [];
 
 	public isAbstract: boolean = false;
+
+	public isDeprecated: boolean = false;
 
 	public isFinalSpecialization: boolean = false;
 

@@ -265,6 +265,10 @@ export interface Element {
 */
 export interface NamedElement extends Element {
 	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated: boolean;
+	/**
 	* The name of the NamedElement.
 	*/
 	name: string;
