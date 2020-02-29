@@ -13,6 +13,12 @@
 */
 
 /**
+* Contains the current version of this meta model. Note that the meta model version is independent
+* from versions of packages that depend on the meta model.
+*/
+export const MetaVersion = '0.1.1';
+
+/**
 * Enumerates all non-abstract element types in the model. Each model element has an elementType field
 * with an ElementType value.
 */

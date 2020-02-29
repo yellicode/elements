@@ -11,6 +11,12 @@
 * 
 * Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
 */
+/**
+* Contains the current version of this meta model. Note that the meta model version is independent
+* from versions of packages that depend on the meta model.
+*/
+export const MetaVersion = '0.1.1';
+
 export type ElementType = "taggedValueSpecification"|"stereotypeExtension"|"class"|"stereotype"|"property"|"package"|"profile"|"dataType"|"primitiveType"|"parameter"|"operation"|"model"|"literalUnlimitedNatural"|"literalString"|"literalReal"|"literalNull"|"literalInteger"|"literalBoolean"|"interfaceRealization"|"interface"|"generalization"|"enumerationLiteral"|"enumeration"|"documentReference"|"document"|"comment"|"association";
 
 /**

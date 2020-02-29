@@ -23,8 +23,8 @@ export class ModelFactory {
         const modelDelegate = new ModelDelegateImpl(elementMap);
         const properties: DocumentProperties = { creator: creator };
         const document = Document.create(modelDelegate, properties);        
-        document.modelTypeName = 'Yellicode YML';
-        document.modelTypeVersion = '0.1.0';
+        document.modelTypeName = 'Yellicode YML';        
+        document.modelTypeVersion = elements.MetaVersion;
         if (initFn) initFn(document);                
         return document;
     }
