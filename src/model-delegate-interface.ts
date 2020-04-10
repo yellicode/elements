@@ -323,6 +323,16 @@ export interface ModelDelegate {
 	onGeneralizationAdded(generalization: elements.Generalization): void;
 
 	/**
+	* Notifies the delegate that a profile was applied.
+	*/
+	onAppliedProfileAdded(pack: elements.Package, profile: elements.Profile): void;
+
+	/**
+	* Notifies the delegate that a stereotype was applied.
+	*/
+	onAppliedStereotypeAdded(element: elements.Element, stereotype: elements.Stereotype): void;
+
+	/**
 	* Sets the default value of the element to the specified value.
 	*/
 	setDefaultValue(hasDefaultValue: elements.Element & { defaultValue: elements.ValueSpecification | null }, value : boolean | number | string) : void;

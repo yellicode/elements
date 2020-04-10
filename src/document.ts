@@ -19,7 +19,14 @@ export interface DocumentProperties {
 }
 
 export interface DocumentEditable extends elements.Document {
+    /**
+     * Sets the main model.
+     */
     setModel(name: string, initFn: (model: ModelEditable) => void): this;
+    /**
+     * Sets the profiles model.
+     */
+    setProfiles(name: string, initFn: (model: ModelEditable) => void): this;
 }
 
 export class Document implements elements.Document, DocumentEditable {
@@ -51,11 +58,17 @@ export class Document implements elements.Document, DocumentEditable {
         return this;
     }
 
+    public setProfiles(name: string, initFn: (model: ModelEditable) => void): this {
+        const properties: ModelProperties = { name: name };
+        this.profiles = this.modelDelegate.createElement('model', null, properties, initFn);
+        return this;
+    }
+
     public static create(modelDelegate: ModelDelegate, properties?: DocumentProperties): Document {
         const doc: Document = new Document(modelDelegate);
         if (properties) Object.assign(doc, properties);
         // Ensure a ID
-        if (!doc.id) doc.id = UniqueId.create();        
+        if (!doc.id) doc.id = UniqueId.create();
         return doc;
     }
 }

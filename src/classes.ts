@@ -215,6 +215,13 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 		return this.modelDelegate.getSuperClasses(this);
 	}
 
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
+	}
+
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
 		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
@@ -246,7 +253,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	}
 }
 
-export class Stereotype extends Element implements elements.Stereotype {
+export class Stereotype extends Element implements elements.Stereotype, editable.StereotypeEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.stereotype;
@@ -405,6 +412,43 @@ export class Stereotype extends Element implements elements.Stereotype {
 	{
 		return this.modelDelegate.getSuperClasses(this);
 	}
+
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
+	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
+	{
+		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		return this;
+	}
+
+	public addInterfaceRealization(properties: editable.InterfaceRealizationProperties, initFn?: (interfaceRealization: editable.InterfaceRealizationEditable) => void): this
+	{
+		this.interfaceRealizations.push(this.modelDelegate.createElement('interfaceRealization', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
+	{
+		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		return this;
+	}
+
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
+	{
+		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		return this;
+	}
 }
 
 export class Property extends Element implements elements.Property, editable.PropertyEditable {
@@ -539,6 +583,13 @@ export class Property extends Element implements elements.Property, editable.Pro
 	public isRequiredAndSinglevalued(): boolean
 	{
 		return this.modelDelegate.isRequiredAndSinglevalued(this);
+	}
+
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
@@ -749,15 +800,34 @@ export class Package extends Element implements elements.Package, editable.Packa
 		return this.modelDelegate.getTypes(this);
 	}
 
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
+	}
+
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
 		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
 		return this;
 	}
 
+	public addAppliedProfile(profile: elements.Profile): this
+	{
+		this.appliedProfiles.push(profile);
+		this.modelDelegate.onAppliedProfileAdded(this, profile);
+		return this;
+	}
+
 	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this
 	{
 		this.packagedElements.push(this.modelDelegate.createElement('package', this, properties, initFn || null));
+		return this;
+	}
+	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('profile', this, properties, initFn || null));
 		return this;
 	}
 	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this
@@ -768,6 +838,11 @@ export class Package extends Element implements elements.Package, editable.Packa
 	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this
 	{
 		this.packagedElements.push(this.modelDelegate.createElement('class', this, properties, initFn || null));
+		return this;
+	}
+	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('stereotype', this, properties, initFn || null));
 		return this;
 	}
 	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this
@@ -792,7 +867,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	}
 }
 
-export class Profile extends Element implements elements.Profile {
+export class Profile extends Element implements elements.Profile, editable.ProfileEditable {
 	constructor(modelDelegate:ModelDelegate, owner: elements.Element | null) {super(modelDelegate, owner);}
 
 	public readonly elementType:elements.ElementType = elements.ElementType.profile;
@@ -955,6 +1030,72 @@ export class Profile extends Element implements elements.Profile {
 	{
 		return this.modelDelegate.getTypes(this);
 	}
+
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
+	}
+
+	public addOwnedComment(properties: editable.CommentProperties): this
+	{
+		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		return this;
+	}
+
+	public addAppliedProfile(profile: elements.Profile): this
+	{
+		this.appliedProfiles.push(profile);
+		this.modelDelegate.onAppliedProfileAdded(this, profile);
+		return this;
+	}
+
+	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('package', this, properties, initFn || null));
+		return this;
+	}
+	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('profile', this, properties, initFn || null));
+		return this;
+	}
+	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('association', this, properties, initFn || null));
+		return this;
+	}
+	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('class', this, properties, initFn || null));
+		return this;
+	}
+	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('stereotype', this, properties, initFn || null));
+		return this;
+	}
+	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('dataType', this, properties, initFn || null));
+		return this;
+	}
+	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('enumeration', this, properties, initFn || null));
+		return this;
+	}
+	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('primitiveType', this, properties, initFn || null));
+		return this;
+	}
+	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('interface', this, properties, initFn || null));
+		return this;
+	}
 }
 
 export class DataType extends Element implements elements.DataType, editable.DataTypeEditable {
@@ -1098,6 +1239,13 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	public getSpecializations(): elements.Classifier[]
 	{
 		return this.modelDelegate.getSpecializations(this);
+	}
+
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
@@ -1268,6 +1416,13 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 		return this.modelDelegate.getSpecializations(this);
 	}
 
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
+	}
+
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
 		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
@@ -1411,6 +1566,13 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 	public isRequiredAndSinglevalued(): boolean
 	{
 		return this.modelDelegate.isRequiredAndSinglevalued(this);
+	}
+
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
@@ -1580,6 +1742,13 @@ export class Operation extends Element implements elements.Operation, editable.O
 	public isOptionalAndSinglevalued(): boolean
 	{
 		return this.modelDelegate.isOptionalAndSinglevalued(this);
+	}
+
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
@@ -1757,15 +1926,34 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 		return this.modelDelegate.getTypes(this);
 	}
 
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
+	}
+
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
 		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
 		return this;
 	}
 
+	public addAppliedProfile(profile: elements.Profile): this
+	{
+		this.appliedProfiles.push(profile);
+		this.modelDelegate.onAppliedProfileAdded(this, profile);
+		return this;
+	}
+
 	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this
 	{
 		this.packagedElements.push(this.modelDelegate.createElement('package', this, properties, initFn || null));
+		return this;
+	}
+	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('profile', this, properties, initFn || null));
 		return this;
 	}
 	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this
@@ -1776,6 +1964,11 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this
 	{
 		this.packagedElements.push(this.modelDelegate.createElement('class', this, properties, initFn || null));
+		return this;
+	}
+	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this
+	{
+		this.packagedElements.push(this.modelDelegate.createElement('stereotype', this, properties, initFn || null));
 		return this;
 	}
 	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this
@@ -2097,6 +2290,13 @@ export class InterfaceRealization extends Element implements elements.InterfaceR
 
 	public taggedValues: elements.TaggedValueSpecification[] = [];
 
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
+	}
+
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
 		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
@@ -2247,6 +2447,13 @@ export class Interface extends Element implements elements.Interface, editable.I
 		return this.modelDelegate.getSpecializations(this);
 	}
 
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
+	}
+
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
 		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
@@ -2289,6 +2496,13 @@ export class Generalization extends Element implements elements.Generalization, 
 
 	public taggedValues: elements.TaggedValueSpecification[] = [];
 
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
+	}
+
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
 		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
@@ -2327,6 +2541,13 @@ export class EnumerationLiteral extends Element implements elements.EnumerationL
 	public getSpecificationValue(): any | null
 	{
 		return this.modelDelegate.getSpecificationValue(this);
+	}
+
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
@@ -2489,6 +2710,13 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	public getSpecializations(): elements.Classifier[]
 	{
 		return this.modelDelegate.getSpecializations(this);
+	}
+
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
@@ -2665,6 +2893,13 @@ export class Association extends Element implements elements.Association, editab
 	public getSpecializations(): elements.Classifier[]
 	{
 		return this.modelDelegate.getSpecializations(this);
+	}
+
+	public addAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		this.appliedStereotypes.push(stereotype);
+		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this

@@ -26,7 +26,7 @@ export class ModelDelegateImpl implements ModelDelegate {
         this.elementFactory = new ElementFactory(this);
     }
 
-    // ************************  Document **************************** //     
+    // ************************  Document **************************** //
 
     public findElementById(id: string): Interfaces.Element | null {
         if (!this.elementMap) return null;
@@ -34,23 +34,23 @@ export class ModelDelegateImpl implements ModelDelegate {
         return this.elementMap.getElementById(id);
     }
 
-    // **************************  Element ******************************* //     
+    // **************************  Element ******************************* //
 
     public getFirstCommentBody(element: Interfaces.Element): string {
         if (!element.ownedComments || element.ownedComments.length == 0)
-            return '';  // return an empty string, no null or undefined, they are inconvenient when using template literals.      
+            return '';  // return an empty string, no null or undefined, they are inconvenient when using template literals.
 
         return element.ownedComments[0].body;
     }
 
-    // ************************  TypedElement **************************** //     
+    // ************************  TypedElement **************************** //
 
     public getTypeName(typedElement: Interfaces.TypedElement): string {
         if (!typedElement.type) return '';
         return typedElement.type.name;
     }
 
-    // *****************************  Package **************************** //     
+    // *****************************  Package **************************** //
     public static getPackagedElementsWhere<TElement extends Interfaces.PackageableElement>(
         pack: Interfaces.Package,
         predicate: (element: Interfaces.PackageableElement) => boolean): TElement[] {
@@ -134,7 +134,7 @@ export class ModelDelegateImpl implements ModelDelegate {
     }
 
 
-    // ************************  PackageableElement **************************** //     
+    // ************************  PackageableElement **************************** //
 
     public getPackage(packagedElement: Interfaces.PackageableElement): Interfaces.Package {
         return packagedElement.owner as Interfaces.Package;
@@ -168,13 +168,13 @@ export class ModelDelegateImpl implements ModelDelegate {
         return namespaceName ? `${namespaceName}${separator}${packagedElement.name}` : packagedElement.name;
     }
 
-    // ************************  Generalization **************************** //     
+    // ************************  Generalization **************************** //
 
     public getSpecific(generalization: Interfaces.Generalization): Interfaces.Classifier {
         return generalization.owner as Interfaces.Classifier;
     }
 
-    // **************************  Classifier ******************************* //     
+    // **************************  Classifier ******************************* //
 
     public getFirstGeneralization(classifier: Interfaces.Classifier): Interfaces.Generalization | null {
         if (classifier.generalizations.length === 0) return null;
@@ -192,7 +192,7 @@ export class ModelDelegateImpl implements ModelDelegate {
 
     /**
     * Returns all of the direct and indirect ancestors of a generalized Classifier, working outwards: more specific classifiers will
-    * appear before more general classifiers.     
+    * appear before more general classifiers.
     */
     public getAllParents(classifier: Interfaces.Classifier): Interfaces.Classifier[] {
         const allParents: Interfaces.Classifier[] = [];
@@ -230,15 +230,15 @@ export class ModelDelegateImpl implements ModelDelegate {
     }
 
     // /**
-    //  * Returns true if one classifier has the other as direct general.     
+    //  * Returns true if one classifier has the other as direct general.
     //  */
     // private static hasGeneral(x: Interfaces.Classifier, y: Interfaces.Classifier): boolean {
     //     // TODO: recursive?
     //     const firstMatch = x.generalizations.find(g => g.general.id === y.id);
-    //     return firstMatch ? true: false;    
+    //     return firstMatch ? true: false;
     // }
 
-    // ********************  MemberedClassifier **************************** //     
+    // ********************  MemberedClassifier **************************** //
 
     public getAllAttributes(memberedClassifier: Interfaces.MemberedClassifier): Interfaces.Property[] {
         const distinctClassifierIds: string[] = []; // keep this list to check against recursion
@@ -279,13 +279,13 @@ export class ModelDelegateImpl implements ModelDelegate {
         // Now add the owned members. Replace any inherited members with the same signature
         memberedClassifier.ownedOperations.forEach(op => {
             // Is there an operation in the result that has the same signature? Then replace it.
-            // TODO: can we set a "redefines" reference (referring to the base operation)?             
+            // TODO: can we set a "redefines" reference (referring to the base operation)?
             _.remove(result, (baseOperation) => ElementComparerImpl.haveEqualSignatures(baseOperation, op));
             result.push(op);
         })
     }
 
-    // ************************  Class  **************************** //         
+    // ************************  Class  **************************** //
     public getSuperClasses<TClass extends Interfaces.Class>(cls: TClass): TClass[] {
         const result: TClass[] = [];
         if (!cls.generalizations) return result;
@@ -297,7 +297,7 @@ export class ModelDelegateImpl implements ModelDelegate {
         return result;
     }
 
-    // ************************  MultiplicityElement **************************** //         
+    // ************************  MultiplicityElement **************************** //
     public getLower(element: Interfaces.MultiplicityElement | Interfaces.Operation): number | null {
         // If element is an operation, return the lower of the return parameter
         const multiplicityElement = element.elementType === Interfaces.ElementType.operation ?
@@ -381,13 +381,13 @@ export class ModelDelegateImpl implements ModelDelegate {
         return !upper.IsInfinity && upper.Value === 1;
     }
 
-    // ********************  Default values **************************** //     
+    // ********************  Default values **************************** //
     public getDefault(hasDefaultValue: { defaultValue: Interfaces.ValueSpecification | null }): any | null {
         if (!hasDefaultValue.defaultValue) return null;
         return this.getValue(hasDefaultValue.defaultValue);
     }
 
-    // ********************  ValueSpecification **************************** //     
+    // ********************  ValueSpecification **************************** //
     public getValue(valueSpecification: Interfaces.ValueSpecification): any | null {
         if ("value" in valueSpecification) { // don't use hasOwnProperty here
             // The valueSpecification is a LiteralInteger, LiteralBoolean, etc.
@@ -408,7 +408,7 @@ export class ModelDelegateImpl implements ModelDelegate {
         return rawValue.toString();
     }
 
-    // ********************  EnumerationLiteral **************************** //     
+    // ********************  EnumerationLiteral **************************** //
     public getEnumeration(literal: Interfaces.EnumerationLiteral): Interfaces.Enumeration {
         return literal.owner as Interfaces.Enumeration;
     }
@@ -418,7 +418,7 @@ export class ModelDelegateImpl implements ModelDelegate {
         return this.getValue(literal.specification);
     }
 
-    // ********************  Property **************************** //     
+    // ********************  Property **************************** //
     public getAssociation(property: Interfaces.Property): Interfaces.Association | null {
         // The property can be owned by an association (association.ownedEnds) or by a classifier
         // If owned by an association, the path is short.
@@ -431,7 +431,7 @@ export class ModelDelegateImpl implements ModelDelegate {
         return this.elementMap.getAssociationHavingMemberEnd(property);
     }
 
-    // ********************  Operation **************************** //     
+    // ********************  Operation **************************** //
     public getReturnParameter(operation: Interfaces.Operation): Interfaces.Parameter | null {
         const val = operation.ownedParameters.find(p => { return p.direction === Interfaces.ParameterDirectionKind.return });
         return val || null;
@@ -457,7 +457,7 @@ export class ModelDelegateImpl implements ModelDelegate {
         return returnParameter ? returnParameter.type : null;
     }
 
-    // ********************  Factory functions  **************************** //     
+    // ********************  Factory functions  **************************** //
     private createValueSpecificationFromValue(value: boolean | number | string, owner: Interfaces.Element): Interfaces.ValueSpecification {
         switch (typeof (value)) {
             case 'number':
@@ -519,6 +519,13 @@ export class ModelDelegateImpl implements ModelDelegate {
         this.elementMap!.addSpecializationById(generalization.general.id, generalization.owner);
     }
 
+    public onAppliedProfileAdded(pack: Interfaces.Package, profile: Interfaces.Profile): void {
+        // nothing needed yet
+    }
+
+    public onAppliedStereotypeAdded(element: Interfaces.Element, stereotype: Interfaces.Stereotype): void {
+        // nothing needed yet
+    }
 
     /**
 	* Sets the default value of the element to the specified value.

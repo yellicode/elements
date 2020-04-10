@@ -56,6 +56,47 @@ export interface ClassProperties {
 	isActive?: boolean;
 }
 
+export interface StereotypeProperties {
+	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
+	/**
+	* The name of the NamedElement.
+	*/
+	name: string;
+	/**
+	* Determines whether and how the NamedElement is visible outside its owning Namespace.
+	*/
+	visibility?: elements.VisibilityKind;
+	/**
+	* If true, the type was inferred by a tool, for example during data import. An inferred type is never
+	* owned by any Package.
+	*/
+	isInferred?: boolean;
+	/**
+	* Indicates whether it is possible to further redefine a RedefinableElement. If the value is true,
+	* then it is not possible to further redefine the RedefinableElement.
+	*/
+	isLeaf?: boolean;
+	/**
+	* If true, the Classifier can only be instantiated by instantiating one of its specializations. An
+	* abstract Classifier is intended to be used by other Classifiers e.g., as the target of Associations
+	* or Generalizations.
+	*/
+	isAbstract?: boolean;
+	/**
+	* If true, the Classifier cannot be specialized.
+	*/
+	isFinalSpecialization?: boolean;
+	/**
+	* Determines whether an object specified by this Class is active or not. If true, then the owning
+	* Class is referred to as an active Class. If false, then such a Class is referred to as a passive
+	* Class.
+	*/
+	isActive?: boolean;
+}
+
 export interface PropertyProperties {
 	/**
 	* If true, using this element should be avoided, typically because it has been superseded.
@@ -133,6 +174,26 @@ export interface PropertyProperties {
 }
 
 export interface PackageProperties {
+	/**
+	* If true, using this element should be avoided, typically because it has been superseded.
+	*/
+	isDeprecated?: boolean;
+	/**
+	* The name of the NamedElement.
+	*/
+	name: string;
+	/**
+	* Determines whether and how the NamedElement is visible outside its owning Namespace.
+	*/
+	visibility?: elements.VisibilityKind;
+	/**
+	* Denotes where the namespace structure for your class model starts; all nested packages below a
+	* namespace root will form the namespace hierarchy for contained types.
+	*/
+	isNamespaceRoot?: boolean;
+}
+
+export interface ProfileProperties {
 	/**
 	* If true, using this element should be avoided, typically because it has been superseded.
 	*/
@@ -496,6 +557,16 @@ export interface AssociationProperties {
 }
 
 export interface ClassEditable extends elements.Class {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
+	addInterfaceRealization(properties: InterfaceRealizationProperties, initFn?: (interfaceRealization: InterfaceRealizationEditable) => void): this;
+	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
+	addOwnedComment(properties: CommentProperties): this;
+	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
+}
+
+export interface StereotypeEditable extends elements.Stereotype {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addInterfaceRealization(properties: InterfaceRealizationProperties, initFn?: (interfaceRealization: InterfaceRealizationEditable) => void): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
@@ -504,6 +575,7 @@ export interface ClassEditable extends elements.Class {
 }
 
 export interface PropertyEditable extends elements.Property {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	setDefaultValue(value: boolean): this;
 	setDefaultValue(value: number): this;
 	setDefaultValueNull(): this;
@@ -516,10 +588,29 @@ export interface PropertyEditable extends elements.Property {
 }
 
 export interface PackageEditable extends elements.Package {
+	addAppliedProfile(profile: elements.Profile): this;
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
 	addPackage(properties: PackageProperties, initFn?: (pack: PackageEditable) => void): this;
+	addProfile(properties: ProfileProperties, initFn?: (profile: ProfileEditable) => void): this;
 	addAssociation(properties: AssociationProperties, initFn?: (association: AssociationEditable) => void): this;
 	addClass(properties: ClassProperties, initFn?: (cls: ClassEditable) => void): this;
+	addStereotype(properties: StereotypeProperties, initFn?: (stereotype: StereotypeEditable) => void): this;
+	addDataType(properties: DataTypeProperties, initFn?: (dataType: DataTypeEditable) => void): this;
+	addEnumeration(properties: EnumerationProperties, initFn?: (enumeration: EnumerationEditable) => void): this;
+	addPrimitiveType(properties: PrimitiveTypeProperties, initFn?: (primitiveType: PrimitiveTypeEditable) => void): this;
+	addInterface(properties: InterfaceProperties, initFn?: (iface: InterfaceEditable) => void): this;
+}
+
+export interface ProfileEditable extends elements.Profile {
+	addAppliedProfile(profile: elements.Profile): this;
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	addOwnedComment(properties: CommentProperties): this;
+	addPackage(properties: PackageProperties, initFn?: (pack: PackageEditable) => void): this;
+	addProfile(properties: ProfileProperties, initFn?: (profile: ProfileEditable) => void): this;
+	addAssociation(properties: AssociationProperties, initFn?: (association: AssociationEditable) => void): this;
+	addClass(properties: ClassProperties, initFn?: (cls: ClassEditable) => void): this;
+	addStereotype(properties: StereotypeProperties, initFn?: (stereotype: StereotypeEditable) => void): this;
 	addDataType(properties: DataTypeProperties, initFn?: (dataType: DataTypeEditable) => void): this;
 	addEnumeration(properties: EnumerationProperties, initFn?: (enumeration: EnumerationEditable) => void): this;
 	addPrimitiveType(properties: PrimitiveTypeProperties, initFn?: (primitiveType: PrimitiveTypeEditable) => void): this;
@@ -527,6 +618,7 @@ export interface PackageEditable extends elements.Package {
 }
 
 export interface DataTypeEditable extends elements.DataType {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
 	addOwnedComment(properties: CommentProperties): this;
@@ -534,6 +626,7 @@ export interface DataTypeEditable extends elements.DataType {
 }
 
 export interface PrimitiveTypeEditable extends elements.PrimitiveType {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
 	addOwnedComment(properties: CommentProperties): this;
@@ -541,6 +634,7 @@ export interface PrimitiveTypeEditable extends elements.PrimitiveType {
 }
 
 export interface ParameterEditable extends elements.Parameter {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	setDefaultValue(value: boolean): this;
 	setDefaultValue(value: number): this;
 	setDefaultValueNull(): this;
@@ -553,15 +647,20 @@ export interface ParameterEditable extends elements.Parameter {
 }
 
 export interface OperationEditable extends elements.Operation {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
 	addOwnedParameter(properties: ParameterProperties, initFn?: (parameter: ParameterEditable) => void): this;
 }
 
 export interface ModelEditable extends elements.Model {
+	addAppliedProfile(profile: elements.Profile): this;
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
 	addPackage(properties: PackageProperties, initFn?: (pack: PackageEditable) => void): this;
+	addProfile(properties: ProfileProperties, initFn?: (profile: ProfileEditable) => void): this;
 	addAssociation(properties: AssociationProperties, initFn?: (association: AssociationEditable) => void): this;
 	addClass(properties: ClassProperties, initFn?: (cls: ClassEditable) => void): this;
+	addStereotype(properties: StereotypeProperties, initFn?: (stereotype: StereotypeEditable) => void): this;
 	addDataType(properties: DataTypeProperties, initFn?: (dataType: DataTypeEditable) => void): this;
 	addEnumeration(properties: EnumerationProperties, initFn?: (enumeration: EnumerationEditable) => void): this;
 	addPrimitiveType(properties: PrimitiveTypeProperties, initFn?: (primitiveType: PrimitiveTypeEditable) => void): this;
@@ -569,10 +668,12 @@ export interface ModelEditable extends elements.Model {
 }
 
 export interface InterfaceRealizationEditable extends elements.InterfaceRealization {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
 }
 
 export interface InterfaceEditable extends elements.Interface {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
 	addOwnedComment(properties: CommentProperties): this;
@@ -580,16 +681,19 @@ export interface InterfaceEditable extends elements.Interface {
 }
 
 export interface GeneralizationEditable extends elements.Generalization {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
 }
 
 export interface EnumerationLiteralEditable extends elements.EnumerationLiteral {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
 	setSpecification(value: number): this;
 	setSpecification(value: string): this;
 }
 
 export interface EnumerationEditable extends elements.Enumeration {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
 	addOwnedComment(properties: CommentProperties): this;
@@ -598,6 +702,7 @@ export interface EnumerationEditable extends elements.Enumeration {
 }
 
 export interface AssociationEditable extends elements.Association {
+	addAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
 	addMemberEnd(property: elements.Property): this;
 	addOwnedComment(properties: CommentProperties): this;
