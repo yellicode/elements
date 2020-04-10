@@ -16,8 +16,10 @@ import * as Data from './data-interfaces';
 
 export interface ElementMap {
 	addElement(element: elements.Element, elementData: Data.ElementData | null) : void;
-	addSpecializationById(generalId: string, specialization: elements.Classifier): void;
+	addSpecialization(generalId: string, specialization: elements.Classifier): void;
+	removeSpecialization(generalId: string, specialization:  elements.Classifier): void;
 	addAssociationByEndId(endId: string, association: elements.Association): void;
+	removeAssociationByEndId(endId: string): void;
 	getElementById<TElement extends elements.Element>(id: string | null): TElement | null;
 	getElementsByIdList<TElement extends elements.Element>(idList: string[]): TElement[];
 	getSpecializationsOf(generalId: string): elements.Classifier[];

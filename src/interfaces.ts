@@ -438,6 +438,11 @@ export interface Classifier extends Type, RedefinableElement {
 	* @returns {Classifier[]}
 	*/
 	getSpecializations(): Classifier[];
+	/**
+	* Gets the super types of this type, derived from its Generalizations.
+	* @returns {this[]}
+	*/
+	getSuperTypes(): this[];
 }
 
 /**
@@ -614,11 +619,6 @@ export interface Class extends BehavioredClassifier, StructuredClassifier, Membe
 	* Class.
 	*/
 	isActive: boolean;
-	/**
-	* Gets the superclasses of a Class, derived from its Generalizations.
-	* @returns {Class[]}
-	*/
-	getSuperClasses(): Class[];
 }
 
 /**

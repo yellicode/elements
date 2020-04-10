@@ -14,6 +14,7 @@ import { ModelDelegate } from './model-delegate-interface';
 import { ElementMap } from './element-map-interface';
 import { UniqueId } from '@yellicode/core';
 import { ElementFactory, FactoryClassMap, createdElement } from './element-factory';
+import { Deletable } from './elements';
 
 /**
  * Internal class to which all behaviour of the model classes is delegated.
@@ -25,6 +26,7 @@ export class ModelDelegateImpl implements ModelDelegate {
         // Note that elementMap is null when not initialized through the DataToModelConverter
         this.elementFactory = new ElementFactory(this);
     }
+
 
     // ************************  Document **************************** //
 
@@ -46,8 +48,11 @@ export class ModelDelegateImpl implements ModelDelegate {
     // ************************  TypedElement **************************** //
 
     public getTypeName(typedElement: Interfaces.TypedElement): string {
-        if (!typedElement.type) return '';
-        return typedElement.type.name;
+        const t = typedElement.type;
+        if (!t) return '';
+        // If the type was deleted, return nothing
+        if ((t as unknown as Deletable).isOrphaned()) return '';
+        return t.name;
     }
 
     // *****************************  Package **************************** //
@@ -287,11 +292,25 @@ export class ModelDelegateImpl implements ModelDelegate {
 
     // ************************  Class  **************************** //
     public getSuperClasses<TClass extends Interfaces.Class>(cls: TClass): TClass[] {
-        const result: TClass[] = [];
-        if (!cls.generalizations) return result;
-        cls.generalizations.forEach(g => {
-            if (ElementTypeUtility.isClass(g.general.elementType)) {
-                result.push(g.general as TClass);
+        return this.getSuperTypes<TClass>(cls);
+        // const result: TClass[] = [];
+        // if (!cls.generalizations) return result;
+        // cls.generalizations.forEach(g => {
+        //     if (ElementTypeUtility.isClass(g.general.elementType)) {
+        //         result.push(g.general as TClass);
+        //     }
+        // })
+        // return result;
+    }
+
+    public getSuperTypes<T extends Interfaces.Classifier>(t: T): T[] {
+        const result: T[] = [];
+        if (!t.generalizations) return result;
+        t.generalizations.forEach(g => {
+            if ((g.general as unknown as Deletable).isOrphaned())
+                return;
+            if (g.general.elementType === t.elementType) {
+                result.push(g.general as T);
             }
         })
         return result;
@@ -492,11 +511,6 @@ export class ModelDelegateImpl implements ModelDelegate {
         if (e.id) {
             this.elementMap!.addElement(e, null);
         }
-
-        // Special case for generalizations: generalizations need to be tracked
-        if (utils.isGeneralization(e) && e.general) {
-            this.onGeneralizationAdded(e);
-        }
         return e;
     }
 
@@ -507,7 +521,6 @@ export class ModelDelegateImpl implements ModelDelegate {
         this.elementMap!.addAssociationByEndId(end.id, association);
     }
 
-
     /**
 	* Notifies the delegate that a generalization was added.
 	*/
@@ -516,15 +529,40 @@ export class ModelDelegateImpl implements ModelDelegate {
             return;
 
         // generalization is a Generalization of classifier, so classifier is a Specialization of generalization.general.
-        this.elementMap!.addSpecializationById(generalization.general.id, generalization.owner);
+        this.elementMap!.addSpecialization(generalization.general.id, generalization.owner);
     }
 
-    public onAppliedProfileAdded(pack: Interfaces.Package, profile: Interfaces.Profile): void {
-        // nothing needed yet
+    /**
+	* Notifies the delegate that a an element was added to a collection.
+	*/
+    public onElementAdded(owner: Interfaces.Element, element: Interfaces.Element): void {
+        switch (element.elementType) {
+            case Interfaces.ElementType.generalization:
+                this.onGeneralizationAdded(element as Interfaces.Generalization);
+                break;
+            case Interfaces.ElementType.property:
+                if (utils.isAssociation(owner)) {
+                    this.onMemberEndAdded(owner, element as Interfaces.Property);
+                }
+                break;
+        }
     }
 
-    public onAppliedStereotypeAdded(element: Interfaces.Element, stereotype: Interfaces.Stereotype): void {
-        // nothing needed yet
+	/**
+	* Notifies the delegate that a owned element was deleted from a collection.
+	*/
+    public onElementDeleted(owner: Interfaces.Element, element: Interfaces.Element): void {
+        switch (element.elementType) {
+            case Interfaces.ElementType.generalization:
+                const generalization = element as Interfaces.Generalization;
+                this.elementMap!.removeSpecialization(generalization.general.id, generalization.owner as Interfaces.Classifier);
+                break;
+            case Interfaces.ElementType.property:
+                if (utils.isAssociation(owner)) {
+                    this.elementMap!.removeAssociationByEndId(element.id);
+                }
+                break;
+        }
     }
 
     /**

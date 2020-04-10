@@ -15,13 +15,29 @@ import * as elements from './interfaces';
 import * as editable from './editable-interfaces';
 import { ModelDelegate } from './model-delegate-interface';
 
-export abstract class Element implements elements.Element {
+function removeFromArray<T>(array: T[], item: T) {
+	const index = array.indexOf(item);
+	if (index >= 0) array.splice(index, 1);
+}
+
+export abstract class Element implements elements.Element, editable.Deletable {
 	constructor(protected modelDelegate:ModelDelegate, owner: elements.Element | null)
 	{
 		this.owner = owner;
 	}
 
 	public abstract readonly elementType: elements.ElementType;
+
+	public isDeleted?: boolean;
+
+	public isOrphaned(): boolean {
+		let e: (editable.Deletable & elements.Element) | null = this;
+		do {
+			if (e.isDeleted) return true; // the element or an ancestor was deleted
+			e = e.owner as editable.Deletable & elements.Element;
+		} while(e);
+		return false
+	}
 
 	public appliedStereotypes: elements.Stereotype[] = [];
 
@@ -207,48 +223,99 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	}
 
 	/**
-	* Gets the superclasses of a Class, derived from its Generalizations.
-	* @returns {elements.Class[]}
+	* Gets the super types of this type, derived from its Generalizations.
+	* @returns {this[]}
 	*/
-	public getSuperClasses(): elements.Class[]
+	public getSuperTypes(): this[]
 	{
-		return this.modelDelegate.getSuperClasses(this);
+		return this.modelDelegate.getSuperTypes(this);
 	}
 
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
 	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
 	{
-		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
+		this.generalizations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteGeneralization(generalization: elements.Generalization): this
+	{
+		removeFromArray(this.generalizations, generalization);
+		(generalization as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
 	public addInterfaceRealization(properties: editable.InterfaceRealizationProperties, initFn?: (interfaceRealization: editable.InterfaceRealizationEditable) => void): this
 	{
-		this.interfaceRealizations.push(this.modelDelegate.createElement('interfaceRealization', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('interfaceRealization', this, properties, initFn || null);
+		this.interfaceRealizations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteInterfaceRealization(interfaceRealization: elements.InterfaceRealization): this
+	{
+		removeFromArray(this.interfaceRealizations, interfaceRealization);
+		(interfaceRealization as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, interfaceRealization);
 		return this;
 	}
 
 	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
 	{
-		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
+		this.ownedAttributes.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedAttribute(property: elements.Property): this
+	{
+		removeFromArray(this.ownedAttributes, property);
+		(property as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
 	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
 	{
-		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
+		this.ownedOperations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedOperation(operation: elements.Operation): this
+	{
+		removeFromArray(this.ownedOperations, operation);
+		(operation as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, operation);
 		return this;
 	}
 }
@@ -405,48 +472,99 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	}
 
 	/**
-	* Gets the superclasses of a Class, derived from its Generalizations.
-	* @returns {elements.Class[]}
+	* Gets the super types of this type, derived from its Generalizations.
+	* @returns {this[]}
 	*/
-	public getSuperClasses(): elements.Class[]
+	public getSuperTypes(): this[]
 	{
-		return this.modelDelegate.getSuperClasses(this);
+		return this.modelDelegate.getSuperTypes(this);
 	}
 
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
 	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
 	{
-		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
+		this.generalizations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteGeneralization(generalization: elements.Generalization): this
+	{
+		removeFromArray(this.generalizations, generalization);
+		(generalization as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
 	public addInterfaceRealization(properties: editable.InterfaceRealizationProperties, initFn?: (interfaceRealization: editable.InterfaceRealizationEditable) => void): this
 	{
-		this.interfaceRealizations.push(this.modelDelegate.createElement('interfaceRealization', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('interfaceRealization', this, properties, initFn || null);
+		this.interfaceRealizations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteInterfaceRealization(interfaceRealization: elements.InterfaceRealization): this
+	{
+		removeFromArray(this.interfaceRealizations, interfaceRealization);
+		(interfaceRealization as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, interfaceRealization);
 		return this;
 	}
 
 	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
 	{
-		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
+		this.ownedAttributes.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedAttribute(property: elements.Property): this
+	{
+		removeFromArray(this.ownedAttributes, property);
+		(property as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
 	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
 	{
-		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
+		this.ownedOperations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedOperation(operation: elements.Operation): this
+	{
+		removeFromArray(this.ownedOperations, operation);
+		(operation as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, operation);
 		return this;
 	}
 }
@@ -588,13 +706,28 @@ export class Property extends Element implements elements.Property, editable.Pro
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
@@ -803,66 +936,112 @@ export class Package extends Element implements elements.Package, editable.Packa
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
 	public addAppliedProfile(profile: elements.Profile): this
 	{
 		this.appliedProfiles.push(profile);
-		this.modelDelegate.onAppliedProfileAdded(this, profile);
+		this.modelDelegate.onElementAdded(this, profile);
+		return this;
+	}
+	public removeAppliedProfile(profile: elements.Profile): this
+	{
+		removeFromArray(this.appliedProfiles, profile);
+		this.modelDelegate.onElementDeleted(this, profile);
 		return this;
 	}
 
 	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('package', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('package', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('profile', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('profile', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('association', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('association', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('class', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('class', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('stereotype', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('stereotype', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('dataType', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('dataType', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('enumeration', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('enumeration', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('primitiveType', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('primitiveType', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('interface', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('interface', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deletePackagedElement(packageableElement: elements.PackageableElement): this
+	{
+		(packageableElement as any).isDeleted = true;
+		removeFromArray(this.packagedElements, packageableElement);
+		this.modelDelegate.onElementDeleted(this, packageableElement);
 		return this;
 	}
 }
@@ -1034,66 +1213,112 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
 	public addAppliedProfile(profile: elements.Profile): this
 	{
 		this.appliedProfiles.push(profile);
-		this.modelDelegate.onAppliedProfileAdded(this, profile);
+		this.modelDelegate.onElementAdded(this, profile);
+		return this;
+	}
+	public removeAppliedProfile(profile: elements.Profile): this
+	{
+		removeFromArray(this.appliedProfiles, profile);
+		this.modelDelegate.onElementDeleted(this, profile);
 		return this;
 	}
 
 	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('package', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('package', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('profile', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('profile', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('association', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('association', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('class', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('class', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('stereotype', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('stereotype', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('dataType', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('dataType', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('enumeration', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('enumeration', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('primitiveType', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('primitiveType', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('interface', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('interface', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deletePackagedElement(packageableElement: elements.PackageableElement): this
+	{
+		(packageableElement as any).isDeleted = true;
+		removeFromArray(this.packagedElements, packageableElement);
+		this.modelDelegate.onElementDeleted(this, packageableElement);
 		return this;
 	}
 }
@@ -1241,34 +1466,85 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 		return this.modelDelegate.getSpecializations(this);
 	}
 
+	/**
+	* Gets the super types of this type, derived from its Generalizations.
+	* @returns {this[]}
+	*/
+	public getSuperTypes(): this[]
+	{
+		return this.modelDelegate.getSuperTypes(this);
+	}
+
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
 	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
 	{
-		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
+		this.generalizations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteGeneralization(generalization: elements.Generalization): this
+	{
+		removeFromArray(this.generalizations, generalization);
+		(generalization as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
 	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
 	{
-		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
+		this.ownedAttributes.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedAttribute(property: elements.Property): this
+	{
+		removeFromArray(this.ownedAttributes, property);
+		(property as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
 	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
 	{
-		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
+		this.ownedOperations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedOperation(operation: elements.Operation): this
+	{
+		removeFromArray(this.ownedOperations, operation);
+		(operation as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, operation);
 		return this;
 	}
 }
@@ -1416,34 +1692,85 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 		return this.modelDelegate.getSpecializations(this);
 	}
 
+	/**
+	* Gets the super types of this type, derived from its Generalizations.
+	* @returns {this[]}
+	*/
+	public getSuperTypes(): this[]
+	{
+		return this.modelDelegate.getSuperTypes(this);
+	}
+
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
 	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
 	{
-		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
+		this.generalizations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteGeneralization(generalization: elements.Generalization): this
+	{
+		removeFromArray(this.generalizations, generalization);
+		(generalization as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
 	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
 	{
-		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
+		this.ownedAttributes.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedAttribute(property: elements.Property): this
+	{
+		removeFromArray(this.ownedAttributes, property);
+		(property as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
 	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
 	{
-		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
+		this.ownedOperations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedOperation(operation: elements.Operation): this
+	{
+		removeFromArray(this.ownedOperations, operation);
+		(operation as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, operation);
 		return this;
 	}
 }
@@ -1571,13 +1898,28 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
@@ -1747,19 +2089,43 @@ export class Operation extends Element implements elements.Operation, editable.O
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
 	public addOwnedParameter(properties: editable.ParameterProperties, initFn?: (parameter: editable.ParameterEditable) => void): this
 	{
-		this.ownedParameters.push(this.modelDelegate.createElement('parameter', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('parameter', this, properties, initFn || null);
+		this.ownedParameters.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedParameter(parameter: elements.Parameter): this
+	{
+		removeFromArray(this.ownedParameters, parameter);
+		(parameter as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, parameter);
 		return this;
 	}
 }
@@ -1929,66 +2295,112 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
 	public addAppliedProfile(profile: elements.Profile): this
 	{
 		this.appliedProfiles.push(profile);
-		this.modelDelegate.onAppliedProfileAdded(this, profile);
+		this.modelDelegate.onElementAdded(this, profile);
+		return this;
+	}
+	public removeAppliedProfile(profile: elements.Profile): this
+	{
+		removeFromArray(this.appliedProfiles, profile);
+		this.modelDelegate.onElementDeleted(this, profile);
 		return this;
 	}
 
 	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('package', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('package', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('profile', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('profile', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('association', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('association', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('class', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('class', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('stereotype', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('stereotype', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('dataType', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('dataType', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('enumeration', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('enumeration', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('primitiveType', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('primitiveType', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
 	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this
 	{
-		this.packagedElements.push(this.modelDelegate.createElement('interface', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('interface', this, properties, initFn || null);
+		this.packagedElements.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deletePackagedElement(packageableElement: elements.PackageableElement): this
+	{
+		(packageableElement as any).isDeleted = true;
+		removeFromArray(this.packagedElements, packageableElement);
+		this.modelDelegate.onElementDeleted(this, packageableElement);
 		return this;
 	}
 }
@@ -2293,13 +2705,28 @@ export class InterfaceRealization extends Element implements elements.InterfaceR
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 }
@@ -2447,34 +2874,85 @@ export class Interface extends Element implements elements.Interface, editable.I
 		return this.modelDelegate.getSpecializations(this);
 	}
 
+	/**
+	* Gets the super types of this type, derived from its Generalizations.
+	* @returns {this[]}
+	*/
+	public getSuperTypes(): this[]
+	{
+		return this.modelDelegate.getSuperTypes(this);
+	}
+
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
 	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
 	{
-		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
+		this.generalizations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteGeneralization(generalization: elements.Generalization): this
+	{
+		removeFromArray(this.generalizations, generalization);
+		(generalization as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
 	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
 	{
-		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
+		this.ownedAttributes.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedAttribute(property: elements.Property): this
+	{
+		removeFromArray(this.ownedAttributes, property);
+		(property as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
 	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
 	{
-		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
+		this.ownedOperations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedOperation(operation: elements.Operation): this
+	{
+		removeFromArray(this.ownedOperations, operation);
+		(operation as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, operation);
 		return this;
 	}
 }
@@ -2499,13 +2977,28 @@ export class Generalization extends Element implements elements.Generalization, 
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 }
@@ -2546,13 +3039,28 @@ export class EnumerationLiteral extends Element implements elements.EnumerationL
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
@@ -2712,40 +3220,100 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 		return this.modelDelegate.getSpecializations(this);
 	}
 
+	/**
+	* Gets the super types of this type, derived from its Generalizations.
+	* @returns {this[]}
+	*/
+	public getSuperTypes(): this[]
+	{
+		return this.modelDelegate.getSuperTypes(this);
+	}
+
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
 	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
 	{
-		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
+		this.generalizations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteGeneralization(generalization: elements.Generalization): this
+	{
+		removeFromArray(this.generalizations, generalization);
+		(generalization as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
 	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
 	{
-		this.ownedAttributes.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
+		this.ownedAttributes.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedAttribute(property: elements.Property): this
+	{
+		removeFromArray(this.ownedAttributes, property);
+		(property as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
 	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
 	{
-		this.ownedOperations.push(this.modelDelegate.createElement('operation', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
+		this.ownedOperations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedOperation(operation: elements.Operation): this
+	{
+		removeFromArray(this.ownedOperations, operation);
+		(operation as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, operation);
 		return this;
 	}
 
 	public addOwnedLiteral(properties: editable.EnumerationLiteralProperties, initFn?: (enumerationLiteral: editable.EnumerationLiteralEditable) => void): this
 	{
-		this.ownedLiterals.push(this.modelDelegate.createElement('enumerationLiteral', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('enumerationLiteral', this, properties, initFn || null);
+		this.ownedLiterals.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedLiteral(enumerationLiteral: elements.EnumerationLiteral): this
+	{
+		removeFromArray(this.ownedLiterals, enumerationLiteral);
+		(enumerationLiteral as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, enumerationLiteral);
 		return this;
 	}
 }
@@ -2895,35 +3463,83 @@ export class Association extends Element implements elements.Association, editab
 		return this.modelDelegate.getSpecializations(this);
 	}
 
+	/**
+	* Gets the super types of this type, derived from its Generalizations.
+	* @returns {this[]}
+	*/
+	public getSuperTypes(): this[]
+	{
+		return this.modelDelegate.getSuperTypes(this);
+	}
+
 	public addAppliedStereotype(stereotype: elements.Stereotype): this
 	{
 		this.appliedStereotypes.push(stereotype);
-		this.modelDelegate.onAppliedStereotypeAdded(this, stereotype);
+		this.modelDelegate.onElementAdded(this, stereotype);
+		return this;
+	}
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this
+	{
+		removeFromArray(this.appliedStereotypes, stereotype);
+		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
 	public addOwnedComment(properties: editable.CommentProperties): this
 	{
-		this.ownedComments.push(this.modelDelegate.createElement('comment', this, properties, null));
+		const e = this.modelDelegate.createElement('comment', this, properties, null);
+		this.ownedComments.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedComment(comment: elements.Comment): this
+	{
+		removeFromArray(this.ownedComments, comment);
+		(comment as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
 	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
 	{
-		this.generalizations.push(this.modelDelegate.createElement('generalization', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
+		this.generalizations.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteGeneralization(generalization: elements.Generalization): this
+	{
+		removeFromArray(this.generalizations, generalization);
+		(generalization as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
 	public addMemberEnd(property: elements.Property): this
 	{
 		this.memberEnds.push(property);
-		this.modelDelegate.onMemberEndAdded(this, property);
+		this.modelDelegate.onElementAdded(this, property);
+		return this;
+	}
+	public removeMemberEnd(property: elements.Property): this
+	{
+		removeFromArray(this.memberEnds, property);
+		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
 	public addOwnedEnd(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
 	{
-		this.ownedEnds.push(this.modelDelegate.createElement('property', this, properties, initFn || null));
+		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
+		this.ownedEnds.push(e);
+		this.modelDelegate.onElementAdded(this, e);
+		return this;
+	}
+	public deleteOwnedEnd(property: elements.Property): this
+	{
+		removeFromArray(this.ownedEnds, property);
+		(property as any).isDeleted = true;
+		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 }

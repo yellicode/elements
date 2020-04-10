@@ -9,8 +9,10 @@ import * as Interfaces from "./interfaces";
 import * as Data from "./data-interfaces";
 import { ElementTypeUtility } from './utils';
 import { primitiveBooleanType, primitiveIntegerType, primitiveStringType, primitiveRealType, primitiveObjectType } from './primitives';
+import { ElementMap } from './element-map-interface';
+import { Deletable } from './editable-interfaces';
 
-export class ElementMapImpl {
+export class ElementMapImpl implements ElementMap {
     private elementsById: { [key: string]: Interfaces.Element } = {};
     private specializationsById: { [generalId: string]: Interfaces.Classifier[] } = {};
     private associationsByEndId: { [endId: string]: Interfaces.Association } = {};
@@ -53,7 +55,7 @@ export class ElementMapImpl {
 
         associationData.memberEnds.forEach(endId => {
             // An association end can only be part of one association.
-            this.addAssociationByEndId(endId, association);            
+            this.addAssociationByEndId(endId, association);
         })
     }
 
@@ -65,6 +67,10 @@ export class ElementMapImpl {
         this.associationsByEndId[endId] = association;
     }
 
+    public removeAssociationByEndId(endId: string): void {
+        delete this.associationsByEndId[endId];
+    }
+
     private addSpecializations(classifier: Interfaces.Classifier, classifierData: Data.ClassifierData) {
         if (!classifierData.generalizations)
             return;
@@ -72,7 +78,7 @@ export class ElementMapImpl {
         // Enumerate the classifierData instead of the classifier itself: the generalizations will not be set here as they are not resolved yet
         classifierData.generalizations.forEach(g => {
             // g is a Generalization of element, so element is a Specialization of g
-            this.addSpecializationById(g.general, classifier);
+            this.addSpecialization(g.general, classifier);
             // if (this.specializationsById.hasOwnProperty(g.general)) {
             //     dictionaryEntry = this.specializationsById[g.general];
             //     dictionaryEntry.push(classifier);
@@ -82,7 +88,7 @@ export class ElementMapImpl {
         });
     }
 
-    public addSpecializationById(generalId: string, specialization: Interfaces.Classifier): void {
+    public addSpecialization(generalId: string, specialization: Interfaces.Classifier): void {
         let dictionaryEntry;
         if (this.specializationsById.hasOwnProperty(generalId)) {
             dictionaryEntry = this.specializationsById[generalId];
@@ -91,6 +97,30 @@ export class ElementMapImpl {
             this.specializationsById[generalId] = [specialization];
         }
     }
+
+    public removeSpecialization(generalId: string, specialization: Interfaces.Classifier): void {
+        if (!this.specializationsById.hasOwnProperty(generalId))
+            return;
+
+        const dictionaryEntry = this.specializationsById[generalId];
+        const ix = dictionaryEntry.indexOf(specialization);
+        if (ix > -1) dictionaryEntry.splice(ix, 1);
+    }
+
+    // public removeGeneral(generalId: string): void {
+    //     if (!this.specializationsById.hasOwnProperty(generalId))
+    //         return;
+
+    //     // First remove the general from all it's specializations
+    //     const dictionaryEntry = this.specializationsById[generalId];
+    //     dictionaryEntry.forEach(specialization => {
+    //         const ix = specialization.generalizations.findIndex(g => g.general.id === generalId);
+    //         if (ix > -1)
+    //             specialization.generalizations.splice(ix, 1);
+    //     })
+    //     // Then remove from the map entirely
+    //     delete this.specializationsById[generalId];
+    // }
 
     public getAssociationHavingMemberEnd(end: Interfaces.Property): Interfaces.Association | null {
         if (!end || !end.id) return null;
@@ -155,11 +185,12 @@ export class ElementMapImpl {
         }
         const directSpecializations = this.specializationsById[generalId];
         directSpecializations.forEach(s => {
-            if (!specialMap.hasOwnProperty(s.id)) {
+            if (!specialMap.hasOwnProperty(s.id) &&
+                !(s as unknown as Deletable).isOrphaned()) {
                 specialMap[s.id] = s;
             }
             // Get the specializations of this specialization
             this.getAllSpecializationsRecursive(s.id, specialMap);
         });
     }
-} 
+}

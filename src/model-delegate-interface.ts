@@ -94,6 +94,11 @@ export interface ModelDelegate {
 	getSpecializations(element: elements.Classifier): elements.Classifier[];
 
 	/**
+	* Gets the super types of this type, derived from its Generalizations.
+	*/
+	getSuperTypes<T extends elements.Classifier>(element: T): T[];
+
+	/**
 	* Gets the lower bound of the multiplicity interval.
 	*/
 	getLower(element: elements.MultiplicityElement): number | null;
@@ -147,11 +152,6 @@ export interface ModelDelegate {
 	* (having the same name and parameter type order) in an inheriting type is not included.
 	*/
 	getAllOperations(element: elements.MemberedClassifier): elements.Operation[];
-
-	/**
-	* Gets the superclasses of a Class, derived from its Generalizations.
-	*/
-	getSuperClasses(element: elements.Class): elements.Class[];
 
 	/**
 	* The Association of which this Property is a member, if any.
@@ -313,6 +313,16 @@ export interface ModelDelegate {
 	createElement<K extends keyof FactoryClassMap>(elementType: K, owner: elements.Element | null, properties: any | null, initFn: ((element: createdElement<K>) => void) | null): createdElement<K>;
 
 	/**
+	* Notifies the delegate that a an element was added to a collection.
+	*/
+	onElementAdded(owner: elements.Element, element: elements.Element): void;
+
+	/**
+	* Notifies the delegate that a element was deleted from a collection.
+	*/
+	onElementDeleted(owner: elements.Element, element: elements.Element): void;
+
+	/**
 	* Notifies the delegate that a property was added as member end to an association.
 	*/
 	onMemberEndAdded(association: elements.Association, end: elements.Property): void;
@@ -321,16 +331,6 @@ export interface ModelDelegate {
 	* Notifies the delegate that a generalization was added.
 	*/
 	onGeneralizationAdded(generalization: elements.Generalization): void;
-
-	/**
-	* Notifies the delegate that a profile was applied.
-	*/
-	onAppliedProfileAdded(pack: elements.Package, profile: elements.Profile): void;
-
-	/**
-	* Notifies the delegate that a stereotype was applied.
-	*/
-	onAppliedStereotypeAdded(element: elements.Element, stereotype: elements.Stereotype): void;
 
 	/**
 	* Sets the default value of the element to the specified value.

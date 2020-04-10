@@ -14,6 +14,17 @@
 
 import * as elements from './interfaces';
 
+export interface Deletable {
+	/**
+	* Returns true if the element is deleted.
+	*/
+	isDeleted?: boolean;
+	/**
+	* Returns true if either the element or one of its owners has been deleted.
+	*/
+	isOrphaned(): boolean;
+}
+
 
 export interface ClassProperties {
 	/**
@@ -556,26 +567,39 @@ export interface AssociationProperties {
 	isFinalSpecialization?: boolean;
 }
 
-export interface ClassEditable extends elements.Class {
+export interface ClassEditable extends elements.Class, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
+	deleteGeneralization(generalization: elements.Generalization): this;
 	addInterfaceRealization(properties: InterfaceRealizationProperties, initFn?: (interfaceRealization: InterfaceRealizationEditable) => void): this;
+	deleteInterfaceRealization(interfaceRealization: elements.InterfaceRealization): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
+	deleteOwnedAttribute(property: elements.Property): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
+	deleteOwnedOperation(operation: elements.Operation): this;
 }
 
-export interface StereotypeEditable extends elements.Stereotype {
+export interface StereotypeEditable extends elements.Stereotype, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
+	deleteGeneralization(generalization: elements.Generalization): this;
 	addInterfaceRealization(properties: InterfaceRealizationProperties, initFn?: (interfaceRealization: InterfaceRealizationEditable) => void): this;
+	deleteInterfaceRealization(interfaceRealization: elements.InterfaceRealization): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
+	deleteOwnedAttribute(property: elements.Property): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
+	deleteOwnedOperation(operation: elements.Operation): this;
 }
 
-export interface PropertyEditable extends elements.Property {
+export interface PropertyEditable extends elements.Property, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	setDefaultValue(value: boolean): this;
 	setDefaultValue(value: number): this;
 	setDefaultValueNull(): this;
@@ -583,14 +607,18 @@ export interface PropertyEditable extends elements.Property {
 	setLowerValue(value: number): this;
 	setLowerValueUnlimited(): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	setUpperValue(value: number): this;
 	setUpperValueUnlimited(): this;
 }
 
-export interface PackageEditable extends elements.Package {
+export interface PackageEditable extends elements.Package, Deletable {
 	addAppliedProfile(profile: elements.Profile): this;
+	removeAppliedProfile(profile: elements.Profile): this;
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	addPackage(properties: PackageProperties, initFn?: (pack: PackageEditable) => void): this;
 	addProfile(properties: ProfileProperties, initFn?: (profile: ProfileEditable) => void): this;
 	addAssociation(properties: AssociationProperties, initFn?: (association: AssociationEditable) => void): this;
@@ -600,12 +628,16 @@ export interface PackageEditable extends elements.Package {
 	addEnumeration(properties: EnumerationProperties, initFn?: (enumeration: EnumerationEditable) => void): this;
 	addPrimitiveType(properties: PrimitiveTypeProperties, initFn?: (primitiveType: PrimitiveTypeEditable) => void): this;
 	addInterface(properties: InterfaceProperties, initFn?: (iface: InterfaceEditable) => void): this;
+	deletePackagedElement(packageableElement: elements.PackageableElement): this;
 }
 
-export interface ProfileEditable extends elements.Profile {
+export interface ProfileEditable extends elements.Profile, Deletable {
 	addAppliedProfile(profile: elements.Profile): this;
+	removeAppliedProfile(profile: elements.Profile): this;
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	addPackage(properties: PackageProperties, initFn?: (pack: PackageEditable) => void): this;
 	addProfile(properties: ProfileProperties, initFn?: (profile: ProfileEditable) => void): this;
 	addAssociation(properties: AssociationProperties, initFn?: (association: AssociationEditable) => void): this;
@@ -615,26 +647,38 @@ export interface ProfileEditable extends elements.Profile {
 	addEnumeration(properties: EnumerationProperties, initFn?: (enumeration: EnumerationEditable) => void): this;
 	addPrimitiveType(properties: PrimitiveTypeProperties, initFn?: (primitiveType: PrimitiveTypeEditable) => void): this;
 	addInterface(properties: InterfaceProperties, initFn?: (iface: InterfaceEditable) => void): this;
+	deletePackagedElement(packageableElement: elements.PackageableElement): this;
 }
 
-export interface DataTypeEditable extends elements.DataType {
+export interface DataTypeEditable extends elements.DataType, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
+	deleteGeneralization(generalization: elements.Generalization): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
+	deleteOwnedAttribute(property: elements.Property): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
+	deleteOwnedOperation(operation: elements.Operation): this;
 }
 
-export interface PrimitiveTypeEditable extends elements.PrimitiveType {
+export interface PrimitiveTypeEditable extends elements.PrimitiveType, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
+	deleteGeneralization(generalization: elements.Generalization): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
+	deleteOwnedAttribute(property: elements.Property): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
+	deleteOwnedOperation(operation: elements.Operation): this;
 }
 
-export interface ParameterEditable extends elements.Parameter {
+export interface ParameterEditable extends elements.Parameter, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	setDefaultValue(value: boolean): this;
 	setDefaultValue(value: number): this;
 	setDefaultValueNull(): this;
@@ -642,20 +686,27 @@ export interface ParameterEditable extends elements.Parameter {
 	setLowerValue(value: number): this;
 	setLowerValueUnlimited(): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	setUpperValue(value: number): this;
 	setUpperValueUnlimited(): this;
 }
 
-export interface OperationEditable extends elements.Operation {
+export interface OperationEditable extends elements.Operation, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	addOwnedParameter(properties: ParameterProperties, initFn?: (parameter: ParameterEditable) => void): this;
+	deleteOwnedParameter(parameter: elements.Parameter): this;
 }
 
-export interface ModelEditable extends elements.Model {
+export interface ModelEditable extends elements.Model, Deletable {
 	addAppliedProfile(profile: elements.Profile): this;
+	removeAppliedProfile(profile: elements.Profile): this;
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	addPackage(properties: PackageProperties, initFn?: (pack: PackageEditable) => void): this;
 	addProfile(properties: ProfileProperties, initFn?: (profile: ProfileEditable) => void): this;
 	addAssociation(properties: AssociationProperties, initFn?: (association: AssociationEditable) => void): this;
@@ -665,46 +716,69 @@ export interface ModelEditable extends elements.Model {
 	addEnumeration(properties: EnumerationProperties, initFn?: (enumeration: EnumerationEditable) => void): this;
 	addPrimitiveType(properties: PrimitiveTypeProperties, initFn?: (primitiveType: PrimitiveTypeEditable) => void): this;
 	addInterface(properties: InterfaceProperties, initFn?: (iface: InterfaceEditable) => void): this;
+	deletePackagedElement(packageableElement: elements.PackageableElement): this;
 }
 
-export interface InterfaceRealizationEditable extends elements.InterfaceRealization {
+export interface InterfaceRealizationEditable extends elements.InterfaceRealization, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 }
 
-export interface InterfaceEditable extends elements.Interface {
+export interface InterfaceEditable extends elements.Interface, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
+	deleteGeneralization(generalization: elements.Generalization): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
+	deleteOwnedAttribute(property: elements.Property): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
+	deleteOwnedOperation(operation: elements.Operation): this;
 }
 
-export interface GeneralizationEditable extends elements.Generalization {
+export interface GeneralizationEditable extends elements.Generalization, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 }
 
-export interface EnumerationLiteralEditable extends elements.EnumerationLiteral {
+export interface EnumerationLiteralEditable extends elements.EnumerationLiteral, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	setSpecification(value: number): this;
 	setSpecification(value: string): this;
 }
 
-export interface EnumerationEditable extends elements.Enumeration {
+export interface EnumerationEditable extends elements.Enumeration, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
+	deleteGeneralization(generalization: elements.Generalization): this;
 	addOwnedAttribute(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
+	deleteOwnedAttribute(property: elements.Property): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	addOwnedLiteral(properties: EnumerationLiteralProperties, initFn?: (enumerationLiteral: EnumerationLiteralEditable) => void): this;
+	deleteOwnedLiteral(enumerationLiteral: elements.EnumerationLiteral): this;
 	addOwnedOperation(properties: OperationProperties, initFn?: (operation: OperationEditable) => void): this;
+	deleteOwnedOperation(operation: elements.Operation): this;
 }
 
-export interface AssociationEditable extends elements.Association {
+export interface AssociationEditable extends elements.Association, Deletable {
 	addAppliedStereotype(stereotype: elements.Stereotype): this;
+	removeAppliedStereotype(stereotype: elements.Stereotype): this;
 	addGeneralization(properties: GeneralizationProperties, initFn?: (generalization: GeneralizationEditable) => void): this;
+	deleteGeneralization(generalization: elements.Generalization): this;
 	addMemberEnd(property: elements.Property): this;
+	removeMemberEnd(property: elements.Property): this;
 	addOwnedComment(properties: CommentProperties): this;
+	deleteOwnedComment(comment: elements.Comment): this;
 	addOwnedEnd(properties: PropertyProperties, initFn?: (property: PropertyEditable) => void): this;
+	deleteOwnedEnd(property: elements.Property): this;
 }

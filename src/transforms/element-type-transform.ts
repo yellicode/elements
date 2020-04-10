@@ -23,12 +23,12 @@ export class ElementTypeTransform extends PackagedElementTransform {
     constructor(
         sourceElementType: ElementType._class | ElementType.dataType | ElementType.enumeration | ElementType._interface | ElementType.primitiveType | ElementType.stereotype,
         targetElementType: ElementType._class | ElementType.dataType | ElementType.enumeration | ElementType._interface | ElementType.primitiveType | ElementType.stereotype) {
-        
+
         super();
 
         if (!sourceElementType)
             throw 'TypeTransform sourceType cannot be null.';
-        
+
         if (!targetElementType)
             throw 'TypeTransform targetType cannot be null.';
 
@@ -47,22 +47,22 @@ export class ElementTypeTransform extends PackagedElementTransform {
             return;
 
         // Note that we don't check compatibility of existing relationships here. For example, we don't check the types of Generalizations when
-        // a Class that has generalizations is transformed to an Interface (that has the same generalizations). 
+        // a Class that has generalizations is transformed to an Interface (that has the same generalizations).
         // The caller is responsible for transforming these generalizations as well.
-        
-        // Remove features that the type doesn't have         
-        // ElementTypeTransform.removeOldSourceFeatures(element, this.targetElementType); // todo: disabled as long as this does not seem to add any value. 
+
+        // Remove features that the type doesn't have
+        // ElementTypeTransform.removeOldSourceFeatures(element, this.targetElementType); // todo: disabled as long as this does not seem to add any value.
 
         // Force the new elementType, even though it is readonly
-        (element as any).elementType = this.targetElementType;         
+        (element as any).elementType = this.targetElementType;
         // Now add features that the type needs
         ElementTypeTransform.addNewTargetFeatures(element, this.sourceElementType);
-    }       
+    }
 
-    private static addNewTargetFeatures(transformedElement: Type, sourceElementType: ElementType): void {        
+    private static addNewTargetFeatures(transformedElement: Type, sourceElementType: ElementType): void {
         // Get access to the internal model ModelDelegate
-        const modelDelegate: ModelDelegate = (transformedElement as any).modelDelegate;        
-       
+        const modelDelegate: ModelDelegate = (transformedElement as any).modelDelegate;
+
         // Implement MemberedClassifier members
         if (isMemberedClassifier(transformedElement) && !ElementTypeUtility.isMemberedClassifier(sourceElementType)) {
             transformedElement.ownedAttributes = [];
@@ -85,6 +85,7 @@ export class ElementTypeTransform extends PackagedElementTransform {
             transformedElement.getFirstParent = () => { return modelDelegate.getFirstParent(transformedElement) };
             transformedElement.getParents = () => { return modelDelegate.getParents(transformedElement) };
             transformedElement.getSpecializations = () => { return modelDelegate.getSpecializations(transformedElement) };
+            transformedElement.getSuperTypes = () => { return modelDelegate.getSuperTypes(transformedElement) };
         }
         // Implement Enumeration members
         if (isEnumeration(transformedElement) && !ElementTypeUtility.isEnumeration(sourceElementType)) {
@@ -94,7 +95,6 @@ export class ElementTypeTransform extends PackagedElementTransform {
         // Implement Class members
         if (isClass(transformedElement) && !ElementTypeUtility.isClass(sourceElementType)) {
             transformedElement.isActive = true;
-            transformedElement.getSuperClasses = () => { return modelDelegate.getSuperClasses(transformedElement) };
         }
         // Implement Stereotype members
         if (isStereotype(transformedElement) && !ElementTypeUtility.isStereotype(sourceElementType)) {
@@ -103,7 +103,7 @@ export class ElementTypeTransform extends PackagedElementTransform {
         }
     }
 
-    private static removeOldSourceFeatures(unTransformedElement: Type, targetElementType: ElementType): void {              
+    private static removeOldSourceFeatures(unTransformedElement: Type, targetElementType: ElementType): void {
         // Remove MemberedClassifier members
         if (isMemberedClassifier(unTransformedElement) && !ElementTypeUtility.isMemberedClassifier(targetElementType)) {
             delete unTransformedElement.ownedAttributes;
@@ -126,6 +126,7 @@ export class ElementTypeTransform extends PackagedElementTransform {
             delete unTransformedElement.getFirstParent;
             delete unTransformedElement.getParents;
             delete unTransformedElement.getSpecializations;
+            delete unTransformedElement.getSuperTypes;
         }
         // Remove Enumeration members
         if (isEnumeration(unTransformedElement) && !ElementTypeUtility.isEnumeration(targetElementType)) {
@@ -135,7 +136,6 @@ export class ElementTypeTransform extends PackagedElementTransform {
         // Remove Class members
         if (isClass(unTransformedElement) && !ElementTypeUtility.isClass(targetElementType)) {
             delete unTransformedElement.isActive;
-            delete unTransformedElement.getSuperClasses;
         }
         // Remove Stereotype members
         if (isStereotype(unTransformedElement) && !ElementTypeUtility.isStereotype(targetElementType)) {
@@ -147,12 +147,12 @@ export class ElementTypeTransform extends PackagedElementTransform {
     private static createTypeSelector(elementType: ElementType): (t: PackageableElement) => t is Type {
         // Do a strict elementType comparison here
         return (t: PackageableElement): t is Type => { return t.elementType === elementType };
-        
-        // Alternatively, we could use the 'is...' functions to also include descendent types of elementType, 
+
+        // Alternatively, we could use the 'is...' functions to also include descendent types of elementType,
         // but this might be confusing.
         // switch (elementType) {
-        //     case ElementType.class:                
-        //         return isClass;                
+        //     case ElementType.class:
+        //         return isClass;
         //     case ElementType.dataType:
         //         return isDataType;
         //     case ElementType.enumeration:
