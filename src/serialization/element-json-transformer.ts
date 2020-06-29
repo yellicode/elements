@@ -239,8 +239,13 @@ export class ElementJSONTransformer {
 			return undefined;
 		}
 
-		if (regularKeys.indexOf(key) > -1)
-			return (key === 'value') ? (element as elements.ValueSpecification).getStringValue() : value;
+		if (regularKeys.indexOf(key) > -1) {
+			if (key !== 'value') return value;
+			// Do the reverse of  "isLiteralUnlimitedNatural(element) ? new elements.UnlimitedNatural(value) : value;" in fromJSON
+			return isLiteralUnlimitedNatural(element) ?
+				element.getStringValue() // string value is most likely a "*"
+				: value;
+		}
 
 		if (referenceKeys.indexOf(key) > -1) {
 			if (valueIsArray) {
