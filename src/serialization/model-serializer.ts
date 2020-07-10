@@ -58,8 +58,8 @@ export class ModelSerializer {
         return JSON.stringify(document, ModelSerializer.replacer, 0);
     }
 
-    public static deserializeModel(text: string, applySorting: boolean, includesPrimitives: boolean = false): Model {
-        const elementMap = new ElementMapImpl(/* initializeWithPrimitives: */ !includesPrimitives);
+    public static deserializeModel(text: string, applySorting: boolean,): Model {
+        const elementMap = new ElementMapImpl();
         const modelDelegate = new ModelDelegateImpl(elementMap);
         const visitor = new ElementVisitor(modelDelegate, applySorting);
         return ModelSerializer.deserializeModelInternal(text, visitor);
@@ -70,8 +70,8 @@ export class ModelSerializer {
         return visitor.visit(modelData) as Model;
     }
 
-    public static deserializeDocument(text: string, applySorting: boolean, includesPrimitives: boolean = false): Document {
-        const elementMap = new ElementMapImpl(/* initializeWithPrimitives: */ !includesPrimitives);
+    public static deserializeDocument(text: string, applySorting: boolean): Document {
+        const elementMap = new ElementMapImpl();
         const modelDelegate = new ModelDelegateImpl(elementMap);
         const visitor = new ElementVisitor(modelDelegate, applySorting);
 

@@ -17,8 +17,8 @@ export class ElementMapImpl implements ElementMap {
     private specializationsById: { [generalId: string]: Interfaces.Classifier[] } = {};
     private associationsByEndId: { [endId: string]: Interfaces.Association } = {};
 
-    constructor(initializeWithPrimitives: boolean) {
-        if (!initializeWithPrimitives) return;
+    constructor() {
+        // if (!initializeWithPrimitives) return;
         this.addElement(primitiveBooleanType, null);
         this.addElement(primitiveIntegerType, null);
         this.addElement(primitiveStringType, null);
@@ -29,7 +29,8 @@ export class ElementMapImpl implements ElementMap {
 
     public addElement(element: Interfaces.Element, elementData: Data.ElementData | null) {
         if (this.elementsById.hasOwnProperty(element.id)) {
-            console.warn(`Duplicate element id '${element.id}'.`);
+            if (element.elementType !== Interfaces.ElementType.primitiveType)
+                console.warn(`Duplicate element id '${element.id}'.`);
             return;
         }
         this.elementsById[element.id] = element;

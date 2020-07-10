@@ -10,7 +10,7 @@ export class ModelFactory {
      * other elements to the model.
      */
     public static create(name: string, initFn: (model: ModelEditable) => void): elements.Model {
-        const elementMap = new ElementMapImpl(true);
+        const elementMap = new ElementMapImpl();
         const modelDelegate = new ModelDelegateImpl(elementMap);
         const properties: ModelProperties = { name: name };
         const model = modelDelegate.createElement('model', null, properties, initFn);
@@ -18,7 +18,7 @@ export class ModelFactory {
     }
 
     public static createDocument(creator: string, initFn: (model: DocumentEditable) => void): elements.Document {
-        const elementMap = new ElementMapImpl(true);
+        const elementMap = new ElementMapImpl();
         const modelDelegate = new ModelDelegateImpl(elementMap);
         const properties: DocumentProperties = { creator: creator };
         const document = Document.create(modelDelegate, properties);

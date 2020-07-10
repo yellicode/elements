@@ -35,26 +35,25 @@ export class ModelReader {
     private allProfiles: Interfaces.Profile[] = [];
 
     constructor() {
-        this.elementMap = new ElementMapImpl(false /* initializeWithPrimitives: false because DataToModelConverter also adds primitives */);
+        this.elementMap = new ElementMapImpl();
         this.modelDelegate = new ModelDelegateImpl(this.elementMap);
         this.converter = new DataToModelConverter(this.elementMap, this.modelDelegate, ElementComparerImpl.getInstance());
     }
 
-   
     public static canRead(data: any): boolean {
         if (!data.modelTypeName) return false;
         return ("yellicode yml" === data.modelTypeName.toLowerCase());
     }
 
-    public static readDocument(documentData: Data.DocumentData): Interfaces.Document | null {               
-        var instance = new ModelReader();        
+    public static readDocument(documentData: Data.DocumentData): Interfaces.Document | null {
+        var instance = new ModelReader();
         return instance.readDocumentRecursive(documentData, false);
     }
 
-    
+
     private readDocumentRecursive(documentData: Data.DocumentData, isReferencedDocument: boolean): Interfaces.Document | null {
-        // Obsolete: Ids must be prefixed if we are loading a referenced document, because references to it 
-        // are prefixed with the document id      
+        // Obsolete: Ids must be prefixed if we are loading a referenced document, because references to it
+        // are prefixed with the document id
         // const elementIdPrefix = isReferencedDocument ? documentData.id : null;
 
         // Convert the document's referenced documents first
@@ -79,7 +78,7 @@ export class ModelReader {
         document.creator =  documentData.creator;
         document.profiles = profilesInDocument;
         document.model = modelInDocument;
-        return document;       
+        return document;
 
         //return documentData.model ? ModelReader.converter.convert(documentData.model, ModelReader.profiles, elementIdPrefix) : null;
     }
@@ -90,8 +89,8 @@ export class ModelReader {
 
         documentData.references.forEach(r => {
             if (!r.document) return;
-            // Load the document. This will load the document's model elements into memory so that the converter can 
-            // resolve any references to it. We don't use the referenced document's main model here, it is not returned 
+            // Load the document. This will load the document's model elements into memory so that the converter can
+            // resolve any references to it. We don't use the referenced document's main model here, it is not returned
             // through the API but may be referenced by the main document.
             this.readDocumentRecursive(r.document, true);
         });
