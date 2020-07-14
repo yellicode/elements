@@ -14,6 +14,7 @@ import { Document as DocumentImpl, DocumentProperties } from '../document';
 import { ElementVisitor } from './element-visitor';
 import { ElementJSONTransformer } from './element-json-transformer';
 import { DocumentJSONTransformer } from './document-json-transformer';
+import { TypeResolver } from '../type-resolver';
 
 export class ModelSerializer {
     /**
@@ -58,8 +59,8 @@ export class ModelSerializer {
         return JSON.stringify(document, ModelSerializer.replacer, 0);
     }
 
-    public static deserializeModel(text: string, applySorting: boolean,): Model {
-        const elementMap = new ElementMapImpl();
+    public static deserializeModel(text: string, applySorting: boolean, customTypeResolver?: TypeResolver): Model {
+        const elementMap = new ElementMapImpl(customTypeResolver);
         const modelDelegate = new ModelDelegateImpl(elementMap);
         const visitor = new ElementVisitor(modelDelegate, applySorting);
         return ModelSerializer.deserializeModelInternal(text, visitor);
@@ -70,8 +71,8 @@ export class ModelSerializer {
         return visitor.visit(modelData) as Model;
     }
 
-    public static deserializeDocument(text: string, applySorting: boolean): Document {
-        const elementMap = new ElementMapImpl();
+    public static deserializeDocument(text: string, applySorting: boolean, customTypeResolver?: TypeResolver): Document {
+        const elementMap = new ElementMapImpl(customTypeResolver);
         const modelDelegate = new ModelDelegateImpl(elementMap);
         const visitor = new ElementVisitor(modelDelegate, applySorting);
 

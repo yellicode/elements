@@ -8,22 +8,19 @@
 import * as Interfaces from "./interfaces";
 import * as Data from "./data-interfaces";
 import { ElementTypeUtility } from './utils';
-import { primitiveBooleanType, primitiveIntegerType, primitiveStringType, primitiveRealType, primitiveObjectType } from './primitives';
 import { ElementMap } from './element-map-interface';
 import { Deletable } from './editable-interfaces';
+import { TypeResolver, BasicTypeResolver } from './type-resolver';
 
 export class ElementMapImpl implements ElementMap {
     private elementsById: { [key: string]: Interfaces.Element } = {};
     private specializationsById: { [generalId: string]: Interfaces.Classifier[] } = {};
     private associationsByEndId: { [endId: string]: Interfaces.Association } = {};
+    private typeResolver: TypeResolver;
 
-    constructor() {
-        // if (!initializeWithPrimitives) return;
-        this.addElement(primitiveBooleanType, null);
-        this.addElement(primitiveIntegerType, null);
-        this.addElement(primitiveStringType, null);
-        this.addElement(primitiveRealType, null);
-        this.addElement(primitiveObjectType, null);
+    constructor(customTypeResolver?: TypeResolver) {
+        this.typeResolver = new BasicTypeResolver(customTypeResolver);
+
         // TODO: do we need UnlimitedNatural? If so, it should be exported by './primitives'.
     }
 
@@ -136,6 +133,11 @@ export class ElementMapImpl implements ElementMap {
     public getElementById<TElement extends Interfaces.Element>(id: string | null): TElement | null {
         if (!id || id.length === 0)
             return null;
+
+        // Is the element a built-in type?
+        const builtInType = this.typeResolver.resolve(id);
+        if (builtInType)
+            return builtInType as any as TElement;
 
         if (this.elementsById.hasOwnProperty(id))
             return this.elementsById[id] as TElement;

@@ -7,6 +7,7 @@
  */
 export * from './primitives';
 export * from './interfaces';
+export { TypeResolver } from './type-resolver';
 export * from './utils';
 export * from './profile-utility'; // needed by generated TS code when a model is saved
 export * from './model-reader';
