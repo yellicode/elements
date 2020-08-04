@@ -55,8 +55,7 @@ export abstract class Element implements elements.Element, editable.Deletable {
 	* @returns {string} The body string of the first comment. If the element has no comments, an empty
 	* string is returned.
 	*/
-	public getFirstCommentBody(): string
-	{
+	public getFirstCommentBody(): string {
 		return this.modelDelegate.getFirstCommentBody(this);
 	}
 }
@@ -116,8 +115,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* Returns both inherited and owned attributes.
 	* @returns {elements.Property[]}
 	*/
-	public getAllAttributes(): elements.Property[]
-	{
+	public getAllAttributes(): elements.Property[] {
 		return this.modelDelegate.getAllAttributes(this);
 	}
 
@@ -126,8 +124,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* (having the same name and parameter type order) in an inheriting type is not included.
 	* @returns {elements.Operation[]}
 	*/
-	public getAllOperations(): elements.Operation[]
-	{
+	public getAllOperations(): elements.Operation[] {
 		return this.modelDelegate.getAllOperations(this);
 	}
 
@@ -136,8 +133,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* specific classifiers will appear before more general classifiers.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllParents(): elements.Classifier[]
-	{
+	public getAllParents(): elements.Classifier[] {
 		return this.modelDelegate.getAllParents(this);
 	}
 
@@ -145,8 +141,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* Gets all classifiers of which this element is a direct or indirect general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllSpecializations(): elements.Classifier[]
-	{
+	public getAllSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getAllSpecializations(this);
 	}
 
@@ -154,8 +149,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* Gets the first direct generalization relationship of the element.
 	* @returns {elements.Generalization}
 	*/
-	public getFirstGeneralization(): elements.Generalization | null
-	{
+	public getFirstGeneralization(): elements.Generalization | null {
 		return this.modelDelegate.getFirstGeneralization(this);
 	}
 
@@ -163,8 +157,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* Gets the first classifier that is an immediate general of the current element.
 	* @returns {elements.Classifier}
 	*/
-	public getFirstParent(): elements.Classifier | null
-	{
+	public getFirstParent(): elements.Classifier | null {
 		return this.modelDelegate.getFirstParent(this);
 	}
 
@@ -176,8 +169,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getNamespaceName(separator?: string): string
-	{
+	public getNamespaceName(separator?: string): string {
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
 
@@ -186,8 +178,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* package.
 	* @returns {elements.Package[]} A collection of Packages.
 	*/
-	public getNestingPackages(): elements.Package[]
-	{
+	public getNestingPackages(): elements.Package[] {
 		return this.modelDelegate.getNestingPackages(this);
 	}
 
@@ -195,8 +186,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* Gives all of the immediate ancestors of a generalized Classifier.
 	* @returns {elements.Classifier[]}
 	*/
-	public getParents(): elements.Classifier[]
-	{
+	public getParents(): elements.Classifier[] {
 		return this.modelDelegate.getParents(this);
 	}
 
@@ -208,8 +198,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getQualifiedName(separator?: string): string
-	{
+	public getQualifiedName(separator?: string): string {
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
 
@@ -217,8 +206,7 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* Gets all classifiers of which this classifier is a direct general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getSpecializations(): elements.Classifier[]
-	{
+	public getSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getSpecializations(this);
 	}
 
@@ -226,93 +214,80 @@ export class Class extends Element implements elements.Class, editable.ClassEdit
 	* Gets the super types of this type, derived from its Generalizations.
 	* @returns {this[]}
 	*/
-	public getSuperTypes(): this[]
-	{
+	public getSuperTypes(): this[] {
 		return this.modelDelegate.getSuperTypes(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
-	{
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this {
 		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
 		this.generalizations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteGeneralization(generalization: elements.Generalization): this
-	{
+	public deleteGeneralization(generalization: elements.Generalization): this {
 		removeFromArray(this.generalizations, generalization);
 		(generalization as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
-	public addInterfaceRealization(properties: editable.InterfaceRealizationProperties, initFn?: (interfaceRealization: editable.InterfaceRealizationEditable) => void): this
-	{
+	public addInterfaceRealization(properties: editable.InterfaceRealizationProperties, initFn?: (interfaceRealization: editable.InterfaceRealizationEditable) => void): this {
 		const e = this.modelDelegate.createElement('interfaceRealization', this, properties, initFn || null);
 		this.interfaceRealizations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteInterfaceRealization(interfaceRealization: elements.InterfaceRealization): this
-	{
+	public deleteInterfaceRealization(interfaceRealization: elements.InterfaceRealization): this {
 		removeFromArray(this.interfaceRealizations, interfaceRealization);
 		(interfaceRealization as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, interfaceRealization);
 		return this;
 	}
 
-	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
-	{
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this {
 		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
 		this.ownedAttributes.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedAttribute(property: elements.Property): this
-	{
+	public deleteOwnedAttribute(property: elements.Property): this {
 		removeFromArray(this.ownedAttributes, property);
 		(property as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
-	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
-	{
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this {
 		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
 		this.ownedOperations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedOperation(operation: elements.Operation): this
-	{
+	public deleteOwnedOperation(operation: elements.Operation): this {
 		removeFromArray(this.ownedOperations, operation);
 		(operation as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, operation);
@@ -365,8 +340,7 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* Returns both inherited and owned attributes.
 	* @returns {elements.Property[]}
 	*/
-	public getAllAttributes(): elements.Property[]
-	{
+	public getAllAttributes(): elements.Property[] {
 		return this.modelDelegate.getAllAttributes(this);
 	}
 
@@ -375,8 +349,7 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* (having the same name and parameter type order) in an inheriting type is not included.
 	* @returns {elements.Operation[]}
 	*/
-	public getAllOperations(): elements.Operation[]
-	{
+	public getAllOperations(): elements.Operation[] {
 		return this.modelDelegate.getAllOperations(this);
 	}
 
@@ -385,8 +358,7 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* specific classifiers will appear before more general classifiers.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllParents(): elements.Classifier[]
-	{
+	public getAllParents(): elements.Classifier[] {
 		return this.modelDelegate.getAllParents(this);
 	}
 
@@ -394,8 +366,7 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* Gets all classifiers of which this element is a direct or indirect general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllSpecializations(): elements.Classifier[]
-	{
+	public getAllSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getAllSpecializations(this);
 	}
 
@@ -403,8 +374,7 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* Gets the first direct generalization relationship of the element.
 	* @returns {elements.Generalization}
 	*/
-	public getFirstGeneralization(): elements.Generalization | null
-	{
+	public getFirstGeneralization(): elements.Generalization | null {
 		return this.modelDelegate.getFirstGeneralization(this);
 	}
 
@@ -412,8 +382,7 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* Gets the first classifier that is an immediate general of the current element.
 	* @returns {elements.Classifier}
 	*/
-	public getFirstParent(): elements.Classifier | null
-	{
+	public getFirstParent(): elements.Classifier | null {
 		return this.modelDelegate.getFirstParent(this);
 	}
 
@@ -425,8 +394,7 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getNamespaceName(separator?: string): string
-	{
+	public getNamespaceName(separator?: string): string {
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
 
@@ -435,8 +403,7 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* package.
 	* @returns {elements.Package[]} A collection of Packages.
 	*/
-	public getNestingPackages(): elements.Package[]
-	{
+	public getNestingPackages(): elements.Package[] {
 		return this.modelDelegate.getNestingPackages(this);
 	}
 
@@ -444,8 +411,7 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* Gives all of the immediate ancestors of a generalized Classifier.
 	* @returns {elements.Classifier[]}
 	*/
-	public getParents(): elements.Classifier[]
-	{
+	public getParents(): elements.Classifier[] {
 		return this.modelDelegate.getParents(this);
 	}
 
@@ -457,8 +423,7 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getQualifiedName(separator?: string): string
-	{
+	public getQualifiedName(separator?: string): string {
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
 
@@ -466,8 +431,7 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* Gets all classifiers of which this classifier is a direct general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getSpecializations(): elements.Classifier[]
-	{
+	public getSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getSpecializations(this);
 	}
 
@@ -475,93 +439,80 @@ export class Stereotype extends Element implements elements.Stereotype, editable
 	* Gets the super types of this type, derived from its Generalizations.
 	* @returns {this[]}
 	*/
-	public getSuperTypes(): this[]
-	{
+	public getSuperTypes(): this[] {
 		return this.modelDelegate.getSuperTypes(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
-	{
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this {
 		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
 		this.generalizations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteGeneralization(generalization: elements.Generalization): this
-	{
+	public deleteGeneralization(generalization: elements.Generalization): this {
 		removeFromArray(this.generalizations, generalization);
 		(generalization as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
-	public addInterfaceRealization(properties: editable.InterfaceRealizationProperties, initFn?: (interfaceRealization: editable.InterfaceRealizationEditable) => void): this
-	{
+	public addInterfaceRealization(properties: editable.InterfaceRealizationProperties, initFn?: (interfaceRealization: editable.InterfaceRealizationEditable) => void): this {
 		const e = this.modelDelegate.createElement('interfaceRealization', this, properties, initFn || null);
 		this.interfaceRealizations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteInterfaceRealization(interfaceRealization: elements.InterfaceRealization): this
-	{
+	public deleteInterfaceRealization(interfaceRealization: elements.InterfaceRealization): this {
 		removeFromArray(this.interfaceRealizations, interfaceRealization);
 		(interfaceRealization as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, interfaceRealization);
 		return this;
 	}
 
-	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
-	{
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this {
 		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
 		this.ownedAttributes.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedAttribute(property: elements.Property): this
-	{
+	public deleteOwnedAttribute(property: elements.Property): this {
 		removeFromArray(this.ownedAttributes, property);
 		(property as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
-	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
-	{
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this {
 		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
 		this.ownedOperations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedOperation(operation: elements.Operation): this
-	{
+	public deleteOwnedOperation(operation: elements.Operation): this {
 		removeFromArray(this.ownedOperations, operation);
 		(operation as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, operation);
@@ -631,8 +582,7 @@ export class Property extends Element implements elements.Property, editable.Pro
 	* @returns {any} The default value (the type depending on the type of value), or null if no default
 	* value can be determined.
 	*/
-	public getDefault(): any | null
-	{
+	public getDefault(): any | null {
 		return this.modelDelegate.getDefault(this);
 	}
 
@@ -641,8 +591,7 @@ export class Property extends Element implements elements.Property, editable.Pro
 	* integerValue of lowerValue, if this is given, and 1 otherwise.
 	* @returns {number}
 	*/
-	public getLowerBound(): number
-	{
+	public getLowerBound(): number {
 		return this.modelDelegate.getLowerBound(this);
 	}
 
@@ -650,8 +599,7 @@ export class Property extends Element implements elements.Property, editable.Pro
 	* Gets the name of the typed element's type.
 	* @returns {string} The type name, or an empty string if the element has no type.
 	*/
-	public getTypeName(): string
-	{
+	public getTypeName(): string {
 		return this.modelDelegate.getTypeName(this);
 	}
 
@@ -660,8 +608,7 @@ export class Property extends Element implements elements.Property, editable.Pro
 	* unlimited natural, which is the unlimitedNaturalValue of upperValue, if given, and 1, otherwise.
 	* @returns {elements.UnlimitedNatural}
 	*/
-	public getUpperBound(): elements.UnlimitedNatural
-	{
+	public getUpperBound(): elements.UnlimitedNatural {
 		return this.modelDelegate.getUpperBound(this);
 	}
 
@@ -669,8 +616,7 @@ export class Property extends Element implements elements.Property, editable.Pro
 	* The query isMultivalued() checks whether this multiplicity has an upper bound greater than one.
 	* @returns {boolean}
 	*/
-	public isMultivalued(): boolean
-	{
+	public isMultivalued(): boolean {
 		return this.modelDelegate.isMultivalued(this);
 	}
 
@@ -678,8 +624,7 @@ export class Property extends Element implements elements.Property, editable.Pro
 	* The query isOptional checks whether this multiplicity has a lower bound of 0 (0..n).
 	* @returns {boolean}
 	*/
-	public isOptional(): boolean
-	{
+	public isOptional(): boolean {
 		return this.modelDelegate.isOptional(this);
 	}
 
@@ -688,8 +633,7 @@ export class Property extends Element implements elements.Property, editable.Pro
 	* upper bound of 1 (0..1).
 	* @returns {boolean}
 	*/
-	public isOptionalAndSinglevalued(): boolean
-	{
+	public isOptionalAndSinglevalued(): boolean {
 		return this.modelDelegate.isOptionalAndSinglevalued(this);
 	}
 
@@ -698,65 +642,55 @@ export class Property extends Element implements elements.Property, editable.Pro
 	* upper bound of 1 (1..1).
 	* @returns {boolean}
 	*/
-	public isRequiredAndSinglevalued(): boolean
-	{
+	public isRequiredAndSinglevalued(): boolean {
 		return this.modelDelegate.isRequiredAndSinglevalued(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public setLowerValueUnlimited(): this
-	{
+	public setLowerValueUnlimited(): this {
 		this.modelDelegate.setLowerValueUnlimited(this);
 		return this;
 	}
 
-	public setLowerValue(value: number): this
-	{
+	public setLowerValue(value: number): this {
 		this.modelDelegate.setLowerValue(this, value);
 		return this;
 	}
 
-	public setUpperValueUnlimited(): this
-	{
+	public setUpperValueUnlimited(): this {
 		this.modelDelegate.setUpperValueUnlimited(this);
 		return this;
 	}
 
-	public setUpperValue(value: number): this
-	{
+	public setUpperValue(value: number): this {
 		this.modelDelegate.setUpperValue(this, value);
 		return this;
 	}
 
-	public setDefaultValueNull(): this
-	{
+	public setDefaultValueNull(): this {
 		this.modelDelegate.setDefaultValueNull(this);
 		return this;
 	}
@@ -764,8 +698,7 @@ export class Property extends Element implements elements.Property, editable.Pro
 	public setDefaultValue(value: boolean): this;
 	public setDefaultValue(value: number): this;
 	public setDefaultValue(value: string): this;
-	public setDefaultValue(value: any): this
-	{
+	public setDefaultValue(value: any): this {
 		this.modelDelegate.setDefaultValue(this, value);
 		return this;
 	}
@@ -800,8 +733,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* Gets all classes that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.Class[]}
 	*/
-	public getAllClasses(): elements.Class[]
-	{
+	public getAllClasses(): elements.Class[] {
 		return this.modelDelegate.getAllClasses(this);
 	}
 
@@ -809,8 +741,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* Gets all data types that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.DataType[]}
 	*/
-	public getAllDataTypes(): elements.DataType[]
-	{
+	public getAllDataTypes(): elements.DataType[] {
 		return this.modelDelegate.getAllDataTypes(this);
 	}
 
@@ -818,8 +749,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.Enumeration[]}
 	*/
-	public getAllEnumerations(): elements.Enumeration[]
-	{
+	public getAllEnumerations(): elements.Enumeration[] {
 		return this.modelDelegate.getAllEnumerations(this);
 	}
 
@@ -827,8 +757,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* Gets all interfaces that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.Interface[]}
 	*/
-	public getAllInterfaces(): elements.Interface[]
-	{
+	public getAllInterfaces(): elements.Interface[] {
 		return this.modelDelegate.getAllInterfaces(this);
 	}
 
@@ -837,8 +766,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* includes the following types of elements: Class, Interface, DataType, PrimitiveType and Enumeration.
 	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
-	public getAllTypes(): elements.Classifier[]
-	{
+	public getAllTypes(): elements.Classifier[] {
 		return this.modelDelegate.getAllTypes(this);
 	}
 
@@ -846,8 +774,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* Gets all classes that are owned by this Package.
 	* @returns {elements.Class[]} A subset of PackagedElements.
 	*/
-	public getClasses(): elements.Class[]
-	{
+	public getClasses(): elements.Class[] {
 		return this.modelDelegate.getClasses(this);
 	}
 
@@ -855,8 +782,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* Gets all data types that are owned by this Package.
 	* @returns {elements.DataType[]} A subset of PackagedElements.
 	*/
-	public getDataTypes(): elements.DataType[]
-	{
+	public getDataTypes(): elements.DataType[] {
 		return this.modelDelegate.getDataTypes(this);
 	}
 
@@ -864,8 +790,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* Gets all enumerations that are owned by this Package.
 	* @returns {elements.Enumeration[]} A subset of PackagedElements.
 	*/
-	public getEnumerations(): elements.Enumeration[]
-	{
+	public getEnumerations(): elements.Enumeration[] {
 		return this.modelDelegate.getEnumerations(this);
 	}
 
@@ -873,8 +798,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* Gets all interfaces that are owned by this Package.
 	* @returns {elements.Interface[]} A subset of PackagedElements.
 	*/
-	public getInterfaces(): elements.Interface[]
-	{
+	public getInterfaces(): elements.Interface[] {
 		return this.modelDelegate.getInterfaces(this);
 	}
 
@@ -886,8 +810,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getNamespaceName(separator?: string): string
-	{
+	public getNamespaceName(separator?: string): string {
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
 
@@ -895,8 +818,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* Gets all packages that are owned by this Package.
 	* @returns {elements.Package[]} A subset of PackagedElements.
 	*/
-	public getNestedPackages(): elements.Package[]
-	{
+	public getNestedPackages(): elements.Package[] {
 		return this.modelDelegate.getNestedPackages(this);
 	}
 
@@ -905,8 +827,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* package.
 	* @returns {elements.Package[]} A collection of Packages.
 	*/
-	public getNestingPackages(): elements.Package[]
-	{
+	public getNestingPackages(): elements.Package[] {
 		return this.modelDelegate.getNestingPackages(this);
 	}
 
@@ -918,8 +839,7 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getQualifiedName(separator?: string): string
-	{
+	public getQualifiedName(separator?: string): string {
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
 
@@ -928,117 +848,100 @@ export class Package extends Element implements elements.Package, editable.Packa
 	* Interface, DataType, PrimitiveType and Enumeration.
 	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
-	public getTypes(): elements.Classifier[]
-	{
+	public getTypes(): elements.Classifier[] {
 		return this.modelDelegate.getTypes(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public addAppliedProfile(profile: elements.Profile): this
-	{
+	public addAppliedProfile(profile: elements.Profile): this {
 		this.appliedProfiles.push(profile);
 		this.modelDelegate.onElementAdded(this, profile);
 		return this;
 	}
-	public removeAppliedProfile(profile: elements.Profile): this
-	{
+	public removeAppliedProfile(profile: elements.Profile): this {
 		removeFromArray(this.appliedProfiles, profile);
 		this.modelDelegate.onElementDeleted(this, profile);
 		return this;
 	}
 
-	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this
-	{
+	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this {
 		const e = this.modelDelegate.createElement('package', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this
-	{
+	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this {
 		const e = this.modelDelegate.createElement('profile', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this
-	{
+	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this {
 		const e = this.modelDelegate.createElement('association', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this
-	{
+	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this {
 		const e = this.modelDelegate.createElement('class', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this
-	{
+	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this {
 		const e = this.modelDelegate.createElement('stereotype', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this
-	{
+	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this {
 		const e = this.modelDelegate.createElement('dataType', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this
-	{
+	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this {
 		const e = this.modelDelegate.createElement('enumeration', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this
-	{
+	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this {
 		const e = this.modelDelegate.createElement('primitiveType', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this
-	{
+	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this {
 		const e = this.modelDelegate.createElement('interface', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deletePackagedElement(packageableElement: elements.PackageableElement): this
-	{
+	public deletePackagedElement(packageableElement: elements.PackageableElement): this {
 		(packageableElement as any).isDeleted = true;
 		removeFromArray(this.packagedElements, packageableElement);
 		this.modelDelegate.onElementDeleted(this, packageableElement);
@@ -1077,8 +980,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* Gets all classes that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.Class[]}
 	*/
-	public getAllClasses(): elements.Class[]
-	{
+	public getAllClasses(): elements.Class[] {
 		return this.modelDelegate.getAllClasses(this);
 	}
 
@@ -1086,8 +988,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* Gets all data types that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.DataType[]}
 	*/
-	public getAllDataTypes(): elements.DataType[]
-	{
+	public getAllDataTypes(): elements.DataType[] {
 		return this.modelDelegate.getAllDataTypes(this);
 	}
 
@@ -1095,8 +996,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.Enumeration[]}
 	*/
-	public getAllEnumerations(): elements.Enumeration[]
-	{
+	public getAllEnumerations(): elements.Enumeration[] {
 		return this.modelDelegate.getAllEnumerations(this);
 	}
 
@@ -1104,8 +1004,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* Gets all interfaces that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.Interface[]}
 	*/
-	public getAllInterfaces(): elements.Interface[]
-	{
+	public getAllInterfaces(): elements.Interface[] {
 		return this.modelDelegate.getAllInterfaces(this);
 	}
 
@@ -1114,8 +1013,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* includes the following types of elements: Class, Interface, DataType, PrimitiveType and Enumeration.
 	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
-	public getAllTypes(): elements.Classifier[]
-	{
+	public getAllTypes(): elements.Classifier[] {
 		return this.modelDelegate.getAllTypes(this);
 	}
 
@@ -1123,8 +1021,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* Gets all classes that are owned by this Package.
 	* @returns {elements.Class[]} A subset of PackagedElements.
 	*/
-	public getClasses(): elements.Class[]
-	{
+	public getClasses(): elements.Class[] {
 		return this.modelDelegate.getClasses(this);
 	}
 
@@ -1132,8 +1029,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* Gets all data types that are owned by this Package.
 	* @returns {elements.DataType[]} A subset of PackagedElements.
 	*/
-	public getDataTypes(): elements.DataType[]
-	{
+	public getDataTypes(): elements.DataType[] {
 		return this.modelDelegate.getDataTypes(this);
 	}
 
@@ -1141,8 +1037,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* Gets all enumerations that are owned by this Package.
 	* @returns {elements.Enumeration[]} A subset of PackagedElements.
 	*/
-	public getEnumerations(): elements.Enumeration[]
-	{
+	public getEnumerations(): elements.Enumeration[] {
 		return this.modelDelegate.getEnumerations(this);
 	}
 
@@ -1150,8 +1045,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* Gets all interfaces that are owned by this Package.
 	* @returns {elements.Interface[]} A subset of PackagedElements.
 	*/
-	public getInterfaces(): elements.Interface[]
-	{
+	public getInterfaces(): elements.Interface[] {
 		return this.modelDelegate.getInterfaces(this);
 	}
 
@@ -1163,8 +1057,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getNamespaceName(separator?: string): string
-	{
+	public getNamespaceName(separator?: string): string {
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
 
@@ -1172,8 +1065,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* Gets all packages that are owned by this Package.
 	* @returns {elements.Package[]} A subset of PackagedElements.
 	*/
-	public getNestedPackages(): elements.Package[]
-	{
+	public getNestedPackages(): elements.Package[] {
 		return this.modelDelegate.getNestedPackages(this);
 	}
 
@@ -1182,8 +1074,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* package.
 	* @returns {elements.Package[]} A collection of Packages.
 	*/
-	public getNestingPackages(): elements.Package[]
-	{
+	public getNestingPackages(): elements.Package[] {
 		return this.modelDelegate.getNestingPackages(this);
 	}
 
@@ -1195,8 +1086,7 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getQualifiedName(separator?: string): string
-	{
+	public getQualifiedName(separator?: string): string {
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
 
@@ -1205,117 +1095,100 @@ export class Profile extends Element implements elements.Profile, editable.Profi
 	* Interface, DataType, PrimitiveType and Enumeration.
 	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
-	public getTypes(): elements.Classifier[]
-	{
+	public getTypes(): elements.Classifier[] {
 		return this.modelDelegate.getTypes(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public addAppliedProfile(profile: elements.Profile): this
-	{
+	public addAppliedProfile(profile: elements.Profile): this {
 		this.appliedProfiles.push(profile);
 		this.modelDelegate.onElementAdded(this, profile);
 		return this;
 	}
-	public removeAppliedProfile(profile: elements.Profile): this
-	{
+	public removeAppliedProfile(profile: elements.Profile): this {
 		removeFromArray(this.appliedProfiles, profile);
 		this.modelDelegate.onElementDeleted(this, profile);
 		return this;
 	}
 
-	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this
-	{
+	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this {
 		const e = this.modelDelegate.createElement('package', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this
-	{
+	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this {
 		const e = this.modelDelegate.createElement('profile', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this
-	{
+	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this {
 		const e = this.modelDelegate.createElement('association', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this
-	{
+	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this {
 		const e = this.modelDelegate.createElement('class', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this
-	{
+	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this {
 		const e = this.modelDelegate.createElement('stereotype', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this
-	{
+	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this {
 		const e = this.modelDelegate.createElement('dataType', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this
-	{
+	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this {
 		const e = this.modelDelegate.createElement('enumeration', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this
-	{
+	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this {
 		const e = this.modelDelegate.createElement('primitiveType', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this
-	{
+	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this {
 		const e = this.modelDelegate.createElement('interface', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deletePackagedElement(packageableElement: elements.PackageableElement): this
-	{
+	public deletePackagedElement(packageableElement: elements.PackageableElement): this {
 		(packageableElement as any).isDeleted = true;
 		removeFromArray(this.packagedElements, packageableElement);
 		this.modelDelegate.onElementDeleted(this, packageableElement);
@@ -1360,8 +1233,7 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* Returns both inherited and owned attributes.
 	* @returns {elements.Property[]}
 	*/
-	public getAllAttributes(): elements.Property[]
-	{
+	public getAllAttributes(): elements.Property[] {
 		return this.modelDelegate.getAllAttributes(this);
 	}
 
@@ -1370,8 +1242,7 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* (having the same name and parameter type order) in an inheriting type is not included.
 	* @returns {elements.Operation[]}
 	*/
-	public getAllOperations(): elements.Operation[]
-	{
+	public getAllOperations(): elements.Operation[] {
 		return this.modelDelegate.getAllOperations(this);
 	}
 
@@ -1380,8 +1251,7 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* specific classifiers will appear before more general classifiers.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllParents(): elements.Classifier[]
-	{
+	public getAllParents(): elements.Classifier[] {
 		return this.modelDelegate.getAllParents(this);
 	}
 
@@ -1389,8 +1259,7 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* Gets all classifiers of which this element is a direct or indirect general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllSpecializations(): elements.Classifier[]
-	{
+	public getAllSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getAllSpecializations(this);
 	}
 
@@ -1398,8 +1267,7 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* Gets the first direct generalization relationship of the element.
 	* @returns {elements.Generalization}
 	*/
-	public getFirstGeneralization(): elements.Generalization | null
-	{
+	public getFirstGeneralization(): elements.Generalization | null {
 		return this.modelDelegate.getFirstGeneralization(this);
 	}
 
@@ -1407,8 +1275,7 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* Gets the first classifier that is an immediate general of the current element.
 	* @returns {elements.Classifier}
 	*/
-	public getFirstParent(): elements.Classifier | null
-	{
+	public getFirstParent(): elements.Classifier | null {
 		return this.modelDelegate.getFirstParent(this);
 	}
 
@@ -1420,8 +1287,7 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getNamespaceName(separator?: string): string
-	{
+	public getNamespaceName(separator?: string): string {
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
 
@@ -1430,8 +1296,7 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* package.
 	* @returns {elements.Package[]} A collection of Packages.
 	*/
-	public getNestingPackages(): elements.Package[]
-	{
+	public getNestingPackages(): elements.Package[] {
 		return this.modelDelegate.getNestingPackages(this);
 	}
 
@@ -1439,8 +1304,7 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* Gives all of the immediate ancestors of a generalized Classifier.
 	* @returns {elements.Classifier[]}
 	*/
-	public getParents(): elements.Classifier[]
-	{
+	public getParents(): elements.Classifier[] {
 		return this.modelDelegate.getParents(this);
 	}
 
@@ -1452,8 +1316,7 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getQualifiedName(separator?: string): string
-	{
+	public getQualifiedName(separator?: string): string {
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
 
@@ -1461,8 +1324,7 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* Gets all classifiers of which this classifier is a direct general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getSpecializations(): elements.Classifier[]
-	{
+	public getSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getSpecializations(this);
 	}
 
@@ -1470,78 +1332,67 @@ export class DataType extends Element implements elements.DataType, editable.Dat
 	* Gets the super types of this type, derived from its Generalizations.
 	* @returns {this[]}
 	*/
-	public getSuperTypes(): this[]
-	{
+	public getSuperTypes(): this[] {
 		return this.modelDelegate.getSuperTypes(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
-	{
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this {
 		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
 		this.generalizations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteGeneralization(generalization: elements.Generalization): this
-	{
+	public deleteGeneralization(generalization: elements.Generalization): this {
 		removeFromArray(this.generalizations, generalization);
 		(generalization as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
-	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
-	{
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this {
 		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
 		this.ownedAttributes.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedAttribute(property: elements.Property): this
-	{
+	public deleteOwnedAttribute(property: elements.Property): this {
 		removeFromArray(this.ownedAttributes, property);
 		(property as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
-	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
-	{
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this {
 		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
 		this.ownedOperations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedOperation(operation: elements.Operation): this
-	{
+	public deleteOwnedOperation(operation: elements.Operation): this {
 		removeFromArray(this.ownedOperations, operation);
 		(operation as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, operation);
@@ -1586,8 +1437,7 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* Returns both inherited and owned attributes.
 	* @returns {elements.Property[]}
 	*/
-	public getAllAttributes(): elements.Property[]
-	{
+	public getAllAttributes(): elements.Property[] {
 		return this.modelDelegate.getAllAttributes(this);
 	}
 
@@ -1596,8 +1446,7 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* (having the same name and parameter type order) in an inheriting type is not included.
 	* @returns {elements.Operation[]}
 	*/
-	public getAllOperations(): elements.Operation[]
-	{
+	public getAllOperations(): elements.Operation[] {
 		return this.modelDelegate.getAllOperations(this);
 	}
 
@@ -1606,8 +1455,7 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* specific classifiers will appear before more general classifiers.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllParents(): elements.Classifier[]
-	{
+	public getAllParents(): elements.Classifier[] {
 		return this.modelDelegate.getAllParents(this);
 	}
 
@@ -1615,8 +1463,7 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* Gets all classifiers of which this element is a direct or indirect general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllSpecializations(): elements.Classifier[]
-	{
+	public getAllSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getAllSpecializations(this);
 	}
 
@@ -1624,8 +1471,7 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* Gets the first direct generalization relationship of the element.
 	* @returns {elements.Generalization}
 	*/
-	public getFirstGeneralization(): elements.Generalization | null
-	{
+	public getFirstGeneralization(): elements.Generalization | null {
 		return this.modelDelegate.getFirstGeneralization(this);
 	}
 
@@ -1633,8 +1479,7 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* Gets the first classifier that is an immediate general of the current element.
 	* @returns {elements.Classifier}
 	*/
-	public getFirstParent(): elements.Classifier | null
-	{
+	public getFirstParent(): elements.Classifier | null {
 		return this.modelDelegate.getFirstParent(this);
 	}
 
@@ -1646,8 +1491,7 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getNamespaceName(separator?: string): string
-	{
+	public getNamespaceName(separator?: string): string {
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
 
@@ -1656,8 +1500,7 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* package.
 	* @returns {elements.Package[]} A collection of Packages.
 	*/
-	public getNestingPackages(): elements.Package[]
-	{
+	public getNestingPackages(): elements.Package[] {
 		return this.modelDelegate.getNestingPackages(this);
 	}
 
@@ -1665,8 +1508,7 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* Gives all of the immediate ancestors of a generalized Classifier.
 	* @returns {elements.Classifier[]}
 	*/
-	public getParents(): elements.Classifier[]
-	{
+	public getParents(): elements.Classifier[] {
 		return this.modelDelegate.getParents(this);
 	}
 
@@ -1678,8 +1520,7 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getQualifiedName(separator?: string): string
-	{
+	public getQualifiedName(separator?: string): string {
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
 
@@ -1687,8 +1528,7 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* Gets all classifiers of which this classifier is a direct general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getSpecializations(): elements.Classifier[]
-	{
+	public getSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getSpecializations(this);
 	}
 
@@ -1696,78 +1536,67 @@ export class PrimitiveType extends Element implements elements.PrimitiveType, ed
 	* Gets the super types of this type, derived from its Generalizations.
 	* @returns {this[]}
 	*/
-	public getSuperTypes(): this[]
-	{
+	public getSuperTypes(): this[] {
 		return this.modelDelegate.getSuperTypes(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
-	{
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this {
 		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
 		this.generalizations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteGeneralization(generalization: elements.Generalization): this
-	{
+	public deleteGeneralization(generalization: elements.Generalization): this {
 		removeFromArray(this.generalizations, generalization);
 		(generalization as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
-	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
-	{
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this {
 		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
 		this.ownedAttributes.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedAttribute(property: elements.Property): this
-	{
+	public deleteOwnedAttribute(property: elements.Property): this {
 		removeFromArray(this.ownedAttributes, property);
 		(property as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
-	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
-	{
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this {
 		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
 		this.ownedOperations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedOperation(operation: elements.Operation): this
-	{
+	public deleteOwnedOperation(operation: elements.Operation): this {
 		removeFromArray(this.ownedOperations, operation);
 		(operation as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, operation);
@@ -1823,8 +1652,7 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 	* @returns {any} The default value (the type depending on the type of value), or null if no default
 	* value can be determined.
 	*/
-	public getDefault(): any | null
-	{
+	public getDefault(): any | null {
 		return this.modelDelegate.getDefault(this);
 	}
 
@@ -1833,8 +1661,7 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 	* integerValue of lowerValue, if this is given, and 1 otherwise.
 	* @returns {number}
 	*/
-	public getLowerBound(): number
-	{
+	public getLowerBound(): number {
 		return this.modelDelegate.getLowerBound(this);
 	}
 
@@ -1842,8 +1669,7 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 	* Gets the name of the typed element's type.
 	* @returns {string} The type name, or an empty string if the element has no type.
 	*/
-	public getTypeName(): string
-	{
+	public getTypeName(): string {
 		return this.modelDelegate.getTypeName(this);
 	}
 
@@ -1852,8 +1678,7 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 	* unlimited natural, which is the unlimitedNaturalValue of upperValue, if given, and 1, otherwise.
 	* @returns {elements.UnlimitedNatural}
 	*/
-	public getUpperBound(): elements.UnlimitedNatural
-	{
+	public getUpperBound(): elements.UnlimitedNatural {
 		return this.modelDelegate.getUpperBound(this);
 	}
 
@@ -1861,8 +1686,7 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 	* The query isMultivalued() checks whether this multiplicity has an upper bound greater than one.
 	* @returns {boolean}
 	*/
-	public isMultivalued(): boolean
-	{
+	public isMultivalued(): boolean {
 		return this.modelDelegate.isMultivalued(this);
 	}
 
@@ -1870,8 +1694,7 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 	* The query isOptional checks whether this multiplicity has a lower bound of 0 (0..n).
 	* @returns {boolean}
 	*/
-	public isOptional(): boolean
-	{
+	public isOptional(): boolean {
 		return this.modelDelegate.isOptional(this);
 	}
 
@@ -1880,8 +1703,7 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 	* upper bound of 1 (0..1).
 	* @returns {boolean}
 	*/
-	public isOptionalAndSinglevalued(): boolean
-	{
+	public isOptionalAndSinglevalued(): boolean {
 		return this.modelDelegate.isOptionalAndSinglevalued(this);
 	}
 
@@ -1890,65 +1712,55 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 	* upper bound of 1 (1..1).
 	* @returns {boolean}
 	*/
-	public isRequiredAndSinglevalued(): boolean
-	{
+	public isRequiredAndSinglevalued(): boolean {
 		return this.modelDelegate.isRequiredAndSinglevalued(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public setLowerValueUnlimited(): this
-	{
+	public setLowerValueUnlimited(): this {
 		this.modelDelegate.setLowerValueUnlimited(this);
 		return this;
 	}
 
-	public setLowerValue(value: number): this
-	{
+	public setLowerValue(value: number): this {
 		this.modelDelegate.setLowerValue(this, value);
 		return this;
 	}
 
-	public setUpperValueUnlimited(): this
-	{
+	public setUpperValueUnlimited(): this {
 		this.modelDelegate.setUpperValueUnlimited(this);
 		return this;
 	}
 
-	public setUpperValue(value: number): this
-	{
+	public setUpperValue(value: number): this {
 		this.modelDelegate.setUpperValue(this, value);
 		return this;
 	}
 
-	public setDefaultValueNull(): this
-	{
+	public setDefaultValueNull(): this {
 		this.modelDelegate.setDefaultValueNull(this);
 		return this;
 	}
@@ -1956,8 +1768,7 @@ export class Parameter extends Element implements elements.Parameter, editable.P
 	public setDefaultValue(value: boolean): this;
 	public setDefaultValue(value: number): this;
 	public setDefaultValue(value: string): this;
-	public setDefaultValue(value: any): this
-	{
+	public setDefaultValue(value: any): this {
 		this.modelDelegate.setDefaultValue(this, value);
 		return this;
 	}
@@ -2004,8 +1815,7 @@ export class Operation extends Element implements elements.Operation, editable.O
 	* Returns the ownedParameters with direction in and inout.
 	* @returns {elements.Parameter[]}
 	*/
-	public getInputParameters(): elements.Parameter[]
-	{
+	public getInputParameters(): elements.Parameter[] {
 		return this.modelDelegate.getInputParameters(this);
 	}
 
@@ -2015,8 +1825,7 @@ export class Operation extends Element implements elements.Operation, editable.O
 	* return result for this Operation.
 	* @returns {number}
 	*/
-	public getLowerBound(): number
-	{
+	public getLowerBound(): number {
 		return this.modelDelegate.getLowerBound(this);
 	}
 
@@ -2024,8 +1833,7 @@ export class Operation extends Element implements elements.Operation, editable.O
 	* Returns the ownedParameters with direction out, inout, or return.
 	* @returns {elements.Parameter[]}
 	*/
-	public getOutputParameters(): elements.Parameter[]
-	{
+	public getOutputParameters(): elements.Parameter[] {
 		return this.modelDelegate.getOutputParameters(this);
 	}
 
@@ -2033,8 +1841,7 @@ export class Operation extends Element implements elements.Operation, editable.O
 	* Gets the operation's return parameter, if it has one.
 	* @returns {elements.Parameter}
 	*/
-	public getReturnParameter(): elements.Parameter | null
-	{
+	public getReturnParameter(): elements.Parameter | null {
 		return this.modelDelegate.getReturnParameter(this);
 	}
 
@@ -2042,8 +1849,7 @@ export class Operation extends Element implements elements.Operation, editable.O
 	* Gets the type of the operation's return parameter, if it has any.
 	* @returns {elements.Type}
 	*/
-	public getReturnType(): elements.Type | null
-	{
+	public getReturnType(): elements.Type | null {
 		return this.modelDelegate.getReturnType(this);
 	}
 
@@ -2053,8 +1859,7 @@ export class Operation extends Element implements elements.Operation, editable.O
 	* This information is derived from the return result for this Operation.
 	* @returns {elements.UnlimitedNatural}
 	*/
-	public getUpperBound(): elements.UnlimitedNatural
-	{
+	public getUpperBound(): elements.UnlimitedNatural {
 		return this.modelDelegate.getUpperBound(this);
 	}
 
@@ -2062,8 +1867,7 @@ export class Operation extends Element implements elements.Operation, editable.O
 	* The query isMultivalued() checks whether the return parameter has an upper bound greater than one.
 	* @returns {boolean}
 	*/
-	public isMultivalued(): boolean
-	{
+	public isMultivalued(): boolean {
 		return this.modelDelegate.isMultivalued(this);
 	}
 
@@ -2071,8 +1875,7 @@ export class Operation extends Element implements elements.Operation, editable.O
 	* The query isOptional checks whether he return parameter has a lower bound of 0 (0..n).
 	* @returns {boolean}
 	*/
-	public isOptional(): boolean
-	{
+	public isOptional(): boolean {
 		return this.modelDelegate.isOptional(this);
 	}
 
@@ -2081,48 +1884,41 @@ export class Operation extends Element implements elements.Operation, editable.O
 	* 1 (0..1).
 	* @returns {boolean}
 	*/
-	public isOptionalAndSinglevalued(): boolean
-	{
+	public isOptionalAndSinglevalued(): boolean {
 		return this.modelDelegate.isOptionalAndSinglevalued(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public addOwnedParameter(properties: editable.ParameterProperties, initFn?: (parameter: editable.ParameterEditable) => void): this
-	{
+	public addOwnedParameter(properties: editable.ParameterProperties, initFn?: (parameter: editable.ParameterEditable) => void): this {
 		const e = this.modelDelegate.createElement('parameter', this, properties, initFn || null);
 		this.ownedParameters.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedParameter(parameter: elements.Parameter): this
-	{
+	public deleteOwnedParameter(parameter: elements.Parameter): this {
 		removeFromArray(this.ownedParameters, parameter);
 		(parameter as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, parameter);
@@ -2159,8 +1955,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* Gets all classes that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.Class[]}
 	*/
-	public getAllClasses(): elements.Class[]
-	{
+	public getAllClasses(): elements.Class[] {
 		return this.modelDelegate.getAllClasses(this);
 	}
 
@@ -2168,8 +1963,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* Gets all data types that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.DataType[]}
 	*/
-	public getAllDataTypes(): elements.DataType[]
-	{
+	public getAllDataTypes(): elements.DataType[] {
 		return this.modelDelegate.getAllDataTypes(this);
 	}
 
@@ -2177,8 +1971,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* Gets all enumerations that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.Enumeration[]}
 	*/
-	public getAllEnumerations(): elements.Enumeration[]
-	{
+	public getAllEnumerations(): elements.Enumeration[] {
 		return this.modelDelegate.getAllEnumerations(this);
 	}
 
@@ -2186,8 +1979,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* Gets all interfaces that are owned by this Package, including the ones owned by nested packages.
 	* @returns {elements.Interface[]}
 	*/
-	public getAllInterfaces(): elements.Interface[]
-	{
+	public getAllInterfaces(): elements.Interface[] {
 		return this.modelDelegate.getAllInterfaces(this);
 	}
 
@@ -2196,8 +1988,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* includes the following types of elements: Class, Interface, DataType, PrimitiveType and Enumeration.
 	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
-	public getAllTypes(): elements.Classifier[]
-	{
+	public getAllTypes(): elements.Classifier[] {
 		return this.modelDelegate.getAllTypes(this);
 	}
 
@@ -2205,8 +1996,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* Gets all classes that are owned by this Package.
 	* @returns {elements.Class[]} A subset of PackagedElements.
 	*/
-	public getClasses(): elements.Class[]
-	{
+	public getClasses(): elements.Class[] {
 		return this.modelDelegate.getClasses(this);
 	}
 
@@ -2214,8 +2004,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* Gets all data types that are owned by this Package.
 	* @returns {elements.DataType[]} A subset of PackagedElements.
 	*/
-	public getDataTypes(): elements.DataType[]
-	{
+	public getDataTypes(): elements.DataType[] {
 		return this.modelDelegate.getDataTypes(this);
 	}
 
@@ -2223,8 +2012,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* Gets all enumerations that are owned by this Package.
 	* @returns {elements.Enumeration[]} A subset of PackagedElements.
 	*/
-	public getEnumerations(): elements.Enumeration[]
-	{
+	public getEnumerations(): elements.Enumeration[] {
 		return this.modelDelegate.getEnumerations(this);
 	}
 
@@ -2232,8 +2020,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* Gets all interfaces that are owned by this Package.
 	* @returns {elements.Interface[]} A subset of PackagedElements.
 	*/
-	public getInterfaces(): elements.Interface[]
-	{
+	public getInterfaces(): elements.Interface[] {
 		return this.modelDelegate.getInterfaces(this);
 	}
 
@@ -2245,8 +2032,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getNamespaceName(separator?: string): string
-	{
+	public getNamespaceName(separator?: string): string {
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
 
@@ -2254,8 +2040,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* Gets all packages that are owned by this Package.
 	* @returns {elements.Package[]} A subset of PackagedElements.
 	*/
-	public getNestedPackages(): elements.Package[]
-	{
+	public getNestedPackages(): elements.Package[] {
 		return this.modelDelegate.getNestedPackages(this);
 	}
 
@@ -2264,8 +2049,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* package.
 	* @returns {elements.Package[]} A collection of Packages.
 	*/
-	public getNestingPackages(): elements.Package[]
-	{
+	public getNestingPackages(): elements.Package[] {
 		return this.modelDelegate.getNestingPackages(this);
 	}
 
@@ -2277,8 +2061,7 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getQualifiedName(separator?: string): string
-	{
+	public getQualifiedName(separator?: string): string {
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
 
@@ -2287,117 +2070,100 @@ export class Model extends Element implements elements.Model, editable.ModelEdit
 	* Interface, DataType, PrimitiveType and Enumeration.
 	* @returns {elements.Classifier[]} A subset of PackagedElements.
 	*/
-	public getTypes(): elements.Classifier[]
-	{
+	public getTypes(): elements.Classifier[] {
 		return this.modelDelegate.getTypes(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public addAppliedProfile(profile: elements.Profile): this
-	{
+	public addAppliedProfile(profile: elements.Profile): this {
 		this.appliedProfiles.push(profile);
 		this.modelDelegate.onElementAdded(this, profile);
 		return this;
 	}
-	public removeAppliedProfile(profile: elements.Profile): this
-	{
+	public removeAppliedProfile(profile: elements.Profile): this {
 		removeFromArray(this.appliedProfiles, profile);
 		this.modelDelegate.onElementDeleted(this, profile);
 		return this;
 	}
 
-	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this
-	{
+	public addPackage(properties: editable.PackageProperties, initFn?: (pack: editable.PackageEditable) => void): this {
 		const e = this.modelDelegate.createElement('package', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this
-	{
+	public addProfile(properties: editable.ProfileProperties, initFn?: (profile: editable.ProfileEditable) => void): this {
 		const e = this.modelDelegate.createElement('profile', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this
-	{
+	public addAssociation(properties: editable.AssociationProperties, initFn?: (association: editable.AssociationEditable) => void): this {
 		const e = this.modelDelegate.createElement('association', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this
-	{
+	public addClass(properties: editable.ClassProperties, initFn?: (cls: editable.ClassEditable) => void): this {
 		const e = this.modelDelegate.createElement('class', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this
-	{
+	public addStereotype(properties: editable.StereotypeProperties, initFn?: (stereotype: editable.StereotypeEditable) => void): this {
 		const e = this.modelDelegate.createElement('stereotype', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this
-	{
+	public addDataType(properties: editable.DataTypeProperties, initFn?: (dataType: editable.DataTypeEditable) => void): this {
 		const e = this.modelDelegate.createElement('dataType', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this
-	{
+	public addEnumeration(properties: editable.EnumerationProperties, initFn?: (enumeration: editable.EnumerationEditable) => void): this {
 		const e = this.modelDelegate.createElement('enumeration', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this
-	{
+	public addPrimitiveType(properties: editable.PrimitiveTypeProperties, initFn?: (primitiveType: editable.PrimitiveTypeEditable) => void): this {
 		const e = this.modelDelegate.createElement('primitiveType', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this
-	{
+	public addInterface(properties: editable.InterfaceProperties, initFn?: (iface: editable.InterfaceEditable) => void): this {
 		const e = this.modelDelegate.createElement('interface', this, properties, initFn || null);
 		this.packagedElements.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deletePackagedElement(packageableElement: elements.PackageableElement): this
-	{
+	public deletePackagedElement(packageableElement: elements.PackageableElement): this {
 		(packageableElement as any).isDeleted = true;
 		removeFromArray(this.packagedElements, packageableElement);
 		this.modelDelegate.onElementDeleted(this, packageableElement);
@@ -2428,8 +2194,7 @@ export class LiteralUnlimitedNatural extends Element implements elements.Literal
 	* Gets the string representation of the value.
 	* @returns {string}
 	*/
-	public getStringValue(): string
-	{
+	public getStringValue(): string {
 		return this.modelDelegate.getStringValue(this);
 	}
 
@@ -2437,8 +2202,7 @@ export class LiteralUnlimitedNatural extends Element implements elements.Literal
 	* Gets the name of the typed element's type.
 	* @returns {string} The type name, or an empty string if the element has no type.
 	*/
-	public getTypeName(): string
-	{
+	public getTypeName(): string {
 		return this.modelDelegate.getTypeName(this);
 	}
 
@@ -2447,8 +2211,7 @@ export class LiteralUnlimitedNatural extends Element implements elements.Literal
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
 	* ValueSpecification.
 	*/
-	public getValue(): any | null
-	{
+	public getValue(): any | null {
 		return this.modelDelegate.getValue(this);
 	}
 }
@@ -2476,8 +2239,7 @@ export class LiteralString extends Element implements elements.LiteralString {
 	* Gets the string representation of the value.
 	* @returns {string}
 	*/
-	public getStringValue(): string
-	{
+	public getStringValue(): string {
 		return this.modelDelegate.getStringValue(this);
 	}
 
@@ -2485,8 +2247,7 @@ export class LiteralString extends Element implements elements.LiteralString {
 	* Gets the name of the typed element's type.
 	* @returns {string} The type name, or an empty string if the element has no type.
 	*/
-	public getTypeName(): string
-	{
+	public getTypeName(): string {
 		return this.modelDelegate.getTypeName(this);
 	}
 
@@ -2495,8 +2256,7 @@ export class LiteralString extends Element implements elements.LiteralString {
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
 	* ValueSpecification.
 	*/
-	public getValue(): any | null
-	{
+	public getValue(): any | null {
 		return this.modelDelegate.getValue(this);
 	}
 }
@@ -2524,8 +2284,7 @@ export class LiteralReal extends Element implements elements.LiteralReal {
 	* Gets the string representation of the value.
 	* @returns {string}
 	*/
-	public getStringValue(): string
-	{
+	public getStringValue(): string {
 		return this.modelDelegate.getStringValue(this);
 	}
 
@@ -2533,8 +2292,7 @@ export class LiteralReal extends Element implements elements.LiteralReal {
 	* Gets the name of the typed element's type.
 	* @returns {string} The type name, or an empty string if the element has no type.
 	*/
-	public getTypeName(): string
-	{
+	public getTypeName(): string {
 		return this.modelDelegate.getTypeName(this);
 	}
 
@@ -2543,8 +2301,7 @@ export class LiteralReal extends Element implements elements.LiteralReal {
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
 	* ValueSpecification.
 	*/
-	public getValue(): any | null
-	{
+	public getValue(): any | null {
 		return this.modelDelegate.getValue(this);
 	}
 }
@@ -2570,8 +2327,7 @@ export class LiteralNull extends Element implements elements.LiteralNull {
 	* Gets the string representation of the value.
 	* @returns {string}
 	*/
-	public getStringValue(): string
-	{
+	public getStringValue(): string {
 		return this.modelDelegate.getStringValue(this);
 	}
 
@@ -2579,8 +2335,7 @@ export class LiteralNull extends Element implements elements.LiteralNull {
 	* Gets the name of the typed element's type.
 	* @returns {string} The type name, or an empty string if the element has no type.
 	*/
-	public getTypeName(): string
-	{
+	public getTypeName(): string {
 		return this.modelDelegate.getTypeName(this);
 	}
 
@@ -2589,8 +2344,7 @@ export class LiteralNull extends Element implements elements.LiteralNull {
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
 	* ValueSpecification.
 	*/
-	public getValue(): any | null
-	{
+	public getValue(): any | null {
 		return this.modelDelegate.getValue(this);
 	}
 }
@@ -2618,8 +2372,7 @@ export class LiteralInteger extends Element implements elements.LiteralInteger {
 	* Gets the string representation of the value.
 	* @returns {string}
 	*/
-	public getStringValue(): string
-	{
+	public getStringValue(): string {
 		return this.modelDelegate.getStringValue(this);
 	}
 
@@ -2627,8 +2380,7 @@ export class LiteralInteger extends Element implements elements.LiteralInteger {
 	* Gets the name of the typed element's type.
 	* @returns {string} The type name, or an empty string if the element has no type.
 	*/
-	public getTypeName(): string
-	{
+	public getTypeName(): string {
 		return this.modelDelegate.getTypeName(this);
 	}
 
@@ -2637,8 +2389,7 @@ export class LiteralInteger extends Element implements elements.LiteralInteger {
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
 	* ValueSpecification.
 	*/
-	public getValue(): any | null
-	{
+	public getValue(): any | null {
 		return this.modelDelegate.getValue(this);
 	}
 }
@@ -2666,8 +2417,7 @@ export class LiteralBoolean extends Element implements elements.LiteralBoolean {
 	* Gets the string representation of the value.
 	* @returns {string}
 	*/
-	public getStringValue(): string
-	{
+	public getStringValue(): string {
 		return this.modelDelegate.getStringValue(this);
 	}
 
@@ -2675,8 +2425,7 @@ export class LiteralBoolean extends Element implements elements.LiteralBoolean {
 	* Gets the name of the typed element's type.
 	* @returns {string} The type name, or an empty string if the element has no type.
 	*/
-	public getTypeName(): string
-	{
+	public getTypeName(): string {
 		return this.modelDelegate.getTypeName(this);
 	}
 
@@ -2685,8 +2434,7 @@ export class LiteralBoolean extends Element implements elements.LiteralBoolean {
 	* @returns {any} The underlying value of the ValueSpecification. The type depends on the type of
 	* ValueSpecification.
 	*/
-	public getValue(): any | null
-	{
+	public getValue(): any | null {
 		return this.modelDelegate.getValue(this);
 	}
 }
@@ -2702,28 +2450,24 @@ export class InterfaceRealization extends Element implements elements.InterfaceR
 
 	public taggedValues: elements.TaggedValueSpecification[] = [];
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
@@ -2768,8 +2512,7 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* Returns both inherited and owned attributes.
 	* @returns {elements.Property[]}
 	*/
-	public getAllAttributes(): elements.Property[]
-	{
+	public getAllAttributes(): elements.Property[] {
 		return this.modelDelegate.getAllAttributes(this);
 	}
 
@@ -2778,8 +2521,7 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* (having the same name and parameter type order) in an inheriting type is not included.
 	* @returns {elements.Operation[]}
 	*/
-	public getAllOperations(): elements.Operation[]
-	{
+	public getAllOperations(): elements.Operation[] {
 		return this.modelDelegate.getAllOperations(this);
 	}
 
@@ -2788,8 +2530,7 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* specific classifiers will appear before more general classifiers.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllParents(): elements.Classifier[]
-	{
+	public getAllParents(): elements.Classifier[] {
 		return this.modelDelegate.getAllParents(this);
 	}
 
@@ -2797,8 +2538,7 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* Gets all classifiers of which this element is a direct or indirect general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllSpecializations(): elements.Classifier[]
-	{
+	public getAllSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getAllSpecializations(this);
 	}
 
@@ -2806,8 +2546,7 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* Gets the first direct generalization relationship of the element.
 	* @returns {elements.Generalization}
 	*/
-	public getFirstGeneralization(): elements.Generalization | null
-	{
+	public getFirstGeneralization(): elements.Generalization | null {
 		return this.modelDelegate.getFirstGeneralization(this);
 	}
 
@@ -2815,8 +2554,7 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* Gets the first classifier that is an immediate general of the current element.
 	* @returns {elements.Classifier}
 	*/
-	public getFirstParent(): elements.Classifier | null
-	{
+	public getFirstParent(): elements.Classifier | null {
 		return this.modelDelegate.getFirstParent(this);
 	}
 
@@ -2828,8 +2566,7 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getNamespaceName(separator?: string): string
-	{
+	public getNamespaceName(separator?: string): string {
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
 
@@ -2838,8 +2575,7 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* package.
 	* @returns {elements.Package[]} A collection of Packages.
 	*/
-	public getNestingPackages(): elements.Package[]
-	{
+	public getNestingPackages(): elements.Package[] {
 		return this.modelDelegate.getNestingPackages(this);
 	}
 
@@ -2847,8 +2583,7 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* Gives all of the immediate ancestors of a generalized Classifier.
 	* @returns {elements.Classifier[]}
 	*/
-	public getParents(): elements.Classifier[]
-	{
+	public getParents(): elements.Classifier[] {
 		return this.modelDelegate.getParents(this);
 	}
 
@@ -2860,8 +2595,7 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getQualifiedName(separator?: string): string
-	{
+	public getQualifiedName(separator?: string): string {
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
 
@@ -2869,8 +2603,7 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* Gets all classifiers of which this classifier is a direct general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getSpecializations(): elements.Classifier[]
-	{
+	public getSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getSpecializations(this);
 	}
 
@@ -2878,78 +2611,67 @@ export class Interface extends Element implements elements.Interface, editable.I
 	* Gets the super types of this type, derived from its Generalizations.
 	* @returns {this[]}
 	*/
-	public getSuperTypes(): this[]
-	{
+	public getSuperTypes(): this[] {
 		return this.modelDelegate.getSuperTypes(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
-	{
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this {
 		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
 		this.generalizations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteGeneralization(generalization: elements.Generalization): this
-	{
+	public deleteGeneralization(generalization: elements.Generalization): this {
 		removeFromArray(this.generalizations, generalization);
 		(generalization as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
-	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
-	{
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this {
 		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
 		this.ownedAttributes.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedAttribute(property: elements.Property): this
-	{
+	public deleteOwnedAttribute(property: elements.Property): this {
 		removeFromArray(this.ownedAttributes, property);
 		(property as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
-	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
-	{
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this {
 		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
 		this.ownedOperations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedOperation(operation: elements.Operation): this
-	{
+	public deleteOwnedOperation(operation: elements.Operation): this {
 		removeFromArray(this.ownedOperations, operation);
 		(operation as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, operation);
@@ -2974,28 +2696,24 @@ export class Generalization extends Element implements elements.Generalization, 
 
 	public taggedValues: elements.TaggedValueSpecification[] = [];
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
@@ -3031,33 +2749,28 @@ export class EnumerationLiteral extends Element implements elements.EnumerationL
 	* @returns {any} The default value (the type depending on the type of value), or null if no default
 	* value can be determined.
 	*/
-	public getSpecificationValue(): any | null
-	{
+	public getSpecificationValue(): any | null {
 		return this.modelDelegate.getSpecificationValue(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
@@ -3066,8 +2779,7 @@ export class EnumerationLiteral extends Element implements elements.EnumerationL
 
 	public setSpecification(value: number): this;
 	public setSpecification(value: string): this;
-	public setSpecification(value: any): this
-	{
+	public setSpecification(value: any): this {
 		this.modelDelegate.setSpecification(this, value);
 		return this;
 	}
@@ -3114,8 +2826,7 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* Returns both inherited and owned attributes.
 	* @returns {elements.Property[]}
 	*/
-	public getAllAttributes(): elements.Property[]
-	{
+	public getAllAttributes(): elements.Property[] {
 		return this.modelDelegate.getAllAttributes(this);
 	}
 
@@ -3124,8 +2835,7 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* (having the same name and parameter type order) in an inheriting type is not included.
 	* @returns {elements.Operation[]}
 	*/
-	public getAllOperations(): elements.Operation[]
-	{
+	public getAllOperations(): elements.Operation[] {
 		return this.modelDelegate.getAllOperations(this);
 	}
 
@@ -3134,8 +2844,7 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* specific classifiers will appear before more general classifiers.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllParents(): elements.Classifier[]
-	{
+	public getAllParents(): elements.Classifier[] {
 		return this.modelDelegate.getAllParents(this);
 	}
 
@@ -3143,8 +2852,7 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* Gets all classifiers of which this element is a direct or indirect general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllSpecializations(): elements.Classifier[]
-	{
+	public getAllSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getAllSpecializations(this);
 	}
 
@@ -3152,8 +2860,7 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* Gets the first direct generalization relationship of the element.
 	* @returns {elements.Generalization}
 	*/
-	public getFirstGeneralization(): elements.Generalization | null
-	{
+	public getFirstGeneralization(): elements.Generalization | null {
 		return this.modelDelegate.getFirstGeneralization(this);
 	}
 
@@ -3161,8 +2868,7 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* Gets the first classifier that is an immediate general of the current element.
 	* @returns {elements.Classifier}
 	*/
-	public getFirstParent(): elements.Classifier | null
-	{
+	public getFirstParent(): elements.Classifier | null {
 		return this.modelDelegate.getFirstParent(this);
 	}
 
@@ -3174,8 +2880,7 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getNamespaceName(separator?: string): string
-	{
+	public getNamespaceName(separator?: string): string {
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
 
@@ -3184,8 +2889,7 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* package.
 	* @returns {elements.Package[]} A collection of Packages.
 	*/
-	public getNestingPackages(): elements.Package[]
-	{
+	public getNestingPackages(): elements.Package[] {
 		return this.modelDelegate.getNestingPackages(this);
 	}
 
@@ -3193,8 +2897,7 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* Gives all of the immediate ancestors of a generalized Classifier.
 	* @returns {elements.Classifier[]}
 	*/
-	public getParents(): elements.Classifier[]
-	{
+	public getParents(): elements.Classifier[] {
 		return this.modelDelegate.getParents(this);
 	}
 
@@ -3206,8 +2909,7 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getQualifiedName(separator?: string): string
-	{
+	public getQualifiedName(separator?: string): string {
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
 
@@ -3215,8 +2917,7 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* Gets all classifiers of which this classifier is a direct general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getSpecializations(): elements.Classifier[]
-	{
+	public getSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getSpecializations(this);
 	}
 
@@ -3224,93 +2925,80 @@ export class Enumeration extends Element implements elements.Enumeration, editab
 	* Gets the super types of this type, derived from its Generalizations.
 	* @returns {this[]}
 	*/
-	public getSuperTypes(): this[]
-	{
+	public getSuperTypes(): this[] {
 		return this.modelDelegate.getSuperTypes(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
-	{
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this {
 		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
 		this.generalizations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteGeneralization(generalization: elements.Generalization): this
-	{
+	public deleteGeneralization(generalization: elements.Generalization): this {
 		removeFromArray(this.generalizations, generalization);
 		(generalization as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
-	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
-	{
+	public addOwnedAttribute(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this {
 		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
 		this.ownedAttributes.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedAttribute(property: elements.Property): this
-	{
+	public deleteOwnedAttribute(property: elements.Property): this {
 		removeFromArray(this.ownedAttributes, property);
 		(property as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
-	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this
-	{
+	public addOwnedOperation(properties: editable.OperationProperties, initFn?: (operation: editable.OperationEditable) => void): this {
 		const e = this.modelDelegate.createElement('operation', this, properties, initFn || null);
 		this.ownedOperations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedOperation(operation: elements.Operation): this
-	{
+	public deleteOwnedOperation(operation: elements.Operation): this {
 		removeFromArray(this.ownedOperations, operation);
 		(operation as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, operation);
 		return this;
 	}
 
-	public addOwnedLiteral(properties: editable.EnumerationLiteralProperties, initFn?: (enumerationLiteral: editable.EnumerationLiteralEditable) => void): this
-	{
+	public addOwnedLiteral(properties: editable.EnumerationLiteralProperties, initFn?: (enumerationLiteral: editable.EnumerationLiteralEditable) => void): this {
 		const e = this.modelDelegate.createElement('enumerationLiteral', this, properties, initFn || null);
 		this.ownedLiterals.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedLiteral(enumerationLiteral: elements.EnumerationLiteral): this
-	{
+	public deleteOwnedLiteral(enumerationLiteral: elements.EnumerationLiteral): this {
 		removeFromArray(this.ownedLiterals, enumerationLiteral);
 		(enumerationLiteral as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, enumerationLiteral);
@@ -3377,8 +3065,7 @@ export class Association extends Element implements elements.Association, editab
 	* specific classifiers will appear before more general classifiers.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllParents(): elements.Classifier[]
-	{
+	public getAllParents(): elements.Classifier[] {
 		return this.modelDelegate.getAllParents(this);
 	}
 
@@ -3386,8 +3073,7 @@ export class Association extends Element implements elements.Association, editab
 	* Gets all classifiers of which this element is a direct or indirect general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getAllSpecializations(): elements.Classifier[]
-	{
+	public getAllSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getAllSpecializations(this);
 	}
 
@@ -3395,8 +3081,7 @@ export class Association extends Element implements elements.Association, editab
 	* Gets the first direct generalization relationship of the element.
 	* @returns {elements.Generalization}
 	*/
-	public getFirstGeneralization(): elements.Generalization | null
-	{
+	public getFirstGeneralization(): elements.Generalization | null {
 		return this.modelDelegate.getFirstGeneralization(this);
 	}
 
@@ -3404,8 +3089,7 @@ export class Association extends Element implements elements.Association, editab
 	* Gets the first classifier that is an immediate general of the current element.
 	* @returns {elements.Classifier}
 	*/
-	public getFirstParent(): elements.Classifier | null
-	{
+	public getFirstParent(): elements.Classifier | null {
 		return this.modelDelegate.getFirstParent(this);
 	}
 
@@ -3417,8 +3101,7 @@ export class Association extends Element implements elements.Association, editab
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getNamespaceName(separator?: string): string
-	{
+	public getNamespaceName(separator?: string): string {
 		return this.modelDelegate.getNamespaceName(this, separator);
 	}
 
@@ -3427,8 +3110,7 @@ export class Association extends Element implements elements.Association, editab
 	* package.
 	* @returns {elements.Package[]} A collection of Packages.
 	*/
-	public getNestingPackages(): elements.Package[]
-	{
+	public getNestingPackages(): elements.Package[] {
 		return this.modelDelegate.getNestingPackages(this);
 	}
 
@@ -3436,8 +3118,7 @@ export class Association extends Element implements elements.Association, editab
 	* Gives all of the immediate ancestors of a generalized Classifier.
 	* @returns {elements.Classifier[]}
 	*/
-	public getParents(): elements.Classifier[]
-	{
+	public getParents(): elements.Classifier[] {
 		return this.modelDelegate.getParents(this);
 	}
 
@@ -3449,8 +3130,7 @@ export class Association extends Element implements elements.Association, editab
 	* used.
 	* @returns {string} A single string with all the names separated.
 	*/
-	public getQualifiedName(separator?: string): string
-	{
+	public getQualifiedName(separator?: string): string {
 		return this.modelDelegate.getQualifiedName(this, separator);
 	}
 
@@ -3458,8 +3138,7 @@ export class Association extends Element implements elements.Association, editab
 	* Gets all classifiers of which this classifier is a direct general.
 	* @returns {elements.Classifier[]}
 	*/
-	public getSpecializations(): elements.Classifier[]
-	{
+	public getSpecializations(): elements.Classifier[] {
 		return this.modelDelegate.getSpecializations(this);
 	}
 
@@ -3467,76 +3146,65 @@ export class Association extends Element implements elements.Association, editab
 	* Gets the super types of this type, derived from its Generalizations.
 	* @returns {this[]}
 	*/
-	public getSuperTypes(): this[]
-	{
+	public getSuperTypes(): this[] {
 		return this.modelDelegate.getSuperTypes(this);
 	}
 
-	public addAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public addAppliedStereotype(stereotype: elements.Stereotype): this {
 		this.appliedStereotypes.push(stereotype);
 		this.modelDelegate.onElementAdded(this, stereotype);
 		return this;
 	}
-	public removeAppliedStereotype(stereotype: elements.Stereotype): this
-	{
+	public removeAppliedStereotype(stereotype: elements.Stereotype): this {
 		removeFromArray(this.appliedStereotypes, stereotype);
 		this.modelDelegate.onElementDeleted(this, stereotype);
 		return this;
 	}
 
-	public addOwnedComment(properties: editable.CommentProperties): this
-	{
+	public addOwnedComment(properties: editable.CommentProperties): this {
 		const e = this.modelDelegate.createElement('comment', this, properties, null);
 		this.ownedComments.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedComment(comment: elements.Comment): this
-	{
+	public deleteOwnedComment(comment: elements.Comment): this {
 		removeFromArray(this.ownedComments, comment);
 		(comment as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, comment);
 		return this;
 	}
 
-	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this
-	{
+	public addGeneralization(properties: editable.GeneralizationProperties, initFn?: (generalization: editable.GeneralizationEditable) => void): this {
 		const e = this.modelDelegate.createElement('generalization', this, properties, initFn || null);
 		this.generalizations.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteGeneralization(generalization: elements.Generalization): this
-	{
+	public deleteGeneralization(generalization: elements.Generalization): this {
 		removeFromArray(this.generalizations, generalization);
 		(generalization as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, generalization);
 		return this;
 	}
 
-	public addMemberEnd(property: elements.Property): this
-	{
+	public addMemberEnd(property: elements.Property): this {
 		this.memberEnds.push(property);
 		this.modelDelegate.onElementAdded(this, property);
 		return this;
 	}
-	public removeMemberEnd(property: elements.Property): this
-	{
+	public removeMemberEnd(property: elements.Property): this {
 		removeFromArray(this.memberEnds, property);
 		this.modelDelegate.onElementDeleted(this, property);
 		return this;
 	}
 
-	public addOwnedEnd(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this
-	{
+	public addOwnedEnd(properties: editable.PropertyProperties, initFn?: (property: editable.PropertyEditable) => void): this {
 		const e = this.modelDelegate.createElement('property', this, properties, initFn || null);
 		this.ownedEnds.push(e);
 		this.modelDelegate.onElementAdded(this, e);
 		return this;
 	}
-	public deleteOwnedEnd(property: elements.Property): this
-	{
+	public deleteOwnedEnd(property: elements.Property): this {
 		removeFromArray(this.ownedEnds, property);
 		(property as any).isDeleted = true;
 		this.modelDelegate.onElementDeleted(this, property);

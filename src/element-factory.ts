@@ -44,12 +44,10 @@ export interface FactoryClassMap {
 export type createdElement<T extends keyof FactoryClassMap> = FactoryClassMap[T];
 
 export class ElementFactory {
-	constructor(private modelDelegate: ModelDelegate)
-	{
+	constructor(private modelDelegate: ModelDelegate) {
 	}
 
-	public create<T extends keyof FactoryClassMap>(elementType: T, owner: elements.Element | null): createdElement<T>
-	{
+	public create<T extends keyof FactoryClassMap>(elementType: T, owner: elements.Element | null): createdElement<T> {
 		switch (elementType)
 		{
 			case 'class':
@@ -103,8 +101,7 @@ export class ElementFactory {
 		}
 	}
 
-	public static requiresId<T extends keyof FactoryClassMap>(elementType: T): boolean
-	{
+	public static requiresId<T extends keyof FactoryClassMap>(elementType: T): boolean {
 		switch (elementType)
 		{
 			case 'literalUnlimitedNatural':
