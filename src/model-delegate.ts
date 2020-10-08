@@ -502,7 +502,14 @@ export class ModelDelegateImpl implements ModelDelegate {
         if (properties) Object.assign(e, properties);
 
         // Ensure a ID
-        if (!e.id && ElementFactory.requiresId(elementType)) e.id = UniqueId.create();
+        if (!e.id && ElementFactory.requiresId(elementType)) {
+            let exists = true;
+            do {
+                e.id = UniqueId.create(6);
+                exists = this.elementMap!.getElementById(e.id) != null;
+            }
+            while (exists);
+        }
 
         // Initialize
         if (initFn) initFn(e);
