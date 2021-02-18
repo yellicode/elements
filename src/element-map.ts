@@ -16,10 +16,10 @@ export class ElementMapImpl implements ElementMap {
     private elementsById: { [key: string]: Interfaces.Element } = {};
     private specializationsById: { [generalId: string]: Interfaces.Classifier[] } = {};
     private associationsByEndId: { [endId: string]: Interfaces.Association } = {};
-    private typeResolver: TypeResolver;
+    private externalTypeResolver: TypeResolver;
 
     constructor(customTypeResolver?: TypeResolver) {
-        this.typeResolver = new BasicTypeResolver(customTypeResolver);
+        this.externalTypeResolver = new BasicTypeResolver(customTypeResolver);
 
         // TODO: do we need UnlimitedNatural? If so, it should be exported by './primitives'.
     }
@@ -134,10 +134,10 @@ export class ElementMapImpl implements ElementMap {
         if (!id || id.length === 0)
             return null;
 
-        // Is the element a built-in type?
-        const builtInType = this.typeResolver.resolve(id);
-        if (builtInType)
-            return builtInType as any as TElement;
+        // Is the element an external or built-in type?
+        const externalType = this.externalTypeResolver.resolve(id);
+        if (externalType)
+            return externalType as any as TElement;
 
         if (this.elementsById.hasOwnProperty(id))
             return this.elementsById[id] as TElement;
