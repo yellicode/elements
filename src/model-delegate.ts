@@ -5,7 +5,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import * as _ from 'lodash';
+import { remove } from 'lodash';
 import * as utils from './utils';
 import * as Interfaces from "./interfaces";
 import { ElementTypeUtility } from './utils';
@@ -285,7 +285,7 @@ export class ModelDelegateImpl implements ModelDelegate {
         memberedClassifier.ownedOperations.forEach(op => {
             // Is there an operation in the result that has the same signature? Then replace it.
             // TODO: can we set a "redefines" reference (referring to the base operation)?
-            _.remove(result, (baseOperation) => ElementComparerImpl.haveEqualSignatures(baseOperation, op));
+            remove(result, (baseOperation) => ElementComparerImpl.haveEqualSignatures(baseOperation, op));
             result.push(op);
         })
     }
