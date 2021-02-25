@@ -5,7 +5,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import { remove } from 'lodash';
 import * as utils from './utils';
 import * as Interfaces from "./interfaces";
 import { ElementTypeUtility } from './utils';
@@ -285,7 +284,7 @@ export class ModelDelegateImpl implements ModelDelegate {
         memberedClassifier.ownedOperations.forEach(op => {
             // Is there an operation in the result that has the same signature? Then replace it.
             // TODO: can we set a "redefines" reference (referring to the base operation)?
-            remove(result, (baseOperation) => ElementComparerImpl.haveEqualSignatures(baseOperation, op));
+            ModelDelegateImpl.removeItems(result, (baseOperation) => ElementComparerImpl.haveEqualSignatures(baseOperation, op));
             result.push(op);
         })
     }
@@ -626,4 +625,21 @@ export class ModelDelegateImpl implements ModelDelegate {
     public setSpecification(element: Interfaces.EnumerationLiteral, value: number | string): void {
         element.specification = this.createValueSpecificationFromValue(value, element);
     }
+
+    private static removeItems<T>(array: T[], predicate: (item: T) => any): void {
+        if (!array.length)
+            return;
+
+        const indices: number[] = [];
+        // Create a reverse array of indices, then remove them in that order.
+        for (let i = array.length - 1; i > -1; i--) {
+            if (predicate(array[i]))
+                indices.push(i);
+        }
+
+        indices.forEach(i => {
+            array.splice(i, 1);
+        });
+    }
+
 }
