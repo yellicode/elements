@@ -103,46 +103,47 @@ export class ElementTypeTransform extends PackagedElementTransform {
         }
     }
 
-    private static removeOldSourceFeatures(unTransformedElement: Type, targetElementType: ElementType): void {
-        // Remove MemberedClassifier members
-        if (isMemberedClassifier(unTransformedElement) && !ElementTypeUtility.isMemberedClassifier(targetElementType)) {
-            delete unTransformedElement.ownedAttributes;
-            delete unTransformedElement.ownedOperations;
-            delete unTransformedElement.getAllAttributes;
-            delete unTransformedElement.getAllOperations;
-        }
-        // Remove BehavioredClassifier members
-        if (isBehavioredClassifier(unTransformedElement) && !ElementTypeUtility.isBehavioredClassifier(targetElementType)) {
-            delete unTransformedElement.interfaceRealizations;
-        }
-        // Remove Classifier members
-        if (isClassifier(unTransformedElement) && !ElementTypeUtility.isClassifier(targetElementType)) {
-            delete unTransformedElement.generalizations;
-            delete unTransformedElement.isAbstract;
-            delete unTransformedElement.isFinalSpecialization;
-            delete unTransformedElement.getAllParents;
-            delete unTransformedElement.getAllSpecializations;
-            delete unTransformedElement.getFirstGeneralization;
-            delete unTransformedElement.getFirstParent;
-            delete unTransformedElement.getParents;
-            delete unTransformedElement.getSpecializations;
-            delete unTransformedElement.getSuperTypes;
-        }
-        // Remove Enumeration members
-        if (isEnumeration(unTransformedElement) && !ElementTypeUtility.isEnumeration(targetElementType)) {
-            delete unTransformedElement.baseType;
-            delete unTransformedElement.ownedLiterals;
-        }
-        // Remove Class members
-        if (isClass(unTransformedElement) && !ElementTypeUtility.isClass(targetElementType)) {
-            delete unTransformedElement.isActive;
-        }
-        // Remove Stereotype members
-        if (isStereotype(unTransformedElement) && !ElementTypeUtility.isStereotype(targetElementType)) {
-            delete unTransformedElement.extends;
-            delete unTransformedElement.safeName;
-        }
-    }
+    // private static removeOldSourceFeatures(unTransformedElement: Type, targetElementType: ElementType): void {
+    // Note: delete statements below give a compilation error "The operand of a 'delete' operator must be optional.ts(2790)""
+    //     // Remove MemberedClassifier members
+    //     if (isMemberedClassifier(unTransformedElement) && !ElementTypeUtility.isMemberedClassifier(targetElementType)) {
+    //         delete unTransformedElement.ownedAttributes;
+    //         delete unTransformedElement.ownedOperations;
+    //         delete unTransformedElement.getAllAttributes;
+    //         delete unTransformedElement.getAllOperations;
+    //     }
+    //     // Remove BehavioredClassifier members
+    //     if (isBehavioredClassifier(unTransformedElement) && !ElementTypeUtility.isBehavioredClassifier(targetElementType)) {
+    //         delete unTransformedElement.interfaceRealizations;
+    //     }
+    //     // Remove Classifier members
+    //     if (isClassifier(unTransformedElement) && !ElementTypeUtility.isClassifier(targetElementType)) {
+    //         delete unTransformedElement.generalizations;
+    //         delete unTransformedElement.isAbstract;
+    //         delete unTransformedElement.isFinalSpecialization;
+    //         delete unTransformedElement.getAllParents;
+    //         delete unTransformedElement.getAllSpecializations;
+    //         delete unTransformedElement.getFirstGeneralization;
+    //         delete unTransformedElement.getFirstParent;
+    //         delete unTransformedElement.getParents;
+    //         delete unTransformedElement.getSpecializations;
+    //         delete unTransformedElement.getSuperTypes;
+    //     }
+    //     // Remove Enumeration members
+    //     if (isEnumeration(unTransformedElement) && !ElementTypeUtility.isEnumeration(targetElementType)) {
+    //         delete unTransformedElement.baseType;
+    //         delete unTransformedElement.ownedLiterals;
+    //     }
+    //     // Remove Class members
+    //     if (isClass(unTransformedElement) && !ElementTypeUtility.isClass(targetElementType)) {
+    //         delete unTransformedElement.isActive;
+    //     }
+    //     // Remove Stereotype members
+    //     if (isStereotype(unTransformedElement) && !ElementTypeUtility.isStereotype(targetElementType)) {
+    //         delete unTransformedElement.extends;
+    //         delete unTransformedElement.safeName;
+    //     }
+    // }
 
     private static createTypeSelector(elementType: ElementType): (t: PackageableElement) => t is Type {
         // Do a strict elementType comparison here
